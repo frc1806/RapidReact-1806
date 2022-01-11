@@ -21,3 +21,17 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+*.bin
+*.lock
+*.ipr
+*.iws
+*.iml
+*.class
+build/*
+out/*
+.idea/*
+docs/*
+maven/*
+Project_Electric_Eye/.gradle/*
+Project_Electric_Eye/.idea/*
