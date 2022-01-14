@@ -1,6 +1,6 @@
 package org.usfirst.frc.team1806.robot.subsystems;
 
-import edu.wpi.first.wpilibj.CircularBuffer;
+import edu.wpi.first.util.CircularBuffer;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,7 +26,7 @@ public class IntakeSubsystem implements Subsystem{
 	Timer timer, stopperTimer;
 	double stopTime = .3; // Seconds to stop the intake for
 	boolean hasStopped = false;
-	PowerDistributionPanel powerDistributionPanel;
+	PowerDistribution powerDistributionPanel;
 	CircularBuffer intakeCircularBuffer;
 	double circularBufferTotal = 0;
 	int wantedSize = 30;

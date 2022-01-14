@@ -9,7 +9,6 @@ import org.usfirst.frc.team1806.robot.path.motion.MotionState;
 import org.usfirst.frc.team1806.robot.util.Lookahead;
 import org.usfirst.frc.team1806.robot.util.Translation2d;
 
-import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *

@@ -66,7 +66,6 @@ public class LiftSubsystem  implements Subsystem {
 	private CANSparkMax liftLead, liftFollow; //gotta have the power
 	public DigitalInput bottomLimit, topLimit;
 
-	private CargoIntakeSubsystem mCargoIntakeSubsystem;
 	private double intakePneumaticWait ;
 	private double lastTimeStamp;
 	private boolean needsIntakeOut;
@@ -98,7 +97,6 @@ public class LiftSubsystem  implements Subsystem {
  		liftLead.getEncoder().setPositionConversionFactor(48);
 
  		intakePneumaticWait = 0;
- 		mCargoIntakeSubsystem = CargoIntakeSubsystem.getInstance();
  		lastTimeStamp = 0;
  		needsIntakeOut = false;
  		wasIntakeOut = false;

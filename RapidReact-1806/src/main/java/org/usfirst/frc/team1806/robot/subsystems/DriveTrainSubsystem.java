@@ -5,6 +5,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.ControlType;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Timer;
 import org.usfirst.frc.team1806.robot.Constants;
 import org.usfirst.frc.team1806.robot.Kinematics;
@@ -247,7 +248,7 @@ public class DriveTrainSubsystem implements Subsystem {
 		mostRecentTargetTimestamp = 0;
 
 		// init solenoids
-		shifter = new DoubleSolenoid(RobotMap.module2Number, RobotMap.shiftLow, RobotMap.shiftHigh);
+		shifter = new DoubleSolenoid(RobotMap.module2Number, PneumaticsModuleType.CTREPCM, RobotMap.shiftLow, RobotMap.shiftHigh);
 //		init navx
 		navx = new NavX(SPI.Port.kMXP);
 
@@ -261,8 +262,7 @@ public class DriveTrainSubsystem implements Subsystem {
 			setMaxDrivePower(1);
 			// We entered a position control state.
 			System.out.println("Configuring position control");
-			masterLeft.setIAccum(0);
-			masterRight.setIAccum(0);
+			//used to reset Iaccumulator
 			setBrakeMode();
 		} else {
 			System.out.println("Oh no! DIdn't set Position control");

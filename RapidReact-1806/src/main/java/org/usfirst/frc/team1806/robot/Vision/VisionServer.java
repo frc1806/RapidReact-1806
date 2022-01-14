@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import edu.wpi.first.wpilibj.CircularBuffer;
 import edu.wpi.first.wpilibj.Timer;
 import org.usfirst.frc.team1806.robot.Constants;
 import org.usfirst.frc.team1806.robot.Vision.Message.HeartbeatMessage;
