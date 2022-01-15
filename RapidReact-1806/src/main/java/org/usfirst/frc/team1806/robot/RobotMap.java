@@ -12,9 +12,9 @@ public class RobotMap {
 	
 	//Drive train CAN
 
-	public static int masterRight = 1;
+	public static int leaderRight = 1;
 	public static int rightA = 2;
-	public static int masterLeft = 4;
+	public static int leaderLeft = 4;
 	public static int leftA = 5;
 	public static int leftB = 15;
 	public static int rightB = 16;
@@ -44,8 +44,8 @@ public class RobotMap {
 	public static int module2Number = 0;
 	
 	//Shifting
-	public static int shiftHigh = 0; //module 2
-	public static int shiftLow = 1;//module 2
+	public static int shiftHigh = 0; //module 1
+	public static int shiftLow = 1;//module 1
 
 	//Intake
 	public static int barIntakeExtend = 5;//module 1

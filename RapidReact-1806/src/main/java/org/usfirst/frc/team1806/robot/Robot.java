@@ -47,6 +47,7 @@ public class Robot extends TimedRobot {
             Arrays.asList(DriveTrainSubsystem.getInstance(), LiftSubsystem.getInstance())); ///TODO RE ADD IN SUBSYSTEMS
 
     private Looper mEnabledLooper = new Looper();
+    private Looper mDisabledLooper = new Looper();
 
     public static SequenceState mSequenceState = SequenceState.VISION;
     public static AutoModeBase selectedAuto;
@@ -68,20 +69,12 @@ public class Robot extends TimedRobot {
     }
     public AutoInTeleOp autoInteleOpState = AutoInTeleOp.AUTO_DISABLED;
 
-    public enum GamePieceMode{
-        HATCH_PANEL,
-        CARGO
-    }
-
-    private static GamePieceMode GamePieceMode;
-
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */
     @Override
     public void robotInit() {
-        Robot.setGamePieceMode(GamePieceMode.HATCH_PANEL);
         selectedModeName = "";
         lastSelectedModeName = "";
       m_oi = new OI();
@@ -99,6 +92,7 @@ public class Robot extends TimedRobot {
       mAutomatedSequenceExecuter = new AutoModeExecuter();
       //mAutoModeExecuter.setAutoMode(new QualMode()); TODO
       mDrive.setCoastMode();
+      AutoModeSelector.registerDisabledLoop(mDisabledLooper);
       AutoModeSelector.initAutoModeSelector();
       needToPositionControlInTele = false;
       try {
@@ -135,12 +129,13 @@ public class Robot extends TimedRobot {
         if(mAutoModeExecuter != null) {
             mAutoModeExecuter.stop();
             AutoModeSelector.initAutoModeSelector();
-            selectedAuto = AutoModeSelector.getSelectedAutoMode(selectedModeName);
+            selectedAuto = AutoModeSelector.getSelectedAutoMode();
         }
         if(mAutomatedSequenceExecuter != null) {
             mAutomatedSequenceExecuter.stop();
         }
         autoInteleOpState = AutoInTeleOp.AUTO_DISABLED;
+        mDisabledLooper.stop();
     }
 
     @Override
@@ -159,8 +154,7 @@ public class Robot extends TimedRobot {
                 "org.usfirst.frc.team1806.robot.auto.modes.NothingAuto");
       if(!selectedModeName.equals(lastSelectedModeName) || bAutoModeStale){
           bAutoModeStale = false;
-          AutoModeSelector.initAutoModeSelector();
-          selectedAuto = AutoModeSelector.getSelectedAutoMode(selectedModeName);
+          selectedAuto = AutoModeSelector.getSelectedAutoMode();
       }
 
       autoInteleOpState = AutoInTeleOp.AUTO_DISABLED;
@@ -174,6 +168,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+      mDisabledLooper.stop();
       bAutoModeStale = true;
       try {
 			zeroAllSensors();
@@ -207,6 +202,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+      mDisabledLooper.stop();
       mEnabledLooper.start();
         if(mAutoModeExecuter != null) {
             mAutoModeExecuter.stop();
@@ -237,7 +233,7 @@ public class Robot extends TimedRobot {
             }
             break;
           case AUTO_INIT:
-            selectedAuto = AutoModeSelector.getSelectedAutoMode(selectedModeName);
+            selectedAuto = AutoModeSelector.getSelectedAutoMode();
             if(false){//m_oi.autoInTeleOpOn()){
               zeroAllSensors();
               if (mAutoModeExecuter != null) {
@@ -311,40 +307,12 @@ public class Robot extends TimedRobot {
       S_SubsystemManager.outputToSmartDashboard();
       mRobotState.outputToSmartDashboard();
       mEnabledLooper.outputToSmartDashboard();
-      SmartDashboard.putString("Auto We Are Running", AutoModeSelector.returnNameOfSelectedAuto());
+      SmartDashboard.putString("Auto We Are Running", AutoModeSelector.returnNameOfSelectedAuto()==null?"Nothing":AutoModeSelector.returnNameOfSelectedAuto());
      //SmartDashboard.putNumber("PDP Total", powerDistributionPanel.getTotalCurrent());
     }
     private void runTeleOp(){
       CommandScheduler.getInstance().run();
       m_oi.runCommands();
       allPeriodic();
-    }
-
-    /**
-     * Sets the global game piece mode, runs functions associated with mode change on subsystems.
-     * @param mode the wanted mode
-     */
-    public static synchronized void setGamePieceMode(GamePieceMode mode){
-        GamePieceMode = mode;
-
-        switch(mode){
-            case CARGO:
-                S_SubsystemManager.goToCargoMode();
-                break;
-            case HATCH_PANEL:
-                S_SubsystemManager.goToHatchMode();
-                break;
-            default:
-                break;
-        }
-    }
-
-
-    public static synchronized GamePieceMode getGamePieceMode(){
-        return GamePieceMode;
-    }
-
-    public static synchronized void RetractAll(){
-        S_SubsystemManager.retractAll();
     }
   }

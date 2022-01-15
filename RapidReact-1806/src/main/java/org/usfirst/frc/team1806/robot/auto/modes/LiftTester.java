@@ -1,7 +1,7 @@
 package org.usfirst.frc.team1806.robot.auto.modes;
 
+import org.usfirst.frc.team1806.robot.auto.actions.LiftActions.LiftToHeight;
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.WaitAction;
-import org.usfirst.frc.team1806.robot.auto.actions.LiftToHeight;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeBase;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeEndedException;
 import org.usfirst.frc.team1806.robot.subsystems.LiftSubsystem;
@@ -14,13 +14,13 @@ import org.usfirst.frc.team1806.robot.subsystems.LiftSubsystem;
 public class LiftTester extends AutoModeBase {
     @Override
     protected void routine() throws AutoModeEndedException {
-        runAction(new LiftToHeight(LiftSubsystem.LiftPosition.ROCKET_CARGO_HIGH, false));
+        runAction(new LiftToHeight(100, false));
         runAction(new WaitAction(1));
-        runAction(new LiftToHeight(LiftSubsystem.LiftPosition.ROCKET_CARGO_LOW, false));
+        runAction(new LiftToHeight(2, false));
         runAction(new WaitAction(1));
-        runAction(new LiftToHeight(LiftSubsystem.LiftPosition.ROCKET_CARGO_MID, false));
+        runAction(new LiftToHeight(5, false));
         runAction(new WaitAction(1));
-        runAction(new LiftToHeight(LiftSubsystem.LiftPosition.TELEOP_HOLD, false));
+        runAction(new LiftToHeight(0, false));
         runAction(new WaitAction(15));
     }
 }
