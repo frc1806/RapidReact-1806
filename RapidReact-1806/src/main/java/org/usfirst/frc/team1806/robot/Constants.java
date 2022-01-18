@@ -93,9 +93,10 @@ public class Constants {
 
 
     public final static double kLiftHoldPercentOutput = .025;
-    // Encoder constants used by Rocket Elevator system
+    // Encoder constants used by Elevator system
     public final static int kCreepModeLiftHeight = 13000;
 
+    public final static double kLiftInchesPerCountDefault = 1;
     public final static int kLiftPositionControlPIDSlot = 10;
     public final static int kLiftPositionPIDTimeout = 10;
     public final static double kLiftPositionkP = .0016;
@@ -116,8 +117,6 @@ public class Constants {
     public final static int kBumpEncoderPosition = 1000;
 
     public final static int kLiftTopLimitSwitchPosition = 500;
-
-    public final static int kTeleOpHoldHeight = 1100;
 
     //Compressor Control Constants
     public final static int kPressureSensorSamplingLoops = 60; //each loop is 1/200 of a second
@@ -145,9 +144,6 @@ public class Constants {
     public final static double kBatteryDepletedVoltage = 11.8;
     public final static double kLowAmpLoad = 10;
 
-    //Accelerometer Constants
-    public final static double habDropAccelerationThreshold = 1.0; //g force
-
     //Lift interference avoidence
     public final static double kLiftWaitForExtendIntake = 0.25;
     public final static int kMaxLiftHeightToNeedToExtendIntake = 1000;
@@ -155,30 +151,6 @@ public class Constants {
 
     //controls
     public final static double kTriggerThreshold = .2;
-
-
-    //HAB Climb Constnats
-    public final static double kHABClimbVelocityKp = 0.005;
-    public final static double kHABClimbVelocityKi = 0.0;
-    public final static double kHABClimbVelocityKd = 0.0;
-    public final static double kHABClimbVelocityKf = 0.0;
-    public final static double kHABClimbVelocityKiZone = 1;
-
-    public final static double kHABClimbSyncKp = 1;
-    public final static double kHABClimbSyncThrottleLetoffDistance = 0.000;
-    public final static double kHABClimbSyncVelocityTolerance = 500;
-    public final static double kHABClimbSyncPositionTolerance = 0.5;
-
-    public final static double kHabClimbTargetSpeed = 2000;
-
-    public final static double kLickKp = 0.04;
-    public final static double kLickKi = 0.00;
-    public final static double kLickKd = 0.00;
-    public final static double kLickKf = 0.00;
-    public final static int kLickKiZone = 10;
-
-    public final static int kLickPositionTolerance = 20;
-    public final static int kLickVelocityTolerance = 2000;
 
     //Output to Smart Dashboard Keys
     public final static String kCompressorKey = "Compressor ";
