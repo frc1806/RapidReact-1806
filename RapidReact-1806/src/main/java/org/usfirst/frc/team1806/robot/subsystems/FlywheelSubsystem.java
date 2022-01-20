@@ -8,7 +8,7 @@ import org.usfirst.frc.team1806.robot.loop.Loop;
 import org.usfirst.frc.team1806.robot.loop.Looper;
 
 public class FlywheelSubsystem implements Subsystem {
-    
+
     private CANSparkMax mFlywheelMotor;
     private Double mKp, mKi, mKd, mKf, mIzone, mConversionFactor, mWantedSpeed;
     private Loop mLoop = new Loop(){
@@ -86,7 +86,7 @@ public class FlywheelSubsystem implements Subsystem {
 
     @Override
     public void registerEnabledLoops(Looper enabledLooper) {
-        // TODO Auto-generated method stub
+        enabledLooper.register(mLoop);
         
     }
 

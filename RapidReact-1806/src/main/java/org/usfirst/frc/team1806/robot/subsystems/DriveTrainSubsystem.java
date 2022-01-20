@@ -117,8 +117,6 @@ public class DriveTrainSubsystem implements Subsystem {
 	private Path mCurrentPath = null;
 	private boolean mIsHighGear = false;
 	public static boolean isWantedLowPID = false;
-	private boolean mIsBrakeMode = false;
-
 	private Loop mLoop = new Loop() {
 		/** Different states that constantly need to be ran
 		 * 	Runs different functions based on the current state of the DriveTrain
@@ -195,14 +193,14 @@ public class DriveTrainSubsystem implements Subsystem {
 	 */
 	public DriveTrainSubsystem() {
 		//init the all of the motor controllers
-		leaderLeft = new CANSparkMax(RobotMap.leaderLeft, CANSparkMaxLowLevel.MotorType.kBrushless);
-		leaderRight = new CANSparkMax(RobotMap.leaderRight, CANSparkMaxLowLevel.MotorType.kBrushless);
+		leaderLeft = new CANSparkMax(RobotMap.leftLeader, CANSparkMaxLowLevel.MotorType.kBrushless);
+		leaderRight = new CANSparkMax(RobotMap.rightLeader, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-		leftA = new CANSparkMax(RobotMap.leftA, CANSparkMaxLowLevel.MotorType.kBrushless);
-		rightA = new CANSparkMax(RobotMap.rightA, CANSparkMaxLowLevel.MotorType.kBrushless);
+		leftA = new CANSparkMax(RobotMap.leftFollowerA, CANSparkMaxLowLevel.MotorType.kBrushless);
+		rightA = new CANSparkMax(RobotMap.rightFollowerA, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-		leftB = new CANSparkMax(RobotMap.leftB, CANSparkMaxLowLevel.MotorType.kBrushless);
-		rightB = new CANSparkMax(RobotMap.rightB, CANSparkMaxLowLevel.MotorType.kBrushless);
+		leftB = new CANSparkMax(RobotMap.leftFollowerB, CANSparkMaxLowLevel.MotorType.kBrushless);
+		rightB = new CANSparkMax(RobotMap.rightFollowerB, CANSparkMaxLowLevel.MotorType.kBrushless);
 
 		//Follow for right side
         rightA.follow(leaderRight);
@@ -581,7 +579,6 @@ public class DriveTrainSubsystem implements Subsystem {
 	 * @param brake if 1, the drive train will go into brake mode, 0 will put it into coast mode
 	 */
 	public synchronized void setNeutralMode(boolean brake) {
-		mIsBrakeMode = brake;
 		CANSparkMax.IdleMode currentMode = brake ? CANSparkMax.IdleMode.kBrake : CANSparkMax.IdleMode.kCoast;
 		leaderRight.setIdleMode(currentMode);
 		rightA.setIdleMode(currentMode);

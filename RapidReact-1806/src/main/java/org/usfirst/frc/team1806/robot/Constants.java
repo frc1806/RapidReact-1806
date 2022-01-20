@@ -137,6 +137,8 @@ public class Constants {
     //Intake Constants
     public final static double kInnerIntakingSpeed = .8;
     public final static double kOuterIntakingSpeed = .8;
+    public final static double kIntakeSpeed = 1.0;
+    public final static double kSweep = 1.0;
 
     //Battery State Of Charge
     public final static double kFullChargeBatteryCoulombCount = 25200;
@@ -174,5 +176,6 @@ public class Constants {
     public final static double kRightFlywheelKf = 0.0;
     public final static Double kRightFlywheelIzone = 0.0;
     public final static Double kRightFlywheelConversionFactor = 0.0;
+
 
 }

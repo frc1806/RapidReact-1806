@@ -1,11 +1,15 @@
 package org.usfirst.frc.team1806.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import org.usfirst.frc.team1806.robot.Constants;
+import org.usfirst.frc.team1806.robot.loop.Loop;
 import org.usfirst.frc.team1806.robot.loop.Looper;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class IntakeSubsystem implements Subsystem {
 
@@ -14,12 +18,49 @@ public class IntakeSubsystem implements Subsystem {
         INTAKING,
         SWEEP
     };
-    private DoubleSolenoid extendSolenoid;
+    private DoubleSolenoid mExtendSolenoid;
     private CANSparkMax intakeMotor;
     private Double mIntakeSpeed = 0.0;
+    private IntakeStates mIntakeState;
+    private Loop mLoop = new Loop(){
 
-    public IntakeSubsystem(Double intakeSpeed){
-        mIntakeSpeed = intakeSpeed;
+        @Override
+        public void onStart(double timestamp) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void onLoop(double timestamp) {
+            switch(mIntakeState){
+                case IDLE:
+                    mExtendSolenoid.set(Value.kReverse);
+                    intakeMotor.set(0.0);
+                    return;
+                case INTAKING:
+                    mExtendSolenoid.set(Value.kForward);
+                    intakeMotor.set(Constants.kIntakeSpeed);
+                    return;
+                case SWEEP:
+                    mExtendSolenoid.set(Value.kForward);
+                    intakeMotor.set(-Constants.kSweep);
+                    return;
+            }
+            
+        }
+
+        @Override
+        public void onStop(double timestamp) {
+            // TODO Auto-generated method stub
+            
+        }
+
+    };
+
+    public IntakeSubsystem(int canID, int extendSolenoidPort, int retractSolenoidPort){
+        mExtendSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, extendSolenoidPort, retractSolenoidPort);
+        intakeMotor = new CANSparkMax(canID, MotorType.kBrushless);
+        mIntakeState = IntakeStates.IDLE;
     }
 
     @Override
@@ -36,7 +77,7 @@ public class IntakeSubsystem implements Subsystem {
 
     @Override
     public void stop() {
-        intakeMotor.set(0.0);
+        mIntakeState = IntakeStates.IDLE;
     }
 
     @Override
@@ -47,7 +88,7 @@ public class IntakeSubsystem implements Subsystem {
 
     @Override
     public void registerEnabledLoops(Looper enabledLooper) {
-        // TODO Auto-generated method stub
+        enabledLooper.register(mLoop);
         
     }
 
@@ -74,5 +115,17 @@ public class IntakeSubsystem implements Subsystem {
         // TODO Auto-generated method stub
         
     }
-    
+
+    public void wantIntaking(){
+        mIntakeState = IntakeStates.INTAKING;
+
+    }
+
+    public void wantIdle(){
+        mIntakeState = IntakeStates.IDLE;
+    }
+
+    public void wantSweep(){
+        mIntakeState = IntakeStates.SWEEP;
+    }
 }
