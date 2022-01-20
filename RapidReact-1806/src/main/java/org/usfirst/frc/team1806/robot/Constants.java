@@ -160,4 +160,19 @@ public class Constants {
     public final static String kSquidKey = "Squid ";
     public final static String kRobotStateKey = "robot";
 
+    //Left Flywheel
+    public final static Double kLeftFlywheelKp = 0.0;
+    public final static Double kLeftFlywheelKi = 0.0;
+    public final static Double kLeftFlywheelKd = 0.0;
+    public final static double kLeftFlywheelKf = 0.0;
+    public final static Double kLeftFlywheelIzone = 0.0;
+    public final static Double kLeftFlywheelConversionFactor = 0.0;
+    //Right Flywheel
+    public final static Double kRightFlywheelKp = 0.0;
+    public final static Double kRightFlywheelKi = 0.0;
+    public final static double kRightFlywheelKd = 0.0;
+    public final static double kRightFlywheelKf = 0.0;
+    public final static Double kRightFlywheelIzone = 0.0;
+    public final static Double kRightFlywheelConversionFactor = 0.0;
+
 }
