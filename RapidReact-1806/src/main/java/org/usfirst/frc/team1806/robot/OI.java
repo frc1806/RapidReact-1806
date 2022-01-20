@@ -19,13 +19,13 @@ import org.usfirst.frc.team1806.robot.util.XboxController;
 public class OI {
 	//snag some subsystem instances
 	private DriveTrainSubsystem mDriveTrainSubsystem = DriveTrainSubsystem.getInstance();
-	private LiftSubsystem mLiftSubsystem = LiftSubsystem.getInstance();
+	private ElevatorSubsystem mLiftSubsystem = ElevatorSubsystem.getInstance();
 
 	//initialise controllers & ish
 	private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
-	private XboxController dc = new XboxController(0);
-	private XboxController oc = new XboxController(1);
-	private XboxController autoController = new XboxController(2);
+	private XboxController driverController = new XboxController(0, "Driver", Constants.kDriverControllerDefaultConfig);
+	private XboxController operatorController = new XboxController(1, "Operator", Constants.kOperatorControllerDefaultConfig);
+	private XboxController debugController = new XboxController(2, "Debug", null);
 	//start up button trackers
 	private Latch autoInTeleOp = new Latch();
 	private Boolean wasSquidExtendButton = false;
@@ -37,5 +37,11 @@ public class OI {
 
 	public void runCommands(){
 		return;
+	}
+
+	public void updateConfigs(){
+		driverController.updateConfig();
+		operatorController.updateConfig();
+		debugController.updateConfig();
 	}
 }

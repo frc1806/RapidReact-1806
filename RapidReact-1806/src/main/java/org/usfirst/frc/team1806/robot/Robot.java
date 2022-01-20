@@ -1,6 +1,8 @@
 package org.usfirst.frc.team1806.robot;
 
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -44,7 +46,7 @@ public class Robot extends TimedRobot {
 
 
     private static final SubsystemManager S_SubsystemManager = new SubsystemManager(
-            Arrays.asList(DriveTrainSubsystem.getInstance(), LiftSubsystem.getInstance())); ///TODO RE ADD IN SUBSYSTEMS
+            Arrays.asList(DriveTrainSubsystem.getInstance(), ElevatorSubsystem.getInstance())); ///TODO RE ADD IN SUBSYSTEMS
 
     private Looper mEnabledLooper = new Looper();
     private Looper mDisabledLooper = new Looper();
@@ -60,7 +62,14 @@ public class Robot extends TimedRobot {
     private boolean wasAutomatedSequenceEnabled = false;
     public static AutoModeBase currentSequence;
 
+    //Global Dashboard tabs
+    private static ShuffleboardTab competitionTab = Shuffleboard.getTab("Competition View");
 
+    public static ShuffleboardTab getMainDriverTab()
+    {
+      return competitionTab;
+    }
+    
     public enum AutoInTeleOp{
       AUTO_DISABLED,
       AUTO_INIT,
@@ -146,6 +155,7 @@ public class Robot extends TimedRobot {
         } else if(DriverStation.getAlliance() == DriverStation.Alliance.Red){
           isBlue = false;
         }
+        m_oi.updateConfigs();
       }
 
       allPeriodic();

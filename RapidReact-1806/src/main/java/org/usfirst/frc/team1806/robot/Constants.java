@@ -1,8 +1,23 @@
 package org.usfirst.frc.team1806.robot;
 
 import org.usfirst.frc.team1806.robot.util.Translation2d;
+import org.usfirst.frc.team1806.robot.util.XboxControllerConfigValues;
 
 public class Constants {
+
+    public static final XboxControllerConfigValues kDriverControllerDefaultConfig = XboxControllerConfigValues.Builder
+            .create().withLeftXDeadzone(.12).withLeftXMinimumOutput(.04).withLeftXLinearity(.32).withLeftYDeadzone(.12)
+            .withLeftYMinimumOutput(.04).withLeftYLinearity(.32).withRightXDeadzone(.12).withRightXMinimumOutput(.04)
+            .withRightXLinearity(.32).withRightYDeadzone(.12).withRightYMinimumOutput(.04).withRightYLinearity(.32)
+            .withTriggerDeadzone(.2).withTriggerMinimumOutput(.04).withTriggerLinearity(.32)
+            .withTriggerAsDigitalDeadzone(.5).build();
+
+    public static final XboxControllerConfigValues kOperatorControllerDefaultConfig = XboxControllerConfigValues.Builder
+            .create().withLeftXDeadzone(.12).withLeftXMinimumOutput(.04).withLeftXLinearity(.32).withLeftYDeadzone(.12)
+            .withLeftYMinimumOutput(.04).withLeftYLinearity(.32).withRightXDeadzone(.12).withRightXMinimumOutput(.04)
+            .withRightXLinearity(.32).withRightYDeadzone(.12).withRightYMinimumOutput(.04).withRightYLinearity(.32)
+            .withTriggerDeadzone(.2).withTriggerMinimumOutput(.04).withTriggerLinearity(.32)
+            .withTriggerAsDigitalDeadzone(.5).build();
 
     public final static int kCoprocessorPort = 8806;
 
@@ -161,6 +176,7 @@ public class Constants {
     public final static String kLiftKey = "Lift ";
     public final static String kSquidKey = "Squid ";
     public final static String kRobotStateKey = "robot";
+    
 
     //Left Flywheel
     public final static Double kLeftFlywheelKp = 0.0;

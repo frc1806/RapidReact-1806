@@ -1,41 +1,85 @@
 package org.usfirst.frc.team1806.robot.util;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 /*
  * The XboxController class is a wrapper of the joystick class,
  * auto applies deadzones and makes nice methods for us
  */
 public class XboxController extends Joystick {
-	private static DriverStation mDS;
+	private static Map<String, Object> AXIS_DISPLAY_BAR_PROPS = new HashMap<>();
+
+    static {
+        AXIS_DISPLAY_BAR_PROPS.put("Min", -1.0d);
+        AXIS_DISPLAY_BAR_PROPS.put("Max", 1.0d);
+        AXIS_DISPLAY_BAR_PROPS.put("Center", 0.0d);
+    }
+
 	private final int mPort;
 	public Timer rumbleTimer;
+	private String mName;
+	private ShuffleboardTab mControllerConfigTab;
+	private XboxControllerConfigDashboard mControllerConfigDashboard;
+	private XboxControllerConfigValues mConfigValues;
+	Supplier<double[]> valueSupplier = new Supplier(){
 
-	// defaults the deadzone to .15 if a value is not passed in as a parameter
-	private double mJoystickDeadzoneValue = .15;
-	private double mTriggerDeadzoneValue = .05;
+		@Override
+		public Object get() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+	};
 	
-	public XboxController(int port) {
+	public XboxController(int port, String name, XboxControllerConfigValues defaultConfig) {
 		super(port);
-		mDS = DriverStation.getInstance();
+		mConfigValues = defaultConfig;
+		mName = name;
+		DriverStation.getInstance();
 		mPort = port;
-	}
-
-	public XboxController(int port, double joystickdeadzone, double triggerdeadzone) {
-		super(port);
-		mDS = DriverStation.getInstance();
-		mPort = port;
-		mJoystickDeadzoneValue = joystickdeadzone;
-		mTriggerDeadzoneValue = triggerdeadzone;
+		mControllerConfigTab = Shuffleboard.getTab(mName.concat(" Controller Configuration"));
+		mControllerConfigDashboard = new XboxControllerConfigDashboard(mControllerConfigTab, defaultConfig);
+		updateConfig();
+		configValueDisplay();
 	}
 
 	public double getRawAxis(final int axis) {
-		return mDS.getStickAxis(mPort, axis);
+		return DriverStation.getStickAxis(mPort, axis);
+	}
+
+	public double applyConfig(double value, double deadZone, double minimumOutput, double linearity)
+	{
+		if(Math.abs(value) < deadZone)
+		{
+			return 0.0;
+		}
+		//Apply Deadzone
+		if(deadZone != 0)
+		{
+			value =(value>0?1:-1) * ((Math.abs(value) - deadZone) * (1.0 / (1.0 - deadZone)));
+		}
+		//Apply Linearity this doesn't need any absolute value to handle so long as the non-linear part is an odd power.
+		value = (value * linearity) + ( Math.pow(value, 5.0) * (1.0 - linearity));
+		//Apply Minimum output
+		if(Math.abs(value) > 0)
+		{
+			value = (value>0?1:-1) * (Math.abs(value) * (1.0-minimumOutput) + minimumOutput);
+		}
+		return value;
+		
 	}
 
 	public boolean getRawButton(final int button) {
-		return ((0x1 << (button - 1)) & mDS.getStickButtons(mPort)) != 0;
+		return ((0x1 << (button - 1)) & DriverStation.getStickButtons(mPort)) != 0;
 	}
 
 	public boolean isPressed(final int button) {
@@ -43,31 +87,27 @@ public class XboxController extends Joystick {
 	}
 
 	public double getRightTrigger() {
-			return getRawAxis(3);
+			return applyConfig(getRawAxis(3), mConfigValues.getTriggerDeadzone(), mConfigValues.getTriggerMinimumOutput(), mConfigValues.getTriggerLinearity());
 	}
 
 	public double getLeftTrigger() {
-			return getRawAxis(2);
+			return applyConfig(getRawAxis(2), mConfigValues.getTriggerDeadzone(), mConfigValues.getTriggerMinimumOutput(), mConfigValues.getTriggerLinearity());
 	}
 
 	public double getRightJoyX() {
-			return getRawAxis(4);
+			return applyConfig(getRawAxis(4), mConfigValues.getRightXDeadzone(), mConfigValues.getRightXMinimumOutput(), mConfigValues.getRightXLinearity());
 	}
 
 	public double getRightJoyY() {
-			return -getRawAxis(5);
+			return applyConfig(-getRawAxis(5), mConfigValues.getRightYDeadzone(), mConfigValues.getRightYMinimumOutput(), mConfigValues.getRightYLinearity());
 	}
 
 	public double getLeftJoyX() {
-			return getRawAxis(0);
+			return applyConfig(getRawAxis(0), mConfigValues.getLeftXDeadzone(), mConfigValues.getLeftXMinimumOutput(), mConfigValues.getLeftXLinearity());
 	}
 
 	public double getLeftJoyY() {
-			if(Math.abs(getRawAxis(1)) < .2) {
-				return 0;
-			} else {
-				return -getRawAxis(1);
-			}
+			return applyConfig(-getRawAxis(1), mConfigValues.getLeftYDeadzone(), mConfigValues.getLeftYMinimumOutput(), mConfigValues.getLeftYLinearity());
 	}
 
 	public boolean getButtonA() {
@@ -126,6 +166,74 @@ public class XboxController extends Joystick {
 	public boolean getPOVRight() {
 
 		return getPOV() > 45 && getPOV() <= 135;
+	}
+
+	public boolean getLeftTriggerAsDigital(){
+		return getRawAxis(2) > mConfigValues.getTriggerAsDigitalDeadzone();
+	}
+
+	public boolean getRightTriggerAsDigital(){
+		return getRawAxis(3) > mConfigValues.getTriggerAsDigitalDeadzone();
+	}
+
+	public void updateConfig()
+	{
+		if(DriverStation.isDSAttached())
+		{
+			mConfigValues = mControllerConfigDashboard.getUpdatedConfigValues();
+		}
+	}
+
+	public void configValueDisplay()
+	{
+		
+		mControllerConfigTab.addNumber("Left X", new DoubleSupplier() {
+
+			@Override
+			public double getAsDouble() {
+				return getLeftJoyX();
+			}
+		}).withWidget(BuiltInWidgets.kNumberBar).withProperties(AXIS_DISPLAY_BAR_PROPS);
+
+		mControllerConfigTab.addNumber("Left Y", new DoubleSupplier() {
+
+			@Override
+			public double getAsDouble() {
+				return getLeftJoyY();
+			}
+		}).withWidget(BuiltInWidgets.kNumberBar).withProperties(AXIS_DISPLAY_BAR_PROPS);
+
+		mControllerConfigTab.addNumber("Right X", new DoubleSupplier() {
+
+			@Override
+			public double getAsDouble() {
+				return getRightJoyX();
+			}
+		}).withWidget(BuiltInWidgets.kNumberBar).withProperties(AXIS_DISPLAY_BAR_PROPS);
+
+		mControllerConfigTab.addNumber("Right Y", new DoubleSupplier() {
+
+			@Override
+			public double getAsDouble() {
+				return getRightJoyY();
+			}
+		}).withWidget(BuiltInWidgets.kNumberBar).withProperties(AXIS_DISPLAY_BAR_PROPS);
+
+		mControllerConfigTab.addNumber("Left Trigger", new DoubleSupplier() {
+
+			@Override
+			public double getAsDouble() {
+				return getLeftTrigger();
+			}
+		}).withWidget(BuiltInWidgets.kNumberBar).withProperties(AXIS_DISPLAY_BAR_PROPS);
+
+		mControllerConfigTab.addNumber("Right Trigger", new DoubleSupplier() {
+
+			@Override
+			public double getAsDouble() {
+				return getRightTrigger();
+			}
+		}).withWidget(BuiltInWidgets.kNumberBar).withProperties(AXIS_DISPLAY_BAR_PROPS);
 	}
 
 	/**
