@@ -48,10 +48,10 @@ public class RobotMap {
 	public static int shiftLow = 1;//module 1
 
 	//Intake
-	public static int barIntakeExtend = 5;//module 1
-	public static int barIntakeRetract = 4;//module 1
-	public static int outerIntakeExtend = 6;//module 1
-	public static int outerIntakeRetract = 7;//module 1
+	public static int frontIntakeExtend = 5;//module 1
+	public static int frontIntakeRetract = 4;//module 1
+	public static int backIntakeExtend = 6;//module 1
+	public static int backIntakeRetract = 7;//module 1
 
 	//Squid
 
