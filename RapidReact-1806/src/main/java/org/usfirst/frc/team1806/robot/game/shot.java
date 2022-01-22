@@ -1,3 +1,5 @@
+package org.usfirst.frc.team1806.robot.game;
+
 public class shot {
     Double liftHeight, launcherAngle, baseSpeed, baseSpin;
 

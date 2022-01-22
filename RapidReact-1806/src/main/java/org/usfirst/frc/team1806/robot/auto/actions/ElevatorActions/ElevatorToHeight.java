@@ -1,18 +1,18 @@
-package org.usfirst.frc.team1806.robot.auto.actions.LiftActions;
+package org.usfirst.frc.team1806.robot.auto.actions.ElevatorActions;
 
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.Action;
-import org.usfirst.frc.team1806.robot.subsystems.LiftSubsystem;
+import org.usfirst.frc.team1806.robot.subsystems.ElevatorSubsystem;
 
-public class LiftToHeight implements Action {
+public class ElevatorToHeight implements Action {
 
     private double wantedHeight;
     private boolean instant;
-    public LiftToHeight(double position, boolean _instant) {
+    public ElevatorToHeight(double position, boolean _instant) {
         wantedHeight = position;
         instant = _instant;
     }
 
-    LiftSubsystem mLiftSubsystem = LiftSubsystem.getInstance();
+    ElevatorSubsystem mLiftSubsystem = ElevatorSubsystem.getInstance();
     @Override
     public boolean isFinished() {
         return mLiftSubsystem.isAtPosition() || instant;

@@ -10,7 +10,6 @@ import org.usfirst.frc.team1806.robot.Constants;
 import org.usfirst.frc.team1806.robot.Kinematics;
 import org.usfirst.frc.team1806.robot.RobotMap;
 import org.usfirst.frc.team1806.robot.RobotState;
-import org.usfirst.frc.team1806.robot.Vision.VisionServer;
 import org.usfirst.frc.team1806.robot.loop.Loop;
 import org.usfirst.frc.team1806.robot.loop.Looper;
 import org.usfirst.frc.team1806.robot.path.Path;
@@ -27,9 +26,6 @@ import edu.wpi.first.wpilibj.SPI;
 public class DriveTrainSubsystem implements Subsystem {
 
 	boolean debug = true;
-
-	VisionServer mVisionServer;
-	Target mostRecentTarget;
 	double mostRecentTargetTimestamp;
 
 	public enum DriveStates {
@@ -193,14 +189,14 @@ public class DriveTrainSubsystem implements Subsystem {
 	 */
 	public DriveTrainSubsystem() {
 		//init the all of the motor controllers
-		leaderLeft = new CANSparkMax(RobotMap.leftLeader, CANSparkMaxLowLevel.MotorType.kBrushless);
-		leaderRight = new CANSparkMax(RobotMap.rightLeader, CANSparkMaxLowLevel.MotorType.kBrushless);
+		leaderLeft = new CANSparkMax(RobotMap.leaderLeft, CANSparkMaxLowLevel.MotorType.kBrushless);
+		leaderRight = new CANSparkMax(RobotMap.leaderRight, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-		leftA = new CANSparkMax(RobotMap.leftFollowerA, CANSparkMaxLowLevel.MotorType.kBrushless);
-		rightA = new CANSparkMax(RobotMap.rightFollowerA, CANSparkMaxLowLevel.MotorType.kBrushless);
+		leftA = new CANSparkMax(RobotMap.leftA, CANSparkMaxLowLevel.MotorType.kBrushless);
+		rightA = new CANSparkMax(RobotMap.rightA, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-		leftB = new CANSparkMax(RobotMap.leftFollowerB, CANSparkMaxLowLevel.MotorType.kBrushless);
-		rightB = new CANSparkMax(RobotMap.rightFollowerB, CANSparkMaxLowLevel.MotorType.kBrushless);
+		leftB = new CANSparkMax(RobotMap.leftB, CANSparkMaxLowLevel.MotorType.kBrushless);
+		rightB = new CANSparkMax(RobotMap.rightB, CANSparkMaxLowLevel.MotorType.kBrushless);
 
 		//Follow for right side
         rightA.follow(leaderRight);
@@ -240,8 +236,6 @@ public class DriveTrainSubsystem implements Subsystem {
 		leftVelocity = 0;
 		rightVelocity = 0;
 
-		mVisionServer = VisionServer.getInstance();
-		mostRecentTarget = null;
 		mostRecentTargetTimestamp = 0;
 
 		// init solenoids
@@ -951,8 +945,6 @@ public class DriveTrainSubsystem implements Subsystem {
 		if(wantVision && mDriveStates != DriveStates.VISION){
 			isWantedLowPID = true;
 			mDriveStates = DriveStates.VISION;
-			configureSparkMaxesForSpeedControl();
-			mostRecentTarget = null;
 			mostRecentTargetTimestamp = 0;
 		}
 		else if(!wantVision && mDriveStates == DriveStates.VISION){
@@ -963,25 +955,7 @@ public class DriveTrainSubsystem implements Subsystem {
 	}
 
 	public void updateVision(){
-		double VISION_BASE_SPEED = 40;
-		double PROPORTIONAL_GAIN_FOR_VISION = .075;
-		Target wantedTarget = TargetHelper.getClosestTargetToRobot();
-		double targetTimestamp = mVisionServer.getTargetsTimestamp();
-		RigidTransform2d robotPose = RobotState.getInstance().getFieldToVehicle(targetTimestamp - Constants.kVisionExpectedCameraLag);
-		if(wantedTarget != null){
-			mostRecentTarget = wantedTarget;
-			mostRecentTargetTimestamp = targetTimestamp;
-		}
-		if(mostRecentTarget != null){
-			RigidTransform2d correctingRobotPose =RobotState.getInstance().getFieldToVehicle(mostRecentTargetTimestamp - Constants.kVisionExpectedCameraLag);
-			double robotToTarget =mostRecentTarget.getRobotToTarget() + correctingRobotPose.getRotation().getDegrees();
-			double visionCorrection = (robotToTarget * PROPORTIONAL_GAIN_FOR_VISION);
-
-			updateVelocitySetpoint(VISION_BASE_SPEED - visionCorrection, VISION_BASE_SPEED + visionCorrection);
-		}
-		else{
-			updateVelocitySetpoint(0, 0);
-		}
+		//TODO: Update vision
 
 
 	}
