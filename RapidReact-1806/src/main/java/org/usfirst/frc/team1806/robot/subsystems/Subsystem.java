@@ -15,11 +15,5 @@ public interface Subsystem {
 
     public abstract void setDebug(boolean _debug);
 
-    //2019 Specific
-
-    public abstract void goToHatchMode();
-
-    public abstract void goToCargoMode();
-
     public abstract void retractAll();
 }

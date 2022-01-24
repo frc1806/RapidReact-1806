@@ -972,15 +972,6 @@ public class DriveTrainSubsystem implements Subsystem {
 		return navx.getWorldLinearAccelZ();
 	}
 
-
-	public void goToHatchMode(){
-		//nothing to do here
-	}
-
-	public void goToCargoMode(){
-		//nothing to do here
-	}
-
 	public void retractAll() {
 		//nothing to do here
 	}

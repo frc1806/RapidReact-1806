@@ -97,18 +97,6 @@ public class FlywheelSubsystem implements Subsystem {
     }
 
     @Override
-    public void goToHatchMode() {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void goToCargoMode() {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
     public void retractAll() {
         // TODO Auto-generated method stub
         

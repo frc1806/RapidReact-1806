@@ -35,10 +35,5 @@ public class SubsystemManager {
         mAllSubsystems.forEach((s) -> s.registerEnabledLoops(enabledLooper));
     }
 
-    //2019 specific
-    public void goToHatchMode() {mAllSubsystems.forEach((s) -> s.goToHatchMode());}
-
-    public void goToCargoMode() {mAllSubsystems.forEach((s) -> s.goToCargoMode());}
-
     public void retractAll() { mAllSubsystems.forEach((s) -> s.retractAll());}
 }

@@ -107,28 +107,28 @@ public class Constants {
     public final static int kDriveVisionTurnIZone = 4;
 
 
-    public final static double kLiftHoldPercentOutput = .025;
+    public final static double kElevatorHoldPercentOutput = .025;
     // Encoder constants used by Elevator system
     public final static int kCreepModeLiftHeight = 13000;
 
-    public final static double kLiftInchesPerCountDefault = 1;
+    public final static double kElevatorInchesPerCountDefault = 1;
     public final static int kLiftPositionControlPIDSlot = 10;
     public final static int kLiftPositionPIDTimeout = 10;
-    public final static double kLiftPositionkP = .0016;
-    public final static double kLiftPositionkI =0.0004; ///0.02;
-    public final static double kLiftPositionkD =0.00015; ///0.015;
-    public final static double kLiftPositionkF =1 / 60000; //1 / 2000;
-    public final static int kLiftPositionIZone = 25;// 800;
+    public final static double kElevatorPositionkP = .0016;
+    public final static double kElevatorPositionkI =0.0004; ///0.02;
+    public final static double kElevatorPositionkD =0.00015; ///0.015;
+    public final static double kElevatorPositionkF =1 / 60000; //1 / 2000;
+    public final static int kElevatorPositionIZone = 25;// 800;
     public final static double kLiftPositionRampRate = 0;
     public final static int kBottomLimitTolerance = 50;
 
-    public final static int kLiftPositionTolerance = 100;
-    public final static int kLiftVelocityTolerance = 500;
+    public final static int kElevatorPositionTolerance = 100;
+    public final static int kElevatorVelocityTolerance = 500;
 
-    public final static double liftSpeed = .2;
+    public final static double elevatorResetSpeed = .2;
 
 
-    public final static double kLiftHoldkPGain = .00005;
+    public final static double kElevatorHoldkPGain = .00005;
     public final static int kBumpEncoderPosition = 1000;
 
     public final static int kLiftTopLimitSwitchPosition = 500;
@@ -163,8 +163,8 @@ public class Constants {
 
     //Lift interference avoidence
     public final static double kLiftWaitForExtendIntake = 0.25;
-    public final static int kMaxLiftHeightToNeedToExtendIntake = 1000;
-    public final static int kSafeLiftHeightOffsetToNotHitIntake = 500; // total of this and the line above will be the setpoint
+    public final static int kMaxElevatorHeightToNeedToExtendIntake = 1000;
+    public final static int kSafeElevatorHeightOffsetToNotHitIntake = 500; // total of this and the line above will be the setpoint
 
     //controls
     public final static double kTriggerThreshold = .2;

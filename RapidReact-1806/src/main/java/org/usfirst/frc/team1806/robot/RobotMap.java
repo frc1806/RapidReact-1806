@@ -21,8 +21,8 @@ public class RobotMap {
 	
 	//Cube Elevator CANs
 
-	public static int liftLead = 6;
-	public static int liftFollow = 7;
+	public static int elevatorLead = 6;
+	public static int elevatorFollow = 7;
 
 
 	//Intake CAN Ports
@@ -74,8 +74,8 @@ public class RobotMap {
 
 	///// DIOs
 
-	public static int liftBottomLimit = 0;
-	public static int liftHighLimit = 1;
+	public static int elevatorBottomLimit = 0;
+	public static int elevatorHighLimit = 1;
 	public static int rearLeftTrigger = 4;
 	public static int rearLeftResponse = 5;
 	public static int rearRightTrigger = 8;
