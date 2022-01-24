@@ -33,12 +33,16 @@ public class Constants {
     public final static double kStallTimeout = 2;
     public final static double kStallWaitPeriod = .3;
     public final static double kStallSpeed = 500;
-    public final static double kStallPower = .15;
+    public final static double kStallPower = 1.8;
 
 
     public final static int kDriveTrainPIDSetTimeout = 30;
-    public final static double kCountsPerInch = 0.575;
-    public final static double kDriveInchesPerRevolution = 1/kCountsPerInch;
+    public final static double kCountsPerInch = 651.899;
+    public final static double kDriveInchesPerCount = 1/kCountsPerInch;
+    public final static int kDIODriveLeftEncoderA = 0;
+    public final static int kDIODriveLeftEncoderB = 1;
+    public final static int kDIODriveRightEncoderA = 2;
+    public final static int kDIODriveRightEncoderB = 3;
 
     ///Motion
     public final static double kMinLookAhead = 4; // inches
@@ -67,9 +71,12 @@ public class Constants {
     // PID gains for drive velocity loop (HIGH GEAR)
     // Units: setpoint, error, and output are in counts per tenth of a second
     public final static double kDriveHighGearVelocityKp = .001; //.0004;//.08;//.16; //1.01;
-    public final static double kDriveHighGearVelocityKi = 0.00000001;
+    public final static double kDriveHighGearVelocityKi = 0.0;
     public final static double kDriveHighGearVelocityKd =  0.002; //.6125; //1.25; //7.8; //0.0001; //6.0/1500;
-    public final static double kDriveHighGearVelocityKf = 0.00004;//.0175; //.035; //0.21; //.025;
+    //public final static double kDriveHighGearVelocityKf = 0.00004;//.0175; //.035; //0.21; //.025;
+    public static final double kDriveHighGearVelocityKs = 0.0;
+    public static final double kDriveHighGearVelcoityKv = 0.0;
+    public static final double kDriveHighGearVelocityKa = 0.0;
     public final static int kDriveHighGearVelocityIZone = 0;
     public final static double kDriveHighGearVelocityRampRate = .1;
     public final static double kDriveHighGearNominalOutput = 0.25;
@@ -80,7 +87,10 @@ public class Constants {
     public final static double kDriveHighGearVelocityLowKp = .0004; // 1.2/1500;
     public final static double kDriveHighGearVelocityLowKi = 0.0000000; //0.0;
     public final static double kDriveHighGearVelocityLowKd = 0; //0.0001; //6.0/1500;
-    public final static double kDriveHighGearVelocityLowKf = 0.00000254;//0; //.025;
+    //public final static double kDriveHighGearVelocityLowKf = 0.00000254;//0; //.025;
+    public static final double kDriveHighGearVelocityLowKs = 0.0;
+    public static final double kDriveHighGearVelcoityLowKv = 0.0;
+    public static final double kDriveHighGearVelocityLowKa = 0.0;
     public final static int kDriveHighGearVelocityLowIZone = 0;
     public final static double kDriveHighGearVelocityLowRampRate = .1;
     public final static double kDriveHighGearLowNominalOutput = 0.25;
@@ -96,7 +106,7 @@ public class Constants {
     public final static double kDriveLowGearPositionIZone = 1.5;
     public final static int kDriveLowGearMaxVelocity = 700; // Counts
     public final static int kDriveLowGearMaxAccel = 20; // Counts
-    public final static double kDriveTurnMaxPower = .6;
+    public final static double kDriveTurnMaxPower = 8;
 
     // PID gains for drive velocity loop ***This should be high gear lollz sorry yall
     // Units: setpoint, error, and output are in counts

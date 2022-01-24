@@ -3,7 +3,11 @@ package org.usfirst.frc.team1806.robot.subsystems;
 //import org.omg.CORBA.PRIVATE_MEMBER;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Timer;
 import org.usfirst.frc.team1806.robot.Constants;
@@ -42,35 +46,21 @@ public class DriveTrainSubsystem implements Subsystem {
 		NOTHING // Used on init
 	}
 
-	private static DriveTrainSubsystem mDriveTrainSubsystem = new DriveTrainSubsystem(); //Only ever 1 instance of drivetrain.
-	private static final int kLowGearPositionControlSlot = 0;
-	private static final int kHighGearVelocityControlSlot = 1;
+	private static DriveTrainSubsystem mDriveTrainSubsystem = new DriveTrainSubsystem(); // Only ever 1 instance of
+																							// drivetrain.
 
 	public static DriveTrainSubsystem getInstance() {
 		return mDriveTrainSubsystem;
 	}
 
-	private static double inchesPerSecondToRPM(double inches_per_second) {
-		return (inches_per_second / Constants.kDriveInchesPerRevolution) * 60;
-	}
-
-
-	private static double inchesPerSecondToRpm(double inches_per_second) {
-		return inchesToRotations(inches_per_second) * 60;
-	}
-
-	private static double inchesToRPM(double inches) {
-		return inches / Constants.kDriveInchesPerRevolution;
-	}
-
-	private static double inchesToRotations(double inches) {
-		return inches / (Constants.kDriveWheelDiameterInches * Math.PI);
+	private static double inchesToCounts(double inches) {
+		return inches / Constants.kDriveInchesPerCount;
 	}
 
 	/**
 	 * Check if the current drive state is using position control.
 	 */
-	protected static boolean usesSparkMaxPositionControl(DriveStates state) {
+	protected static boolean usesPositionPID(DriveStates state) {
 		if (state == DriveStates.DRIVE_TO_POSITION ||
 				state == DriveStates.TURN_TO_HEADING) {
 			return true;
@@ -80,17 +70,19 @@ public class DriveTrainSubsystem implements Subsystem {
 
 	/**
 	 * Check if the proposed DriveStates needs VelocityControl
+	 * 
 	 * @param state the DriveStates to determine if velocity control is needed
 	 * @return true or false depending on if the VelocityControl is needed or not
 	 */
-	protected static boolean usesSparkMaxVelocityControl(DriveStates state) {
-		if (state == DriveStates.VELOCITY_SETPOINT || state == DriveStates.PATH_FOLLOWING || state == DriveStates.VISION) {
+	protected static boolean usesVelocityPID(DriveStates state) {
+		if (state == DriveStates.VELOCITY_SETPOINT || state == DriveStates.PATH_FOLLOWING
+				|| state == DriveStates.VISION) {
 			return true;
 		}
 		return false;
 	}
 
-	//Initialize all of the drive motors
+	// Initialize all of the drive motors
 	private CANSparkMax leaderLeft, leaderRight, leftA, rightA, leftB, rightB;
 	private DoubleSolenoid shifter;
 	private NavX navx;
@@ -102,6 +94,10 @@ public class DriveTrainSubsystem implements Subsystem {
 	private double lastTimeStamp;
 	private double leftEncoderDistance, rightEncoderDistance;
 	private double leftVelocity, rightVelocity;
+	private Encoder leftEncoder, rightEncoder;
+	private double lowGearPositionMaxPower = 1;
+	private PIDController leftHighGearVelocityPID, rightHighGearVelocityPID, leftLoweGearPositionPID, rightLowGearPositionPID;
+	private SimpleMotorFeedforward leftHighGearVelocityFeedForward, rightHighGearVelocityFeedForward;
 
 	public DriveStates getmDriveStates() {
 		return mDriveStates;
@@ -114,18 +110,20 @@ public class DriveTrainSubsystem implements Subsystem {
 	private boolean mIsHighGear = false;
 	public static boolean isWantedLowPID = false;
 	private Loop mLoop = new Loop() {
-		/** Different states that constantly need to be ran
-		 * 	Runs different functions based on the current state of the DriveTrain
+		/**
+		 * Different states that constantly need to be ran
+		 * Runs different functions based on the current state of the DriveTrain
+		 * 
 		 * @param timestamp current robot runtime in seconds
 		 */
 		@Override
 		public synchronized void onLoop(double timestamp) {
 			lastTimeStamp = currentTimeStamp;
 			currentTimeStamp = timestamp;
-			leftEncoderDistance = leaderLeft.getEncoder().getPosition();
-			rightEncoderDistance = leaderRight.getEncoder().getPosition();
-			leftVelocity = leaderLeft.getEncoder().getVelocity();
-			rightVelocity = leaderRight.getEncoder().getVelocity();
+			leftEncoderDistance = leftEncoder.getDistance();
+			rightEncoderDistance =  rightEncoder.getDistance();
+			leftVelocity = leftEncoder.getRate();
+			rightVelocity = rightEncoder.getRate();
 			synchronized (DriveTrainSubsystem.this) {
 				switch (mDriveStates) {
 					case CREEP:
@@ -173,7 +171,7 @@ public class DriveTrainSubsystem implements Subsystem {
 				setOpenLoop(DriveSignal.NEUTRAL);
 				setNeutralMode(false);
 				navx.reset();
-				setMaxDrivePower(1);
+				setLowGearPositionControlMaxDrivePower(12);
 			}
 		}
 
@@ -184,11 +182,16 @@ public class DriveTrainSubsystem implements Subsystem {
 		}
 	};
 
-	/** instantiating the motors
-	 *  sets currentLimit
+	/**
+	 * instantiating the motors
+	 * sets currentLimit
 	 */
 	public DriveTrainSubsystem() {
-		//init the all of the motor controllers
+		//init encoders
+		leftEncoder = new Encoder(Constants.kDIODriveLeftEncoderA, Constants.kDIODriveLeftEncoderB);
+		rightEncoder = new Encoder(Constants.kDIODriveRightEncoderA, Constants.kDIODriveRightEncoderB);
+
+		// init the all of the motor controllers
 		leaderLeft = new CANSparkMax(RobotMap.leaderLeft, CANSparkMaxLowLevel.MotorType.kBrushless);
 		leaderRight = new CANSparkMax(RobotMap.leaderRight, CANSparkMaxLowLevel.MotorType.kBrushless);
 
@@ -198,35 +201,27 @@ public class DriveTrainSubsystem implements Subsystem {
 		leftB = new CANSparkMax(RobotMap.leftB, CANSparkMaxLowLevel.MotorType.kBrushless);
 		rightB = new CANSparkMax(RobotMap.rightB, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-		//Follow for right side
-        rightA.follow(leaderRight);
-        rightB.follow(leaderRight);
+		// Follow for right side
+		rightA.follow(leaderRight);
+		rightB.follow(leaderRight);
 
 		// Follow for left side
-        leftA.follow(leaderLeft);
-        leftB.follow(leaderLeft);
+		leftA.follow(leaderLeft);
+		leftB.follow(leaderLeft);
 
-        leaderLeft.setSmartCurrentLimit(85);
-        leftA.setSmartCurrentLimit(85);
-        leftB.setSmartCurrentLimit(85);
+		leaderLeft.setSmartCurrentLimit(85);
+		leftA.setSmartCurrentLimit(85);
+		leftB.setSmartCurrentLimit(85);
 
-        leaderRight.setSmartCurrentLimit(85);
-        rightA.setSmartCurrentLimit(85);
-        rightB.setSmartCurrentLimit(85);
+		leaderRight.setSmartCurrentLimit(85);
+		rightA.setSmartCurrentLimit(85);
+		rightB.setSmartCurrentLimit(85);
 
-
-		//Set Encoders for each side of the sparkMax
-        //TODO: configure after REV updates their software. https://www.chiefdelphi.com/t/connecting-external-encoders-to-spark-max/345039
-		/*leaderLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
-		leaderRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
-		leaderRight.setSensorPhase(true);
-		leaderLeft.setSensorPhase(true);
-		*/
 		leaderLeft.setInverted(true);
 		leftA.setInverted(true);
 		leftB.setInverted(true);
 
-//		//Invert the right side
+		// //Invert the right side
 		leaderRight.setInverted(false);
 		rightA.setInverted(false);
 		rightB.setInverted(false);
@@ -236,80 +231,83 @@ public class DriveTrainSubsystem implements Subsystem {
 		leftVelocity = 0;
 		rightVelocity = 0;
 
+
 		mostRecentTargetTimestamp = 0;
 
 		// init solenoids
-		shifter = new DoubleSolenoid(RobotMap.module2Number, PneumaticsModuleType.CTREPCM, RobotMap.shiftLow, RobotMap.shiftHigh);
-//		init navx
+		shifter = new DoubleSolenoid( PneumaticsModuleType.CTREPCM, RobotMap.shiftLow,
+				RobotMap.shiftHigh);
+		// init navx
 		navx = new NavX(SPI.Port.kMXP);
 
 		reloadGains();
 		mDriveStates = DriveStates.NOTHING;
-		setMaxDrivePower(1);
+		setLowGearPositionControlMaxDrivePower(12);
 	}
 
-	private synchronized void configureSparkMaxesForPositionControl() {
-		if (usesSparkMaxPositionControl(mDriveStates)) {
-			setMaxDrivePower(1);
+	private synchronized void configureForPositionControl() {
+		if (usesPositionPID(mDriveStates)) {
+			setLowGearPositionControlMaxDrivePower(12);
 			// We entered a position control state.
 			System.out.println("Configuring position control");
-			//used to reset Iaccumulator
+			// used to reset Iaccumulator
 			setBrakeMode();
 		} else {
 			System.out.println("Oh no! DIdn't set Position control");
 		}
 	}
 
-	private synchronized void configureSparkMaxesForSpeedControl() {
-		if (!usesSparkMaxVelocityControl(mDriveStates)) {
+	private synchronized void configureForVelocityControl() {
+		if (!usesVelocityPID(mDriveStates)) {
 			// We entered a velocity control state.
-			setMaxDrivePower(1);
+			setLowGearPositionControlMaxDrivePower(12);
 			System.out.println("Configuring speed control");
 			setBrakeMode();
-			updateVelocitySetpoint(0,0);
+			updateVelocitySetpoint(0, 0);
 		}
 	}
 
 	public synchronized void forceDoneWithPath() {
 		if (mDriveStates == DriveStates.PATH_FOLLOWING && mPathFollower != null) {
 			mPathFollower.forceFinish();
-		}
-		else {
+		} else {
 			System.out.println("Robot is not in path following mode");
 		}
 
 		mDriveStates = DriveStates.DRIVING;
-		setOpenLoop(new DriveSignal(0, 0 , true));
+		setOpenLoop(new DriveSignal(0, 0, true));
 		mPathFollower = null;
 	}
 
 	public synchronized Rotation2d getGyroYaw() {
 		return navx.getYaw();
-		//return new Rotation2d();
+		// return new Rotation2d();
 	}
 
 	private double zeroRoll = 0;
+
 	public synchronized double getGyroRoll() {
 		return navx.getRoll() - zeroRoll;
 	}
+
 	public void zeroGyroRoll() {
 		zeroRoll = navx.getRoll();
 	}
 
 	public double getLeftDistanceInches() {
-		return leftEncoderDistance * Constants.kDriveInchesPerRevolution;
+		return leftEncoderDistance * Constants.kDriveInchesPerCount;
 	}
 
 	public double getLeftVelocityInchesPerSec() {
-		return leftVelocity * Constants.kDriveInchesPerRevolution / 60;
+		return leftVelocity * Constants.kDriveInchesPerCount / 60;
 	}
 
 	public double getRightDistanceInches() {
-		return rightEncoderDistance * Constants.kDriveInchesPerRevolution;
+		return rightEncoderDistance * Constants.kDriveInchesPerCount;
 	}
 
 	public double getRightVelocityInchesPerSec() {
-		return rightVelocity * Constants.kDriveInchesPerRevolution / 60;
+		return rightVelocity * Constants.kDriveInchesPerCount / 60;
 	}
 
 	public boolean isCreeping() {
@@ -319,7 +317,7 @@ public class DriveTrainSubsystem implements Subsystem {
 	public synchronized boolean isDoneWithPath() {
 		if (mDriveStates == DriveStates.PATH_FOLLOWING && mPathFollower != null) {
 			boolean isFinished = mPathFollower.isFinished();
-			if(isFinished){
+			if (isFinished) {
 				mPathFollower = null;
 			}
 			return isFinished;
@@ -353,22 +351,24 @@ public class DriveTrainSubsystem implements Subsystem {
 	}
 
 	public void leftDrive(double output) {
-	    leaderLeft.getPIDController().setReference(output, CANSparkMax.ControlType.kDutyCycle);
+		leaderLeft.setVoltage(output);
 	}
 
 	@Override
 	public void outputToSmartDashboard() {
-		if(debug) {
+		if (debug) {
 			SmartDashboard.putNumber(Constants.kDriveTrainKey + "position left (in)", getLeftDistanceInches());
 			SmartDashboard.putNumber(Constants.kDriveTrainKey + "position right (in)", getRightDistanceInches());
-			SmartDashboard.putNumber(Constants.kDriveTrainKey + "velocity left (in/sec)", getLeftVelocityInchesPerSec());
-			SmartDashboard.putNumber(Constants.kDriveTrainKey + "velocity right (in/sec)", getRightVelocityInchesPerSec());
+			SmartDashboard.putNumber(Constants.kDriveTrainKey + "velocity left (in/sec)",
+					getLeftVelocityInchesPerSec());
+			SmartDashboard.putNumber(Constants.kDriveTrainKey + "velocity right (in/sec)",
+					getRightVelocityInchesPerSec());
 			SmartDashboard.putNumber(Constants.kDriveTrainKey + "encoder count left", leftEncoderDistance);
 			SmartDashboard.putNumber(Constants.kDriveTrainKey + "encoder count right", rightEncoderDistance);
 
 			SmartDashboard.putString(Constants.kDriveTrainKey + "drive state", returnDriveState());
 			SmartDashboard.putNumber(Constants.kDriveTrainKey + "navX yaw", getGyroYaw().getDegrees());
-		   SmartDashboard.putBoolean(Constants.kDriveTrainKey + "is high gear?", isHighGear());
+			SmartDashboard.putBoolean(Constants.kDriveTrainKey + "is high gear?", isHighGear());
 
 			SmartDashboard.putNumber(Constants.kDriveTrainKey + "temp leaderLeft", leaderLeft.getMotorTemperature());
 			SmartDashboard.putNumber(Constants.kDriveTrainKey + "temp leftA", leftA.getMotorTemperature());
@@ -387,7 +387,6 @@ public class DriveTrainSubsystem implements Subsystem {
 		}
 	}
 
-
 	@Override
 	public synchronized void registerEnabledLoops(Looper enabledLooper) {
 		enabledLooper.register(mLoop);
@@ -404,41 +403,33 @@ public class DriveTrainSubsystem implements Subsystem {
 		reloadHighGearVelocityGains();
 	}
 
-
-
-	/** sets a pid on a motor controller position (high gear high speed)
+	/**
+	 * sets a pid on a motor controller position (high gear high speed)
 	 *
 	 * @param motorController to set the pid values on
 	 */
 	public synchronized void reloadHighGearPositionGainsForController(CANSparkMax motorController) {
-	    motorController.getPIDController().setP(Constants.kDriveHighGearVelocityKp, kHighGearVelocityControlSlot);
-        motorController.getPIDController().setI(Constants.kDriveHighGearVelocityKi, kHighGearVelocityControlSlot);
-        motorController.getPIDController().setD(Constants.kDriveHighGearVelocityKd, kHighGearVelocityControlSlot);
-        motorController.getPIDController().setFF(Constants.kDriveHighGearVelocityKf, kHighGearVelocityControlSlot);
-        motorController.getPIDController().setIZone(Constants.kDriveHighGearVelocityIZone, kHighGearVelocityControlSlot);
-
-        /*TODO: Do we need this?
-		motorController.configClosedloopRamp(Constants.kDriveHighGearVelocityRampRate, Constants.kDriveTrainPIDSetTimeout);
-         */
+		leftHighGearVelocityPID = new PIDController(Constants.kDriveHighGearVelocityKp, Constants.kDriveHighGearVelocityKi, Constants.kDriveHighGearVelocityKd);
+		leftHighGearVelocityFeedForward = new SimpleMotorFeedforward(Constants.kDriveHighGearVelocityKs, Constants.kDriveHighGearVelcoityKv, Constants.kDriveHighGearVelocityKa);
+		rightHighGearVelocityPID = new PIDController(Constants.kDriveHighGearVelocityKp, Constants.kDriveHighGearVelocityKi, Constants.kDriveHighGearVelocityKd);
+		rightHighGearVelocityFeedForward = new SimpleMotorFeedforward(Constants.kDriveHighGearVelocityKs, Constants.kDriveHighGearVelcoityKv, Constants.kDriveHighGearVelocityKa);
 	}
 
-	/** sets a pid on a motor controller position (high gear low speed)
+	/**
+	 * sets a pid on a motor controller position (high gear low speed)
 	 *
 	 * @param motorController to set the pid values on
 	 */
 	public synchronized void reloadHighGearPositionGainsForControllerLowPID(CANSparkMax motorController) {
-        motorController.getPIDController().setP(Constants.kDriveHighGearVelocityLowKp, kHighGearVelocityControlSlot);
-        motorController.getPIDController().setI(Constants.kDriveHighGearVelocityLowKi, kHighGearVelocityControlSlot);
-        motorController.getPIDController().setD(Constants.kDriveHighGearVelocityLowKd, kHighGearVelocityControlSlot);
-        motorController.getPIDController().setFF(Constants.kDriveHighGearVelocityLowKf, kHighGearVelocityControlSlot);
-        motorController.getPIDController().setIZone(Constants.kDriveHighGearVelocityLowIZone, kHighGearVelocityControlSlot);
-
-                /*TODO: Do we need this?
-		motorController.configClosedloopRamp(Constants.kDriveHighGearVelocityLowRampRate, Constants.kDriveTrainPIDSetTimeout);
-         */
+		leftHighGearVelocityPID = new PIDController(Constants.kDriveHighGearVelocityLowKp, Constants.kDriveHighGearVelocityLowKi, Constants.kDriveHighGearVelocityLowKd);
+		leftHighGearVelocityFeedForward = new SimpleMotorFeedforward(Constants.kDriveHighGearVelocityLowKs, Constants.kDriveHighGearVelcoityLowKv, Constants.kDriveHighGearVelocityLowKa);
+		rightHighGearVelocityPID = new PIDController(Constants.kDriveHighGearVelocityLowKp, Constants.kDriveHighGearVelocityLowKi, Constants.kDriveHighGearVelocityLowKd);
+		rightHighGearVelocityFeedForward = new SimpleMotorFeedforward(Constants.kDriveHighGearVelocityLowKs, Constants.kDriveHighGearVelcoityLowKv, Constants.kDriveHighGearVelocityLowKa);
 	}
 
-	/** reloads the velocity pid based on whether or not the current wanted pid is high speed or low speed
+	/**
+	 * reloads the velocity pid based on whether or not the current wanted pid is
+	 * high speed or low speed
 	 *
 	 */
 	public synchronized void reloadHighGearVelocityGains() {
@@ -453,29 +444,23 @@ public class DriveTrainSubsystem implements Subsystem {
 		}
 	}
 
-	/** Resets leaderLeft and materRight low gear position gains
+	/**
+	 * Resets leaderLeft and materRight low gear position gains
 	 *
 	 */
 	public synchronized void reloadLowGearPositionGains() {
 		reloadLowGearPositionGainsForController(leaderLeft);
 		reloadLowGearPositionGainsForController(leaderRight);
 	}
-	/** sets a pid on a motor controller position (low gear)
+
+	/**
+	 * sets a pid on a motor controller position (low gear)
 	 *
 	 * @param motorController to set the pid values on
 	 */
 	public synchronized void reloadLowGearPositionGainsForController(CANSparkMax motorController) {
-        motorController.getPIDController().setP(Constants.kDriveLowGearPositionKp,kLowGearPositionControlSlot);
-        motorController.getPIDController().setI(Constants.kDriveLowGearPositionKi,kLowGearPositionControlSlot);
-        motorController.getPIDController().setD(Constants.kDriveLowGearPositionKd,kLowGearPositionControlSlot);
-        motorController.getPIDController().setFF(Constants.kDriveLowGearPositionKf,kLowGearPositionControlSlot);
-        motorController.getPIDController().setIZone(Constants.kDriveLowGearPositionIZone,kLowGearPositionControlSlot);
-        motorController.getPIDController().setSmartMotionMaxVelocity(Constants.kDriveLowGearMaxVelocity,kLowGearPositionControlSlot);
-        motorController.getPIDController().setSmartMotionMaxAccel(Constants.kDriveLowGearMaxAccel, Constants.kLiftPositionControlPIDSlot);
-        /*TODO:DO we need this?
-		motorController.configClosedloopRamp(Constants.kDriveLowGearPositionRampRate, Constants.kDriveTrainPIDSetTimeout);
-		*/
-
+		leftLoweGearPositionPID = new PIDController(Constants.kDriveLowGearPositionKp, Constants.kDriveLowGearPositionKi, Constants.kDriveLowGearPositionKd);
+		rightLowGearPositionPID = new PIDController(Constants.kDriveLowGearPositionKp, Constants.kDriveLowGearPositionKi, Constants.kDriveLowGearPositionKd);
 	}
 
 	public synchronized void resetNavx() {
@@ -497,15 +482,15 @@ public class DriveTrainSubsystem implements Subsystem {
 	 * @param output Wanted percent
 	 */
 	public void rightDrive(double output) {
-	    leaderRight.getPIDController().setReference(output,CANSparkMax.ControlType.kDutyCycle);
+		leaderRight.setVoltage(output);
 	}
 
 	/**
 	 * Sets the sparkMaxes for brake mode
 	 */
 	public synchronized void setBrakeMode() {
-		//set for auto
-        leaderLeft.setIdleMode(CANSparkMax.IdleMode.kBrake);
+		// set for auto
+		leaderLeft.setIdleMode(CANSparkMax.IdleMode.kBrake);
 		leftA.setIdleMode(CANSparkMax.IdleMode.kBrake);
 		leftB.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
@@ -539,8 +524,8 @@ public class DriveTrainSubsystem implements Subsystem {
 			mDriveStates = DriveStates.CREEP;
 			System.out.println("CREEP");
 		}
-		leaderLeft.getPIDController().setReference(signal.getLeft() / 2,CANSparkMax.ControlType.kDutyCycle);
-		leaderRight.getPIDController().setReference(signal.getRight() / 2,CANSparkMax.ControlType.kDutyCycle);
+		leaderLeft.setVoltage(signal.getLeft() / 2);
+		leaderRight.setVoltage(signal.getRight() / 2);
 	}
 
 	//////
@@ -557,20 +542,22 @@ public class DriveTrainSubsystem implements Subsystem {
 
 	/**
 	 * Used to set highgear
+	 * 
 	 * @param wantsHighGear
-	 * it's a boolean saying if you want it or not
+	 *                      it's a boolean saying if you want it or not
 	 */
 	public synchronized void setHighGear(boolean wantsHighGear) {
-        if (wantsHighGear != mIsHighGear) {
-            mIsHighGear = wantsHighGear;
-            shifter.set(wantsHighGear ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
-        }
-    }
+		if (wantsHighGear != mIsHighGear) {
+			mIsHighGear = wantsHighGear;
+			shifter.set(wantsHighGear ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+		}
+	}
 
 	/**
 	 * Sets the neutral mode for the drive train.
 	 *
-	 * @param brake if 1, the drive train will go into brake mode, 0 will put it into coast mode
+	 * @param brake if 1, the drive train will go into brake mode, 0 will put it
+	 *              into coast mode
 	 */
 	public synchronized void setNeutralMode(boolean brake) {
 		CANSparkMax.IdleMode currentMode = brake ? CANSparkMax.IdleMode.kBrake : CANSparkMax.IdleMode.kCoast;
@@ -590,8 +577,8 @@ public class DriveTrainSubsystem implements Subsystem {
 			mDriveStates = DriveStates.DRIVING;
 			setNeutralMode(false);
 		}
-        leaderLeft.getPIDController().setReference(signal.getLeft(),CANSparkMax.ControlType.kDutyCycle);
-		leaderRight.getPIDController().setReference(signal.getRight(),CANSparkMax.ControlType.kDutyCycle);
+		leaderLeft.setVoltage(signal.getLeft());
+		leaderRight.setVoltage(signal.getRight());
 	}
 
 	/**
@@ -601,7 +588,7 @@ public class DriveTrainSubsystem implements Subsystem {
 	 * @param right_inches_per_sec Right inches per second
 	 */
 	public synchronized void setVelocitySetpoint(double left_inches_per_sec, double right_inches_per_sec) {
-		configureSparkMaxesForSpeedControl();
+		configureForVelocityControl();
 		mDriveStates = DriveStates.VELOCITY_SETPOINT;
 		updateVelocitySetpoint(left_inches_per_sec, right_inches_per_sec);
 	}
@@ -616,7 +603,7 @@ public class DriveTrainSubsystem implements Subsystem {
 		reloadHighGearVelocityGains();
 		if (mCurrentPath != path || mDriveStates != DriveStates.PATH_FOLLOWING) {
 			System.out.println("Setting Path_Following");
-			configureSparkMaxesForSpeedControl();
+			configureForVelocityControl();
 			RobotState.getInstance().resetDistanceDriven();
 			mPathFollower = new PathFollower(path, reversed,
 					new PathFollower.Parameters(
@@ -642,8 +629,8 @@ public class DriveTrainSubsystem implements Subsystem {
 	public synchronized void setWantTurnToHeading(Rotation2d heading) {
 		if (mDriveStates != DriveStates.TURN_TO_HEADING) {
 			mDriveStates = DriveStates.TURN_TO_HEADING;
-			configureSparkMaxesForPositionControl();
-			setMaxDrivePower(Constants.kDriveTurnMaxPower);
+			configureForPositionControl();
+			setLowGearPositionControlMaxDrivePower(Constants.kDriveTurnMaxPower);
 			updatePositionSetpoint(getLeftDistanceInches(), getRightDistanceInches());
 		}
 		if (Math.abs(heading.inverse().rotateBy(mTargetHeading).getDegrees()) > 1E-3) {
@@ -656,7 +643,7 @@ public class DriveTrainSubsystem implements Subsystem {
 	boolean startingWiggle = false;
 	boolean finishingWiggle = false;
 	double wiggleAdjust = 0;
-	double kWiggle = 6*3.1415;
+	double kWiggle = 6 * 3.1415;
 	double kWiggleAmplitude = .15;
 	Timer wiggleTime = new Timer();
 
@@ -664,13 +651,11 @@ public class DriveTrainSubsystem implements Subsystem {
 		startingWiggle = wiggleReq && !wasWigglin;
 		finishingWiggle = !wiggleReq && wasWigglin;
 
-
-		if(startingWiggle) {
+		if (startingWiggle) {
 			wiggleTime.reset();
 			wiggleTime.start();
 			mDriveStates = DriveStates.WIGGLE;
-		}
-		else if(finishingWiggle) {
+		} else if (finishingWiggle) {
 			wiggleTime.stop();
 			wiggleTime.reset();
 			mDriveStates = DriveStates.DRIVING;
@@ -679,17 +664,15 @@ public class DriveTrainSubsystem implements Subsystem {
 			rightDrive(0);
 		}
 
-		if(wiggleReq) {
+		if (wiggleReq) {
 			wiggleAdjust = Math.sin(wiggleTime.get() * kWiggle) * .2;
 
 			leftDrive(.25 - wiggleAdjust);
 			rightDrive(.25 + wiggleAdjust);
 		}
 
-
 		wasWigglin = wiggleReq;
 	}
-
 
 	boolean wasPushing = false;
 	boolean startingPush = false;
@@ -700,8 +683,7 @@ public class DriveTrainSubsystem implements Subsystem {
 	public synchronized boolean driveToStall(boolean pushReq, boolean stopReq) {
 		startingPush = pushReq && !wasPushing;
 
-
-		if(startingPush) {
+		if (startingPush) {
 			System.out.println("starting push");
 			mDriveStates = DriveStates.DRIVE_TO_STALL;
 			leftDrive(Constants.kStallPower);
@@ -710,15 +692,16 @@ public class DriveTrainSubsystem implements Subsystem {
 		}
 
 		isTimedOut = (currentTimeStamp - pushTimeStamp > Constants.kStallTimeout);
-		finishingPush = (leftVelocity < Constants.kStallSpeed && rightVelocity < Constants.kStallSpeed && currentTimeStamp - pushTimeStamp > Constants.kStallWaitPeriod) || isTimedOut || stopReq;
+		finishingPush = (leftVelocity < Constants.kStallSpeed && rightVelocity < Constants.kStallSpeed
+				&& currentTimeStamp - pushTimeStamp > Constants.kStallWaitPeriod) || isTimedOut || stopReq;
 		wasPushing = pushReq;
-		if(leftVelocity < Constants.kStallSpeed && mDriveStates == DriveStates.DRIVE_TO_STALL) {
+		if (leftVelocity < Constants.kStallSpeed && mDriveStates == DriveStates.DRIVE_TO_STALL) {
 			System.out.println("time to stall " + (currentTimeStamp - pushTimeStamp));
 		}
 
-		if(finishingPush && mDriveStates == DriveStates.DRIVE_TO_STALL) {
+		if (finishingPush && mDriveStates == DriveStates.DRIVE_TO_STALL) {
 			System.out.println("finishing push");
-			System.out.println("speed low? " + (leftVelocity < Constants.kStallSpeed ));
+			System.out.println("speed low? " + (leftVelocity < Constants.kStallSpeed));
 			System.out.println("wait period? " + (currentTimeStamp - pushTimeStamp > Constants.kStallWaitPeriod));
 			System.out.println("is timed out? " + isTimedOut);
 			mDriveStates = DriveStates.DRIVING;
@@ -736,31 +719,20 @@ public class DriveTrainSubsystem implements Subsystem {
 	private double parkingBrakePositionRight = 0.0;
 
 	private synchronized boolean parkingBrakeHandler() {
-		if(!parkingBrakeIsStopped) {
-			leaderLeft.getPIDController().setReference(0,CANSparkMax.ControlType.kVelocity);
-			leaderRight.getPIDController().setReference(0,CANSparkMax.ControlType.kVelocity);
-			if(leaderRight.getEncoder().getVelocity() < 100 && leaderLeft.getEncoder().getVelocity() < 100)  {
+		if (!parkingBrakeIsStopped) {
+			setVelocitySetpoint(0, 0);
+			if ( leftEncoder.getRate() < inchesToCounts(4) && rightEncoder.getRate()< inchesToCounts(4)) {
 				parkingBrakeIsStopped = true;
-				parkingBrakePositionLeft = leaderLeft.getEncoder().getPosition();
-				parkingBrakePositionRight = leaderRight.getEncoder().getPosition();
-				reloadParkingBrakeGains(leaderLeft);
-				reloadParkingBrakeGains(leaderRight);
+				parkingBrakePositionLeft = leftEncoder.getDistance();
+				parkingBrakePositionRight = rightEncoder.getDistance();
+				reloadLowGearPositionGains();
 			}
-		}
-		else {
-			leaderLeft.getPIDController().setReference(parkingBrakePositionLeft,CANSparkMax.ControlType.kPosition);
-			leaderRight.getPIDController().setReference(parkingBrakePositionRight,CANSparkMax.ControlType.kPosition);
+		} else {
+			leaderLeft.setVoltage(leftLoweGearPositionPID.calculate(leftEncoder.getDistance(), parkingBrakePositionLeft));
+			leaderRight.setVoltage(rightLowGearPositionPID.calculate(rightEncoder.getDistance(), parkingBrakePositionRight));
 		}
 
 		return false;
-	}
-
-	private void reloadParkingBrakeGains(CANSparkMax motorController) { //TODO create seperate PID slot if needed
-		motorController.getPIDController().setP(Constants.kDriveLowGearPositionKp,kLowGearPositionControlSlot);
-		motorController.getPIDController().setI(Constants.kDriveLowGearPositionKi,kLowGearPositionControlSlot);
-		motorController.getPIDController().setD(Constants.kDriveLowGearPositionKd,kLowGearPositionControlSlot);
-		motorController.getPIDController().setFF(Constants.kDriveLowGearPositionKf,kLowGearPositionControlSlot);
-		motorController.getPIDController().setIZone(Constants.kDriveLowGearPositionIZone,kLowGearPositionControlSlot);
 	}
 
 	public void startParkingBrake() {
@@ -768,14 +740,12 @@ public class DriveTrainSubsystem implements Subsystem {
 		mDriveStates = DriveStates.PARKING_BRAKE;
 		parkingBrakeIsStopped = false;
 	}
+
 	public void stopParkingBrake() {
 		mDriveStates = DriveStates.DRIVING;
 		parkingBrakeIsStopped = false;
 		setCoastMode();
 	}
-
-
-
 
 	@Override
 	public synchronized void stop() {
@@ -790,14 +760,15 @@ public class DriveTrainSubsystem implements Subsystem {
 		if (mDriveStates != DriveStates.DRIVING) {
 			mDriveStates = DriveStates.DRIVING;
 		}
-		leaderLeft.getPIDController().setReference(0,CANSparkMax.ControlType.kDutyCycle);
-		leaderRight.getPIDController().setReference(0,CANSparkMax.ControlType.kDutyCycle);
+		leaderLeft.setVoltage(0);
+		leaderRight.setVoltage(0);
 	}
 
-
 	/**
-	 * Called periodically when the robot is in path following mode. Updates the path follower with the robots latest
-	 * pose, distance driven, and velocity, the updates the wheel velocity setpoints.
+	 * Called periodically when the robot is in path following mode. Updates the
+	 * path follower with the robots latest
+	 * pose, distance driven, and velocity, the updates the wheel velocity
+	 * setpoints.
 	 */
 	private synchronized void updatePathFollower(double timestamp) {
 		RigidTransform2d robot_pose = mRobotState.getLatestFieldToVehicle().getValue();
@@ -810,7 +781,7 @@ public class DriveTrainSubsystem implements Subsystem {
 			SmartDashboard.putNumber("A Right Side Setpoint: ", setpoint.right);
 		} else {
 			setOpenLoop(new DriveSignal(0, 0, false));
-			//updateVelocitySetpoint(0, 0);
+			// updateVelocitySetpoint(0, 0);
 		}
 	}
 
@@ -821,13 +792,13 @@ public class DriveTrainSubsystem implements Subsystem {
 	 * @param right_position_inches Inches wanted
 	 */
 	private synchronized void updatePositionSetpoint(double left_position_inches, double right_position_inches) {
-		if (usesSparkMaxPositionControl(mDriveStates)) {
-		    leaderLeft.getPIDController().setReference(inchesToRPM(left_position_inches),CANSparkMax.ControlType.kPosition, kLowGearPositionControlSlot);
-			leaderRight.getPIDController().setReference(inchesToRPM(right_position_inches),CANSparkMax.ControlType.kPosition, kLowGearPositionControlSlot);
+		if (usesPositionPID(mDriveStates)) {
+			leaderLeft.setVoltage(leftLoweGearPositionPID.calculate(leftEncoder.getDistance(), inchesToCounts(left_position_inches)));
+			leaderRight.setVoltage(rightLowGearPositionPID.calculate(rightEncoder.getDistance(), inchesToCounts(right_position_inches)));
 		} else {
 			System.out.println("Hit a bad position control state");
-            leaderLeft.getPIDController().setReference(0,CANSparkMax.ControlType.kDutyCycle);
-            leaderRight.getPIDController().setReference(0,CANSparkMax.ControlType.kDutyCycle);
+			leaderLeft.setVoltage(0);
+			leaderRight.setVoltage(0);
 		}
 	}
 
@@ -865,29 +836,27 @@ public class DriveTrainSubsystem implements Subsystem {
 	}
 
 	/**
-	 * Update velocity setpoint is used to send over our desired velocity from pure pursuit control
+	 * Update velocity setpoint is used to send over our desired velocity from pure
+	 * pursuit control
 	 *
 	 * @param left_inches_per_sec  Left side inches per second
 	 * @param right_inches_per_sec right side inches per second
 	 */
 	private synchronized void updateVelocitySetpoint(double left_inches_per_sec, double right_inches_per_sec) {
-		if (usesSparkMaxVelocityControl(mDriveStates)) {
+		if (usesVelocityPID(mDriveStates)) {
 			final double max_desired = Math.max(Math.abs(left_inches_per_sec), Math.abs(right_inches_per_sec));
 			final double scale = max_desired > Constants.kDriveHighGearMaxSetpoint
-					? Constants.kDriveHighGearMaxSetpoint / max_desired : 1.0;
-			leaderLeft.getPIDController().setReference(inchesPerSecondToRPM(left_inches_per_sec * scale),CANSparkMax.ControlType.kVelocity, kHighGearVelocityControlSlot);
-			leaderRight.getPIDController().setReference(inchesPerSecondToRPM(right_inches_per_sec * scale),CANSparkMax.ControlType.kVelocity, kHighGearVelocityControlSlot);
-            
-           /* System.out.println("Left Side Velocity : "+ left_inches_per_sec+ "  " + 
-            		"Right Side Veloctiy: "+ right_inches_per_sec);*/
-
+					? Constants.kDriveHighGearMaxSetpoint / max_desired
+					: 1.0;
+			leaderLeft.setVoltage(leftHighGearVelocityFeedForward.calculate(inchesToCounts(left_inches_per_sec * scale)) + leftHighGearVelocityPID.calculate(leftEncoder.getDistance(), inchesToCounts(left_inches_per_sec * scale)));
+			leaderRight.setVoltage(rightHighGearVelocityFeedForward.calculate(inchesToCounts(right_inches_per_sec * scale)) + rightHighGearVelocityPID.calculate(rightEncoder.getDistance(), inchesToCounts(right_inches_per_sec * scale)));
 
 			SmartDashboard.putNumber("A Left Side Velocity", getLeftVelocityInchesPerSec());
 			SmartDashboard.putNumber("A Right Side Velocity", getRightVelocityInchesPerSec());
 		} else {
 			System.out.println("Hit a bad velocity control state");
-            leaderLeft.getPIDController().setReference(0,CANSparkMax.ControlType.kDutyCycle);
-            leaderRight.getPIDController().setReference(0,CANSparkMax.ControlType.kDutyCycle);
+			leaderLeft.setVoltage(0);
+			leaderRight.setVoltage(0);
 		}
 	}
 
@@ -896,24 +865,24 @@ public class DriveTrainSubsystem implements Subsystem {
 	 */
 	@Override
 	public synchronized void zeroSensors() {
-//		System.out.println("Zeroing drivetrain sensors...");
-        leaderLeft.getEncoder().setPosition(0);
-        leaderRight.getEncoder().setPosition(0);
-        leftVelocity = 0;
-        rightVelocity = 0;
-        leftEncoderDistance =0;
-        rightEncoderDistance = 0;
+		// System.out.println("Zeroing drivetrain sensors...");
+		leftEncoder.reset();
+		rightEncoder.reset();
+		leftVelocity = 0;
+		rightVelocity = 0;
+		leftEncoderDistance = 0;
+		rightEncoderDistance = 0;
 		navx.zeroYaw();
-//   	 System.out.println("Drivetrain sensors zeroed!");
+		// System.out.println("Drivetrain sensors zeroed!");
 	}
 
 	public double getLeftVoltage() {
 		return leaderLeft.getAppliedOutput();
 	}
+
 	public double getRightVoltage() {
 		return leaderRight.getAppliedOutput();
 	}
-
 
 	@Override
 	public void writeToLog() {
@@ -935,28 +904,24 @@ public class DriveTrainSubsystem implements Subsystem {
 	 *
 	 * @param power
 	 */
-	public void setMaxDrivePower(double power) {
-	    leaderLeft.getPIDController().setOutputRange(-power, power);
-	    leaderRight.getPIDController().setOutputRange(-power, power);
-
+	public void setLowGearPositionControlMaxDrivePower(double power) {
+		lowGearPositionMaxPower = power;
 	}
 
-	public void setWantVisionTracking(boolean wantVision){
-		if(wantVision && mDriveStates != DriveStates.VISION){
+	public void setWantVisionTracking(boolean wantVision) {
+		if (wantVision && mDriveStates != DriveStates.VISION) {
 			isWantedLowPID = true;
 			mDriveStates = DriveStates.VISION;
 			mostRecentTargetTimestamp = 0;
-		}
-		else if(!wantVision && mDriveStates == DriveStates.VISION){
+		} else if (!wantVision && mDriveStates == DriveStates.VISION) {
 			mDriveStates = DriveStates.DRIVING;
 			setCoastMode();
 		}
 
 	}
 
-	public void updateVision(){
-		//TODO: Update vision
-
+	public void updateVision() {
+		// TODO: Update vision
 
 	}
 
@@ -973,8 +938,6 @@ public class DriveTrainSubsystem implements Subsystem {
 	}
 
 	public void retractAll() {
-		//nothing to do here
+		// nothing to do here
 	}
 }
-
-
