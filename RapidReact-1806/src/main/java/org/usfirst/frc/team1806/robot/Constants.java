@@ -203,5 +203,23 @@ public class Constants {
     public final static Double kRightFlywheelIzone = 0.0;
     public final static Double kRightFlywheelConversionFactor = 0.0;
 
+public static Double kRPMToCounts;
+
+public static Double kTopFlywheelKp;
+
+public static Double kTopFlywheelKi;
+
+public static Double kTopFlywheelKd;
+
+public static Double kTopFlywheelKf;
+
+public static Double kTopFlywheelIzone;
+
+public static Double kTopFlywheelConversionFactor;
+
+public static Double kTopFlywheelKs;
+
+public static Double kTopFlywheelKv;
+
 
 }

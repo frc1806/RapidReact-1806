@@ -1,8 +1,32 @@
 package org.usfirst.frc.team1806.robot.subsystems;
 
+import org.usfirst.frc.team1806.robot.Constants;
+import org.usfirst.frc.team1806.robot.RobotMap;
+import org.usfirst.frc.team1806.robot.game.shot;
 import org.usfirst.frc.team1806.robot.loop.Looper;
 
 public class SuperStructure implements Subsystem {
+
+    public enum SuperStructureStates{
+        IntakingFront,
+        IntakingBack,
+        PrepareLaunch,
+        Launching,
+        Idle,
+        Climbing,
+    };
+
+    private IntakeSubsystem mFrontIntake;
+    private IntakeSubsystem mBackIntake;
+    private FlywheelSubsystem mUpFlywheel;
+    private FlywheelSubsystem mDownFlywheel;
+    private ElevatorSubsystem mElevator;
+
+    public SuperStructure(){
+        mFrontIntake = new IntakeSubsystem(RobotMap.frontIntake, RobotMap.frontIntakeExtend, RobotMap.backIntakeExtend);
+        mBackIntake = new IntakeSubsystem(RobotMap.rearIntake, RobotMap.backIntakeExtend, RobotMap.backIntakeRetract);
+        mUpFlywheel = new FlywheelSubsystem(RobotMap.upFlywheel, Constants.kTopFlywheelKp, Constants.kTopFlywheelKi, Constants.kTopFlywheelKd, Constants.kTopFlywheelKf, Constants.kTopFlywheelIzone, false, Constants.kTopFlywheelConversionFactor, RobotMap.upFlywheel, Constants.kTopFlywheelKs, Constants.kTopFlywheelKv);
+    }
 
     @Override
     public void writeToLog() {
@@ -44,6 +68,22 @@ public class SuperStructure implements Subsystem {
     public void retractAll() {
         // TODO Auto-generated method stub
         
+    }
+
+    public void wantIntakeFront(){
+        // do this later
+    };
+
+    public void wantIntakeBack(){
+        // todo
+    }
+
+    public void wantPrepareShot(shot wantedShot){
+        // todo
+    }
+
+    public void wantConfirmLaunch(Boolean shouldShoot){
+        // todo 
     }
     
 }

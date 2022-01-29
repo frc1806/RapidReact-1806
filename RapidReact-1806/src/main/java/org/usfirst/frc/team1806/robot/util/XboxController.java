@@ -193,7 +193,7 @@ public class XboxController extends Joystick {
 			public double getAsDouble() {
 				return getLeftJoyX();
 			}
-		}).withWidget(BuiltInWidgets.kNumberBar).withProperties(AXIS_DISPLAY_BAR_PROPS);
+		}).withWidget(BuiltInWidgets.kNumberBar).withProperties(AXIS_DISPLAY_BAR_PROPS).withSize(2, 1).withPosition(0, 3);
 
 		mControllerConfigTab.addNumber("Left Y", new DoubleSupplier() {
 
@@ -201,7 +201,7 @@ public class XboxController extends Joystick {
 			public double getAsDouble() {
 				return getLeftJoyY();
 			}
-		}).withWidget(BuiltInWidgets.kNumberBar).withProperties(AXIS_DISPLAY_BAR_PROPS);
+		}).withWidget(BuiltInWidgets.kNumberBar).withProperties(AXIS_DISPLAY_BAR_PROPS).withSize(2, 1).withPosition(2, 3);
 
 		mControllerConfigTab.addNumber("Right X", new DoubleSupplier() {
 
@@ -209,7 +209,7 @@ public class XboxController extends Joystick {
 			public double getAsDouble() {
 				return getRightJoyX();
 			}
-		}).withWidget(BuiltInWidgets.kNumberBar).withProperties(AXIS_DISPLAY_BAR_PROPS);
+		}).withWidget(BuiltInWidgets.kNumberBar).withProperties(AXIS_DISPLAY_BAR_PROPS).withSize(2, 1).withPosition(4, 3);
 
 		mControllerConfigTab.addNumber("Right Y", new DoubleSupplier() {
 
@@ -217,7 +217,7 @@ public class XboxController extends Joystick {
 			public double getAsDouble() {
 				return getRightJoyY();
 			}
-		}).withWidget(BuiltInWidgets.kNumberBar).withProperties(AXIS_DISPLAY_BAR_PROPS);
+		}).withWidget(BuiltInWidgets.kNumberBar).withProperties(AXIS_DISPLAY_BAR_PROPS).withSize(2, 1).withPosition(6, 3);
 
 		mControllerConfigTab.addNumber("Left Trigger", new DoubleSupplier() {
 
@@ -225,7 +225,7 @@ public class XboxController extends Joystick {
 			public double getAsDouble() {
 				return getLeftTrigger();
 			}
-		}).withWidget(BuiltInWidgets.kNumberBar).withProperties(AXIS_DISPLAY_BAR_PROPS);
+		}).withWidget(BuiltInWidgets.kNumberBar).withProperties(AXIS_DISPLAY_BAR_PROPS).withSize(2, 1).withPosition(6, 4);
 
 		mControllerConfigTab.addNumber("Right Trigger", new DoubleSupplier() {
 
@@ -233,7 +233,7 @@ public class XboxController extends Joystick {
 			public double getAsDouble() {
 				return getRightTrigger();
 			}
-		}).withWidget(BuiltInWidgets.kNumberBar).withProperties(AXIS_DISPLAY_BAR_PROPS);
+		}).withWidget(BuiltInWidgets.kNumberBar).withProperties(AXIS_DISPLAY_BAR_PROPS).withSize(2, 1).withPosition(8, 4);
 	}
 
 	/**

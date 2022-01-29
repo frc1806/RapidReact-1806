@@ -192,14 +192,14 @@ public class DriveTrainSubsystem implements Subsystem {
 		rightEncoder = new Encoder(Constants.kDIODriveRightEncoderA, Constants.kDIODriveRightEncoderB);
 
 		// init the all of the motor controllers
-		leaderLeft = new CANSparkMax(RobotMap.leaderLeft, CANSparkMaxLowLevel.MotorType.kBrushless);
-		leaderRight = new CANSparkMax(RobotMap.leaderRight, CANSparkMaxLowLevel.MotorType.kBrushless);
+		leaderLeft = new CANSparkMax(RobotMap.leftLeader, CANSparkMaxLowLevel.MotorType.kBrushless);
+		leaderRight = new CANSparkMax(RobotMap.rightLeader, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-		leftA = new CANSparkMax(RobotMap.leftA, CANSparkMaxLowLevel.MotorType.kBrushless);
-		rightA = new CANSparkMax(RobotMap.rightA, CANSparkMaxLowLevel.MotorType.kBrushless);
+		leftA = new CANSparkMax(RobotMap.leftFollowerA, CANSparkMaxLowLevel.MotorType.kBrushless);
+		rightA = new CANSparkMax(RobotMap.rightFollowerA, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-		leftB = new CANSparkMax(RobotMap.leftB, CANSparkMaxLowLevel.MotorType.kBrushless);
-		rightB = new CANSparkMax(RobotMap.rightB, CANSparkMaxLowLevel.MotorType.kBrushless);
+		leftB = new CANSparkMax(RobotMap.leftFollowerB, CANSparkMaxLowLevel.MotorType.kBrushless);
+		rightB = new CANSparkMax(RobotMap.rightFollowerB, CANSparkMaxLowLevel.MotorType.kBrushless);
 
 		// Follow for right side
 		rightA.follow(leaderRight);

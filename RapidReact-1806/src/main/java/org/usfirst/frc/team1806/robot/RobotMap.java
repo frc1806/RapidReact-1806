@@ -12,85 +12,64 @@ public class RobotMap {
 	
 	//Drive train CAN
 
-	public static int leaderRight = 1;
-	public static int rightA = 2;
-	public static int leaderLeft = 4;
-	public static int leftA = 5;
-	public static int leftB = 15;
-	public static int rightB = 16;
+	public static int leftLeader = 1;
+	public static int leftFollowerA = 2;
+	public static int leftFollowerB = 3;
+	public static int rightLeader = 4;
+	public static int rightFollowerA = 5;
+	public static int rightFollowerB = 6;
+	public static int leftDriveEncoder = 0;
+	public static int leftDriveEncoderB = 1;
+	public static int rightDriveEncoder = 2;
+	public static int rightDriveEncoderB = 3;
 	
-	//Cube Elevator CANs
-
-	public static int elevatorLead = 6;
-	public static int elevatorFollow = 7;
-
+	//Elevator
+	public static int elevatorLeader = 10;
+	public static int elevatorFollower = 11;
 
 	//Intake CAN Ports
-	
-	public static int leftInnerIntake = 11;
-	public static int rightInnerIntake = 12;
-	public static int leftOuterIntake = 13;
-	public static int rightOuterIntake = 14;
+	public static int frontIntake = 20;
 
+	public static int rearIntake = 22;
 
-	//Hatch Floor Pickup
-	public static int tongueMotor = 42;
+	//Conveyor
+	public static int upperConveyor = 30;
+	public static int lowerConveyor = 32;
 
-
+	//Flywheel
+	public static int upFlywheel = 40;
+	public static int downFlywheel = 42;
 
 
 	////////// These are all of the solenoids for the robotri
 	public static int module1Number = 0;
 	public static int module2Number = 0;
-	
-	//Shifting
-	public static int shiftHigh = 0; //module 1
-	public static int shiftLow = 1;//module 1
 
 	//Intake
-	public static int frontIntakeExtend = 5;//module 1
-	public static int frontIntakeRetract = 4;//module 1
-	public static int backIntakeExtend = 6;//module 1
-	public static int backIntakeRetract = 7;//module 1
+	public static int frontIntakeExtend = 0;//module 1
+	public static int frontIntakeRetract = 1;//module 1
+	public static int backIntakeExtend = 2;//module 1
+	public static int backIntakeRetract = 3;//module 1
 
-	//Squid
-
-	public static int squidOpenPort = 1;//module 1
-	public static int squidClosePort = 0; //module 1
-	public static int squidExtendForward = 3;//module 1
-	public static int squidExtendBackward = 2;//module 1
-
-	//BeaverTail
-
-	//public static int beaverTailEjectExtend = 6;
-	//public static int beaverTailEjectRetract = 7;
-
-	//LiftStand
-	//public static int liftStandUp = 6;
-	//public static int liftLeanBack = 7;
-
-
-
+	//shifter
+	public static int shiftHigh = 4;
+	public static int shiftLow = 5;
 
 	///// DIOs
 
-	public static int elevatorBottomLimit = 0;
-	public static int elevatorHighLimit = 1;
-	public static int rearLeftTrigger = 4;
-	public static int rearLeftResponse = 5;
-	public static int rearRightTrigger = 8;
-	public static int rearRightResponse = 9;
-	public static int leftTrigger = 10;
-	public static int leftResponse = 11;
-	public static int rightTrigger = 12;
-	public static int rightResponse = 2;
-	public static int hatchDetector = 3;
+	public static int liftBottomLimit = 0;
+	public static int liftHighLimit = 1;
 
 	//HABClimber
 
 
 	///////////// PDP PORTS
 
+
+
+	//CANifier IDs
+	public static int UpFlywheelCANifier = 1;
+	public static int DownFlywheelCANifier = 2;
 
 
 }

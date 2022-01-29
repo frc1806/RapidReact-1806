@@ -45,16 +45,16 @@ public class ElevatorSubsystem implements Subsystem {
 
 	public ElevatorSubsystem() {
 		inchesPerCount = Constants.kElevatorInchesPerCountDefault;
-		elevatorLead = new CANSparkMax(RobotMap.elevatorLead, CANSparkMaxLowLevel.MotorType.kBrushless);
-		elevatorFollow = new CANSparkMax(RobotMap.elevatorFollow, CANSparkMaxLowLevel.MotorType.kBrushless);
+		elevatorLead = new CANSparkMax(RobotMap.elevatorLeader, CANSparkMaxLowLevel.MotorType.kBrushless);
+		elevatorFollow = new CANSparkMax(RobotMap.elevatorFollower, CANSparkMaxLowLevel.MotorType.kBrushless);
 		elevatorLead.setInverted(true);
 		elevatorFollow.follow(elevatorLead, true);
 		/*
 		 * liftLead.setSmartCurrentLimit(130, 80);
 		 * liftFollow.setSmartCurrentLimit(130, 80);
 		 */
-		bottomLimit = new DigitalInput(RobotMap.elevatorBottomLimit);
-		topLimit = new DigitalInput(RobotMap.elevatorHighLimit);
+		//bottomLimit = new DigitalInput(RobotMap.liftBottomLimit);
+		//topLimit = new DigitalInput(RobotMap.liftHighLimit);
 		mElevatorStates = ElevatorStates.IDLE;
 		elevatorWantedPosition = 0;
 		reloadGains();

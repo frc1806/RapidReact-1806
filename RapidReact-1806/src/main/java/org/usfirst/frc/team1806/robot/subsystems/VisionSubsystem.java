@@ -69,10 +69,10 @@ public class VisionSubsystem implements Subsystem {
     }
     
     public void turnLEDOn(){
-        leds.setData(buffer);
-        for(int i=0; i<24 ; i++)
-        {
-            //do loop stuff here
-        }
+        leds.setData(onBuffer);
+    }
+
+    public void turnLEDOff(){
+        leds.setData(offBuffer);
     }
 }
