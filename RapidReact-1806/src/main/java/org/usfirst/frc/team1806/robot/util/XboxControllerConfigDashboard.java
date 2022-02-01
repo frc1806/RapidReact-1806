@@ -50,44 +50,44 @@ public class XboxControllerConfigDashboard {
         }
         this.controllerConfigTab = configTab;
         this.leftXDeadzone = controllerConfigTab.addPersistent("Left X Deadzone", configValues.getLeftXDeadzone())
-                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).getEntry();
+                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).withSize(2, 1).withPosition(0, 0).getEntry();
         this.leftXMinimumOutput = controllerConfigTab
                 .addPersistent("Left X Minimum Output", configValues.getLeftXMinimumOutput())
-                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).getEntry();
+                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).withSize(2, 1).withPosition(0, 1).getEntry();
         this.leftXLinearity = controllerConfigTab.addPersistent("Left X Linearity", configValues.getLeftXLinearity())
-                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).getEntry();
+                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).withSize(2, 1).withPosition(0, 2).getEntry();
         this.leftYDeadzone = controllerConfigTab.addPersistent("Left Y Deadzone", configValues.getLeftYDeadzone())
-                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).getEntry();
+                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).withSize(2, 1).withPosition(2, 0).getEntry();
         this.leftYMinimumOutput = controllerConfigTab
                 .addPersistent("Left Y Minimum Output", configValues.getLeftYMinimumOutput())
-                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).getEntry();
+                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).withSize(2, 1).withPosition(2, 1).getEntry();
         this.leftYLinearity = controllerConfigTab.addPersistent("Left Y Linearity", configValues.getLeftYLinearity())
-                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).getEntry();
+                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).withSize(2, 1).withPosition(2, 2).getEntry();
         this.rightXDeadzone = controllerConfigTab.addPersistent("Right X Deadzone", configValues.getRightXDeadzone())
-                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).getEntry();
+                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).withSize(2, 1).withPosition(4, 0).getEntry();
         this.rightXMinimumOutput = controllerConfigTab
                 .addPersistent("Right X Minimum Output", configValues.getRightXMinimumOutput())
-                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).getEntry();
+                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).withSize(2, 1).withPosition(4, 1).getEntry();
         this.rightXLinearity = controllerConfigTab.addPersistent("Right X Linearity", configValues.getRightXLinearity())
-                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).getEntry();
+                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).withSize(2, 1).withPosition(4, 2).getEntry();
         this.rightYDeadzone = controllerConfigTab.addPersistent("Right Y Deadzone", configValues.getRightYDeadzone())
-                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).getEntry();
+                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).withSize(2, 1).withPosition(6, 0).getEntry();
         this.rightYMinimumOutput = controllerConfigTab
                 .addPersistent("Right Y Minimum Output", configValues.getRightYMinimumOutput())
-                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).getEntry();
+                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).withSize(2, 1).withPosition(6, 1).getEntry();
         this.rightYLinearity = controllerConfigTab.addPersistent("Right Y Linearity", configValues.getRightYLinearity())
-                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).getEntry();
+                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).withSize(2, 1).withPosition(6, 2).getEntry();
         this.triggerDeadzone = controllerConfigTab.addPersistent("Trigger Deadzone", configValues.getTriggerDeadzone())
-                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).getEntry();
+                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).withSize(2, 1).withPosition(8, 0).getEntry();
         this.triggerMinimumOutput = controllerConfigTab
                 .addPersistent("Trigger Minimum Output", configValues.getTriggerMinimumOutput())
-                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).getEntry();
+                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).withSize(2, 1).withPosition(8, 1).getEntry();
         this.triggerLinearity = controllerConfigTab
                 .addPersistent("Trigger Linearity", configValues.getTriggerLinearity())
-                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).getEntry();
+                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).withSize(2, 1).withPosition(8, 2).getEntry();
         this.triggerAsDigitalDeadzone = controllerConfigTab
                 .addPersistent("Trigger As Digital Deadzone", configValues.getTriggerAsDigitalDeadzone())
-                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).getEntry();
+                .withWidget(BuiltInWidgets.kNumberSlider).withProperties(CONTROLLER_CONFIG_SLIDER_PROPS).withSize(2, 1).withPosition(8, 3).getEntry();
     }
 
     public XboxControllerConfigValues getUpdatedConfigValues() {
