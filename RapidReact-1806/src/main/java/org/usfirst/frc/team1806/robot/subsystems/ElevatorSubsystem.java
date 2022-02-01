@@ -9,7 +9,9 @@ import org.usfirst.frc.team1806.robot.loop.Loop;
 import org.usfirst.frc.team1806.robot.loop.Looper;
 
 import com.revrobotics.CANSparkMax;
-import edu.wpi.first.wpilibj.DigitalInput;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.AnalogInput;
 
 
 /**
@@ -22,19 +24,18 @@ public class ElevatorSubsystem implements Subsystem {
 
 	public enum ElevatorStates {
 		POSITION_CONTROL,
-		RESET_TO_BOTTOM,
-		RESET_TO_TOP,
 		HOLD_POSITION,
 		MANUAL_CONTROL,
 		IDLE
 	}
 
-	private CANSparkMax elevatorLead, elevatorFollow; // gotta have the power
-	public DigitalInput bottomLimit, topLimit;
+	private CANSparkMax elevatorLead;
 
 	private double inchesPerCount;
 	private double lastTimeStamp;
 	private double elevatorWantedPosition;
+	private AnalogInput mStringPotentiometer;
+	private PIDController mPidController;
 
 	private boolean isBrakeMode = false;
 	private boolean mIsOnTarget = false;
@@ -46,15 +47,7 @@ public class ElevatorSubsystem implements Subsystem {
 	public ElevatorSubsystem() {
 		inchesPerCount = Constants.kElevatorInchesPerCountDefault;
 		elevatorLead = new CANSparkMax(RobotMap.elevatorLeader, CANSparkMaxLowLevel.MotorType.kBrushless);
-		elevatorFollow = new CANSparkMax(RobotMap.elevatorFollower, CANSparkMaxLowLevel.MotorType.kBrushless);
 		elevatorLead.setInverted(true);
-		elevatorFollow.follow(elevatorLead, true);
-		/*
-		 * liftLead.setSmartCurrentLimit(130, 80);
-		 * liftFollow.setSmartCurrentLimit(130, 80);
-		 */
-		//bottomLimit = new DigitalInput(RobotMap.liftBottomLimit);
-		//topLimit = new DigitalInput(RobotMap.liftHighLimit);
 		mElevatorStates = ElevatorStates.IDLE;
 		elevatorWantedPosition = 0;
 		reloadGains();
@@ -62,7 +55,7 @@ public class ElevatorSubsystem implements Subsystem {
 		elevatorLead.getEncoder().setPositionConversionFactor(48);
 
 		lastTimeStamp = 0;
-
+		mStringPotentiometer = new AnalogInput(0);
 	}
 
 	@Override
@@ -73,11 +66,8 @@ public class ElevatorSubsystem implements Subsystem {
 			SmartDashboard.putNumber(Constants.kLiftKey + "Encoder Position", elevatorLead.getEncoder().getPosition());
 			SmartDashboard.putNumber(Constants.kLiftKey + "Velocity", elevatorLead.getEncoder().getVelocity());
 			SmartDashboard.putNumber(Constants.kLiftKey + "Leader Power Sending", elevatorLead.getAppliedOutput());
-			SmartDashboard.putNumber(Constants.kLiftKey + "Follow Power Sending", elevatorFollow.getAppliedOutput());
-			SmartDashboard.putBoolean(Constants.kLiftKey + "Bottom limit triggered", areWeAtBottomLimit());
 			SmartDashboard.putNumber(Constants.kLiftKey + "Wanted Height", elevatorWantedPosition);
 			SmartDashboard.putNumber(Constants.kLiftKey + "Lead Motor Temp", elevatorLead.getMotorTemperature());
-			SmartDashboard.putNumber(Constants.kLiftKey + "Follow Motor Temp", elevatorFollow.getMotorTemperature());
 			SmartDashboard.putBoolean(Constants.kLiftKey + "is at position?", isAtPosition());
 		}
 
@@ -139,17 +129,9 @@ public class ElevatorSubsystem implements Subsystem {
 
 				// not moving and not manual
 				if (isAtPosition() && mElevatorStates != ElevatorStates.MANUAL_CONTROL) {
-					// not moving, at bottom
-					if (mElevatorStates == ElevatorStates.RESET_TO_BOTTOM
-							|| areWeAtBottomLimit()) {
-						mElevatorStates = ElevatorStates.IDLE;
-					}
-					// not moving, not at bottom
-					else {
+
 						mElevatorStates = ElevatorStates.HOLD_POSITION;
 						holdPosition();
-
-					}
 				}
 				elevatorStateLoop();
 
@@ -159,12 +141,7 @@ public class ElevatorSubsystem implements Subsystem {
 			private void elevatorStateLoop() {
 				switch (mElevatorStates) {
 					case POSITION_CONTROL:
-						return;
-					case RESET_TO_BOTTOM:
-						mIsOnTarget = false;
-						return;
-					case RESET_TO_TOP:
-						mIsOnTarget = false;
+						elevatorLead.setVoltage(mPidController.calculate(getHeightInInches(), elevatorWantedPosition));
 						return;
 					case HOLD_POSITION:
 						holdPosition();
@@ -172,7 +149,7 @@ public class ElevatorSubsystem implements Subsystem {
 					case MANUAL_CONTROL:
 						return;
 					case IDLE:
-						elevatorLead.getPIDController().setReference(0, CANSparkMax.ControlType.kDutyCycle);
+						elevatorLead.setVoltage(0);
 						return;
 					default:
 						return;
@@ -196,25 +173,10 @@ public class ElevatorSubsystem implements Subsystem {
 		return mElevatorSubsystem;
 	}
 
-	public synchronized void goToSetpoint(double setpoint) {
-		mElevatorStates = ElevatorStates.POSITION_CONTROL;
-		elevatorWantedPosition = setpoint;
-		setBrakeMode();
-		elevatorLead.getPIDController().setReference(elevatorWantedPosition, CANSparkMax.ControlType.kPosition);
-		// System.out.println(mLiftWantedPosition + " " + isReadyForSetpoint());
-	}
-
 	public synchronized void goToSetpointInches(double setpointInInches)
 	{
 		mElevatorStates = ElevatorStates.POSITION_CONTROL;
-		elevatorWantedPosition = setpointInInches / inchesPerCount;
-	}
-
-	public synchronized void zeroOnBottom() {
-		// TODO Auto-generated method stub
-		if (mElevatorStates != ElevatorStates.RESET_TO_BOTTOM) {
-			mElevatorStates = ElevatorStates.RESET_TO_BOTTOM;
-		}
+		elevatorWantedPosition = setpointInInches;
 	}
 
 	public synchronized void goToTop() {
@@ -227,7 +189,7 @@ public class ElevatorSubsystem implements Subsystem {
 	}
 
 	public double getHeightInCounts() {
-		return elevatorLead.getEncoder().getPosition();
+		return mStringPotentiometer.getAverageVoltage();
 	}
 
 	public boolean isOnTarget() {
@@ -237,14 +199,12 @@ public class ElevatorSubsystem implements Subsystem {
 	public void setBrakeMode() {
 
 		elevatorLead.setIdleMode(CANSparkMax.IdleMode.kBrake);
-		elevatorFollow.setIdleMode(CANSparkMax.IdleMode.kBrake);
 		isBrakeMode = true;
 
 	}
 
 	public void setCoastMode() {
 		elevatorLead.setIdleMode(CANSparkMax.IdleMode.kCoast);
-		elevatorFollow.setIdleMode(CANSparkMax.IdleMode.kCoast);
 		isBrakeMode = false;
 	}
 
@@ -253,45 +213,8 @@ public class ElevatorSubsystem implements Subsystem {
 	}
 
 	public void reloadGains() {
-		/*
-		 * liftLead.setParameter(CANSparkMaxLowLevel.ConfigParameter.kP_0,
-		 * Constants.kLiftPositionkP);
-		 * liftLead.setParameter(CANSparkMaxLowLevel.ConfigParameter.kI_0,
-		 * Constants.kLiftPositionkI);
-		 * liftLead.setParameter(CANSparkMaxLowLevel.ConfigParameter.kD_0,
-		 * Constants.kLiftPositionkD);
-		 * liftLead.setParameter(CANSparkMaxLowLevel.ConfigParameter.kF_0,
-		 * Constants.kLiftPositionkF);
-		 * liftLead.setParameter(CANSparkMaxLowLevel.ConfigParameter.kIZone_0,
-		 * Constants.kLiftPositionIZone);
-		 * liftLead.setParameter(CANSparkMaxLowLevel.ConfigParameter.kRampRate,
-		 * Constants.kLiftPositionRampRate);
-		 */
-		elevatorLead.getPIDController().setP(Constants.kElevatorPositionkP);
-		elevatorLead.getPIDController().setI(Constants.kElevatorPositionkI);
-		elevatorLead.getPIDController().setD(Constants.kElevatorPositionkD);
-		elevatorLead.getPIDController().setFF(Constants.kElevatorPositionkF);
-		elevatorLead.getPIDController().setIZone(Constants.kElevatorPositionIZone);
+		mPidController = new PIDController(Constants.kElevatorPositionkP, Constants.kElevatorPositionkI, Constants.kElevatorPositionkD);
 
-	}
-
-	public synchronized void resetToBottom() {
-		if (!areWeAtBottomLimit() || Math.abs(elevatorLead.getEncoder().getPosition()) < Constants.kBottomLimitTolerance) {
-			mElevatorStates = ElevatorStates.RESET_TO_BOTTOM;
-			goToSetpoint(0);
-		}
-	}
-
-	public synchronized void resetToTop() {
-		if (!topLimit.get()) {
-			if (mElevatorStates != ElevatorStates.RESET_TO_TOP) {
-				mElevatorStates = ElevatorStates.RESET_TO_TOP;
-				goToSetpoint(Constants.kLiftTopLimitSwitchPosition);
-			}
-			elevatorLead.getPIDController().setReference(Constants.elevatorResetSpeed, CANSparkMax.ControlType.kDutyCycle);
-		} else {
-			zeroSensorsAtTop();
-		}
 	}
 
 	/**
@@ -330,7 +253,7 @@ public class ElevatorSubsystem implements Subsystem {
 
 	public synchronized void setLiftHoldPosition() {
 		mElevatorStates = ElevatorStates.POSITION_CONTROL;
-		goToSetpoint(getHeightInCounts());
+		goToSetpointInches(getHeightInCounts());
 	}
 
 	/**
@@ -345,7 +268,7 @@ public class ElevatorSubsystem implements Subsystem {
 		mElevatorStates = ElevatorStates.MANUAL_CONTROL;
 		elevatorLead.getPIDController().setReference(power, CANSparkMax.ControlType.kDutyCycle);
 		if (Math.abs(power) < .2) {
-			goToSetpoint(elevatorLead.getEncoder().getPosition());
+			goToSetpointInches(elevatorLead.getEncoder().getPosition());
 			mElevatorStates = ElevatorStates.HOLD_POSITION;
 		}
 	}
@@ -355,29 +278,17 @@ public class ElevatorSubsystem implements Subsystem {
 	 */
 	public synchronized void holdPosition() {
 		elevatorLead.getPIDController().setReference(Constants.kElevatorHoldPercentOutput +
-				(elevatorWantedPosition - elevatorLead.getEncoder().getPosition()) * Constants.kElevatorHoldkPGain,
+				(elevatorWantedPosition - getHeightInCounts()) * Constants.kElevatorHoldkPGain,
 				CANSparkMax.ControlType.kDutyCycle);
 		if (Math.abs(getHeightInCounts() - elevatorWantedPosition) > Constants.kElevatorPositionTolerance) {
 			mElevatorStates = ElevatorStates.POSITION_CONTROL;
-			goToSetpoint(elevatorWantedPosition);
+			goToSetpointInches(elevatorWantedPosition);
 		}
-	}
-
-	/**
-	 * @return
-	 *         are we at the bottom limit??
-	 */
-	public boolean areWeAtBottomLimit() {
-		return !bottomLimit.get();
-	}
-
-	public double returnLiftHeight() {
-		return elevatorLead.getEncoder().getPosition();
 	}
 
 	public synchronized boolean bumpHeightUp() {
 		if (mElevatorStates == ElevatorStates.POSITION_CONTROL || mElevatorStates == ElevatorStates.HOLD_POSITION) {
-			goToSetpoint(elevatorWantedPosition + Constants.kBumpEncoderPosition);
+			goToSetpointInches(elevatorWantedPosition + Constants.kBumpEncoderPosition);
 			return true;
 		}
 		return false;
@@ -385,13 +296,13 @@ public class ElevatorSubsystem implements Subsystem {
 
 	public synchronized boolean bumpHeightDown() {
 		if (mElevatorStates == ElevatorStates.POSITION_CONTROL || mElevatorStates == ElevatorStates.HOLD_POSITION) {
-			goToSetpoint(elevatorWantedPosition - Constants.kBumpEncoderPosition);
+			goToSetpointInches(elevatorWantedPosition - Constants.kBumpEncoderPosition);
 			return true;
 		}
 		return false;
 	}
 
 	public void retractAll() {
-		goToSetpoint(Constants.kMaxElevatorHeightToNeedToExtendIntake + Constants.kSafeElevatorHeightOffsetToNotHitIntake);
+		goToSetpointInches(Constants.kMaxElevatorHeightToNeedToExtendIntake + Constants.kSafeElevatorHeightOffsetToNotHitIntake);
 	}
 }

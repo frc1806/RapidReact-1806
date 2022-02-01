@@ -19,7 +19,7 @@ import org.usfirst.frc.team1806.robot.util.XboxController;
 public class OI {
 	//snag some subsystem instances
 	private DriveTrainSubsystem mDriveTrainSubsystem = DriveTrainSubsystem.getInstance();
-	private ElevatorSubsystem mLiftSubsystem = ElevatorSubsystem.getInstance();
+	private ElevatorSubsystem mElevatorSubsystem = ElevatorSubsystem.getInstance();
 
 	//initialise controllers & ish
 	private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();

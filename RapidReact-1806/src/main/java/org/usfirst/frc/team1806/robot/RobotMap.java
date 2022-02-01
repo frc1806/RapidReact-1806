@@ -8,6 +8,9 @@ package org.usfirst.frc.team1806.robot;
  * floating around.
  */
 public class RobotMap {
+
+	///////////// Analog Inputs
+	public static int mStringPotentiometer = 0;
     ///////////// CAN ports 
 	
 	//Drive train CAN

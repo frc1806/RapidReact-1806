@@ -30,6 +30,6 @@ public class ElevatorToHeight implements Action {
 
     @Override
     public void start() {
-        mLiftSubsystem.goToSetpoint(wantedHeight);
+        mLiftSubsystem.goToSetpointInches(wantedHeight);
     }
 }
