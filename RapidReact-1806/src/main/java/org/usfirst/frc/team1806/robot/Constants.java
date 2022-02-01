@@ -203,7 +203,12 @@ public class Constants {
     public final static Double kRightFlywheelIzone = 0.0;
     public final static Double kRightFlywheelConversionFactor = 0.0;
 
-public static Double kRPMToCounts;
+    //Conveyor
+    public final static Double kConveyorIntakingSpeed = 1.0;
+    //public final static Double kLaunchingSpeed = NOT KNOWN YET
+
+    
+    public static Double kRPMToCounts;
 
 public static Double kTopFlywheelKp;
 
