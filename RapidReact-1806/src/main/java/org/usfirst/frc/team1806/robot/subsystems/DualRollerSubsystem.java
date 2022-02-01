@@ -10,8 +10,8 @@ import org.usfirst.frc.team1806.robot.loop.Looper;
 
 public class DualRollerSubsystem implements Subsystem{
 
-    TalonSRX rollerOne;
-    TalonSRX rollerTwo;
+    private TalonSRX rollerOne;
+    private TalonSRX rollerTwo;
       
     public DualRollerSubsystem(){
         rollerOne = new TalonSRX(RobotMap.rollerOne);
