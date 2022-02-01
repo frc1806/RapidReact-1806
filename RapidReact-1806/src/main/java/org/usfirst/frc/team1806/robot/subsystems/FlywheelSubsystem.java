@@ -16,9 +16,9 @@ public class FlywheelSubsystem implements Subsystem {
 
     private CANSparkMax mFlywheelMotor;
     private Double mKp, mKi, mKd, mKf, mIzone, mConversionFactor, mWantedSpeed, mks, mkv;
-    private CANifier mCANifierFlywheelCANifiermFlywheelCANifier;
     private PIDController mFlywheelPIDController;
     private SimpleMotorFeedforward mFeedforwardController;
+    private CANifier mCanifier;
 
 
     private Loop mLoop = new Loop(){
@@ -54,7 +54,7 @@ public class FlywheelSubsystem implements Subsystem {
 
     private FlywheelStates mFlywheelStates;
 
-    public FlywheelSubsystem(Integer canID, Double kp, Double ki, Double kd, Double kf, Double izone, Boolean isInverted, Double conversionFactor, Integer CANifierID, Double ks, Double kv){
+    public FlywheelSubsystem(Integer canID, Double kp, Double ki, Double kd, Double kf, Double izone, Boolean isInverted, Double conversionFactor, Integer CANifierID, Double ks, Double kv, CANifier canifier){
         mFlywheelMotor = new CANSparkMax(canID, MotorType.kBrushless);
         mKp = kp;
         mKi = ki;
@@ -66,7 +66,7 @@ public class FlywheelSubsystem implements Subsystem {
         mConversionFactor = conversionFactor;
         mWantedSpeed = 0.0;
         mFlywheelStates = FlywheelStates.kIdle;
-        mCANifierFlywheelCANifiermFlywheelCANifier = new CANifier(CANifierID);
+        mCanifier = canifier;
 
         reloadGames();
     }
@@ -133,7 +133,7 @@ public class FlywheelSubsystem implements Subsystem {
         }
         mWantedSpeed = speed;
         mFlywheelStates = FlywheelStates.kPositionControl;
-        mFlywheelMotor.setVoltage(mFeedforwardController.calculate(rpmToCounts(mWantedSpeed)) + mFlywheelPIDController.calculate(mCANifierFlywheelCANifiermFlywheelCANifier.getQuadratureVelocity(), rpmToCounts(mWantedSpeed)));
+        mFlywheelMotor.setVoltage(mFeedforwardController.calculate(rpmToCounts(mWantedSpeed)) + mFlywheelPIDController.calculate(mCanifier.getQuadratureVelocity(), rpmToCounts(mWantedSpeed)));
     }
 
     public Double getWantedRPM(){
