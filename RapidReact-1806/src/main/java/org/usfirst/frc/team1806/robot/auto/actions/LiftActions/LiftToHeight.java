@@ -20,16 +20,14 @@ public class LiftToHeight implements Action {
 
     @Override
     public void update() {
-
     }
 
     @Override
     public void done() {
-
     }
 
     @Override
     public void start() {
-        mLiftSubsystem.goToSetpoint(wantedHeight);
+        mLiftSubsystem.goToSetpointInches(wantedHeight);
     }
 }
