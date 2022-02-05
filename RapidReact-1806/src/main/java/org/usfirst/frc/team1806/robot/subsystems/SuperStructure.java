@@ -40,7 +40,8 @@ public class SuperStructure implements Subsystem {
                     mBackIntake.stop();
                     mDualRollerSubsystem.startRoller();
                     mConveyor.loadConveyor();
-                    //TODO: make flywheels pull cargo in
+                    mUpFlywheel.setReverseSpeed(1500.0);
+                    mDownFlywheel.setReverseSpeed(1500.0);
                     return;
                 case IntakingBack:
                     mElevator.goToSetpointInches(0);
@@ -48,7 +49,8 @@ public class SuperStructure implements Subsystem {
                     mBackIntake.wantIntaking();
                     mDualRollerSubsystem.startRoller();
                     mConveyor.loadConveyor();
-                    //TODO: make flywheels pull cargo in
+                    mUpFlywheel.setReverseSpeed(1500.0);
+                    mDownFlywheel.setReverseSpeed(1500.0);
                     return;
                 case Launching:
                     switch(mLaunchingStates){

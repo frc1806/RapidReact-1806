@@ -1,23 +1,71 @@
 package org.usfirst.frc.team1806.robot.subsystems;
 
-import com.revrobotics.CANEncoder;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkMaxAlternateEncoder;
-import com.revrobotics.SparkMaxPIDController;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import org.usfirst.frc.team1806.robot.loop.Loop;
 import org.usfirst.frc.team1806.robot.loop.Looper;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
+
 
 public class LunchboxAngler implements Subsystem {
 
-    private CANSparkMax mLaunchMotor;
-    private SparkMaxAlternateEncoder mEncoder;
-    private SparkMaxPIDController mPIDController;
+    private TalonSRX mLaunchMotor;
+    private DutyCycleEncoder mEncoder;
+    private PIDController mPIDController;
     private static LunchboxAngler LUNCH_BOX_ANGLER;
+    private Double mKp, mKi, mKd, mWantedSetPoint;
+    private enum LunchboxStates{
+        Idle,
+        GoingToPosition,
+        AtPosition
+    }
+    private LunchboxStates mLunchboxStates;
 
-    public LunchboxAngler(CANSparkMax LaunchMotor){
+    private Loop mLoop = new Loop(){
+
+        @Override
+        public void onStart(double timestamp) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void onLoop(double timestamp) {
+            switch(mLunchboxStates){
+                case Idle:
+                    mLaunchMotor.set(ControlMode.PercentOutput, 0.0);
+                    return;
+                case GoingToPosition:
+                    mLaunchMotor.set(ControlMode.PercentOutput, mPIDController.calculate(mEncoder.getDistance(), mWantedSetPoint));
+                    return;
+                case AtPosition:
+                    return;
+            }
+            
+        }
+
+        @Override
+        public void onStop(double timestamp) {
+            // TODO Auto-generated method stub
+            
+        }
+        
+    };
+
+    public LunchboxAngler(TalonSRX LaunchMotor, Double kp, Double ki, Double kd){
+        mEncoder.setConnectedFrequencyThreshold(975);
+        mEncoder.setDutyCycleRange(1.0/1025.0, 1024.0/1025.0);
+        mEncoder.setDistancePerRotation(360);
+
+        mKp = kp;
+        mKi = ki;
+        mKd = kd;
         mLaunchMotor = LaunchMotor;
-        mPIDController = mLaunchMotor.getPIDController();
-        mPIDController.setFeedbackDevice(mEncoder);
+        mPIDController.setPID(mKp, mKi, mKd);;
+        
    }
 
     @Override
@@ -34,7 +82,7 @@ public class LunchboxAngler implements Subsystem {
 
     @Override
     public void stop() {
-        mLaunchMotor.set(0.0);
+        mLaunchMotor.set(ControlMode.PercentOutput, 0.0);
         
     }
 
