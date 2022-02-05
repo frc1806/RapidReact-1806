@@ -9,11 +9,14 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 public class Conveyor implements Subsystem {
 
+    
+
     private enum ConveyorStates{
         kIdle,
         kConveying,
         kReverse,
         kLoading,
+        kLaunch,
         kPrepareForLaunch,
     };
 
@@ -53,8 +56,8 @@ public class Conveyor implements Subsystem {
     };
     private TalonSRX mTalonMotor;
 
-    public Conveyor(Integer CANifierID, CANifier canifier){
-        canifier = new CANifier(CANifierID);
+    public Conveyor(CANifier canifier){
+        canifier = canifier;
         mConveyorStates = ConveyorStates.kIdle;
     }
 
@@ -111,6 +114,10 @@ public class Conveyor implements Subsystem {
 
     public void prepareForLaunch(){
         mConveyorStates = ConveyorStates.kPrepareForLaunch;
+    }
+
+    public void launch(){
+        mConveyorStates = ConveyorStates.kLaunch;
     }
     
 }

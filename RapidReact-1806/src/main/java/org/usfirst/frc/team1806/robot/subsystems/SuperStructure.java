@@ -4,8 +4,8 @@ import com.ctre.phoenix.CANifier;
 
 import org.usfirst.frc.team1806.robot.Constants;
 import org.usfirst.frc.team1806.robot.RobotMap;
-import org.usfirst.frc.team1806.robot.game.shot;
 import org.usfirst.frc.team1806.robot.loop.Loop;
+import org.usfirst.frc.team1806.robot.game.Shot;
 import org.usfirst.frc.team1806.robot.loop.Looper;
 
 public class SuperStructure implements Subsystem {
@@ -13,11 +13,15 @@ public class SuperStructure implements Subsystem {
     public enum SuperStructureStates{
         IntakingFront,
         IntakingBack,
-        PrepareLaunch,
         Launching,
         Idle,
         Climbing,
     };
+
+    public enum LaunchingStates{
+        kPreparingLaunch,
+        kLaunching
+    }
 
     private Loop mLoop = new Loop(){
 
@@ -31,17 +35,72 @@ public class SuperStructure implements Subsystem {
         public void onLoop(double timestamp) {
             switch(mSuperStructureStates){
                 case IntakingFront:
+                    mElevator.goToSetpointInches(0);
+                    mFrontIntake.wantIntaking();
+                    mBackIntake.stop();
+                    mDualRollerSubsystem.startRoller();
+                    mConveyor.loadConveyor();
+                    //TODO: make flywheels pull cargo in
                     return;
                 case IntakingBack:
-                    return;
-                case PrepareLaunch:
+                    mElevator.goToSetpointInches(0);
+                    mFrontIntake.stop();
+                    mBackIntake.wantIntaking();
+                    mDualRollerSubsystem.startRoller();
+                    mConveyor.loadConveyor();
+                    //TODO: make flywheels pull cargo in
                     return;
                 case Launching:
+                    switch(mLaunchingStates){
+                        default:
+                        case kPreparingLaunch:
+                            mElevator.goToSetpointInches(mWantedShot.getLiftHeight());
+                            mLunchboxAngler.goToAngle(mWantedShot.getLauncherAngle());
+                            mUpFlywheel.setWantedSpeed(mWantedShot.getTopSpeed());
+                            mDownFlywheel.setWantedSpeed(mWantedShot.getBottomSpeed());
+                            mFrontIntake.stop();
+                            mBackIntake.stop();
+                            mDualRollerSubsystem.stop();
+                            mConveyor.prepareForLaunch();;
+                            if(mWantConfirmShot) //TODO: And a bunch of other logic
+                            {
+                                mLaunchingStates = LaunchingStates.kLaunching;
+                            }
+                            break;
+                        case kLaunching:
+                            mElevator.goToSetpointInches(mWantedShot.getLiftHeight());
+                            mUpFlywheel.setWantedSpeed(mWantedShot.getTopSpeed());
+                            mLunchboxAngler.goToAngle(mWantedShot.getLauncherAngle());
+                            mDownFlywheel.setWantedSpeed(mWantedShot.getBottomSpeed());
+                            mFrontIntake.stop();
+                            mBackIntake.stop();
+                            mConveyor.launch();
+                            mDualRollerSubsystem.stop();
+                            if(!mWantConfirmShot) //TODO: And a bunch of other logic
+                            {
+                                mLaunchingStates = LaunchingStates.kPreparingLaunch;
+                            }
+                            break;
+                    }
                     return;
                 default:
                 case Idle:
+                    mUpFlywheel.stop();
+                    mDownFlywheel.stop();
+                    mElevator.stop();
+                    mFrontIntake.stop();
+                    mBackIntake.stop();
+                    mDualRollerSubsystem.stop();
+                    mConveyor.stop();
                     return;
                 case Climbing:
+                    mUpFlywheel.stop();
+                    mDownFlywheel.stop();
+                    mElevator.stop();
+                    mFrontIntake.stop();
+                    mBackIntake.stop();
+                    mDualRollerSubsystem.stop();
+                    mConveyor.stop();
                     return;
             }
             
@@ -56,21 +115,30 @@ public class SuperStructure implements Subsystem {
     };
 
     private static SuperStructure SUPER_STRUCTURE = new SuperStructure();
+
+
     private IntakeSubsystem mFrontIntake;
     private IntakeSubsystem mBackIntake;
     private FlywheelSubsystem mUpFlywheel;
     private FlywheelSubsystem mDownFlywheel;
     private ElevatorSubsystem mElevator;
+    private DualRollerSubsystem mDualRollerSubsystem = DualRollerSubsystem.getInstance();
+    private Conveyor mConveyor;
     private LunchboxAngler mLunchboxAngler;
     private SuperStructureStates mSuperStructureStates;
+    private LaunchingStates mLaunchingStates;
+    private Boolean mWantConfirmShot;
     private CANifier mCanifierUp = new CANifier(0);
     private CANifier mCanitiferDown = new CANifier(1);
+    private Shot mWantedShot; //make sure to null check this
 
     private SuperStructure(){
+
         mFrontIntake = new IntakeSubsystem(RobotMap.frontIntake, RobotMap.frontIntakeExtend, RobotMap.backIntakeExtend);
         mBackIntake = new IntakeSubsystem(RobotMap.rearIntake, RobotMap.backIntakeExtend, RobotMap.backIntakeRetract);
         mUpFlywheel = new FlywheelSubsystem(RobotMap.upFlywheel, Constants.kTopFlywheelKp, Constants.kTopFlywheelKi, Constants.kTopFlywheelKd, Constants.kTopFlywheelKf, Constants.kTopFlywheelIzone, false, Constants.kTopFlywheelConversionFactor, RobotMap.upFlywheel, Constants.kTopFlywheelKs, Constants.kTopFlywheelKv, mCanifierUp);
         mDownFlywheel =  new FlywheelSubsystem(RobotMap.downFlywheel, Constants.kTopFlywheelKp, Constants.kTopFlywheelKi, Constants.kTopFlywheelKd, Constants.kTopFlywheelKf, Constants.kTopFlywheelIzone, false, Constants.kTopFlywheelConversionFactor, RobotMap.upFlywheel, Constants.kTopFlywheelKs, Constants.kTopFlywheelKv, mCanitiferDown);
+        mConveyor = new Conveyor(mCanifierUp);
     }
 
     @Override
@@ -90,6 +158,7 @@ public class SuperStructure implements Subsystem {
         mDownFlywheel.outputToSmartDashboard();
         mUpFlywheel.outputToSmartDashboard();
         mElevator.outputToSmartDashboard();
+        mConveyor.outputToSmartDashboard();
         
     }
 
@@ -101,6 +170,7 @@ public class SuperStructure implements Subsystem {
         mUpFlywheel.stop();
         mDownFlywheel.stop();
         mElevator.stop();
+        mConveyor.stop();
         
     }
 
@@ -121,7 +191,7 @@ public class SuperStructure implements Subsystem {
         mDownFlywheel.registerEnabledLoops(enabledLooper);
         mUpFlywheel.registerEnabledLoops(enabledLooper);
         mElevator.registerEnabledLoops(enabledLooper);
-        
+        mConveyor.registerEnabledLoops(enabledLooper);
     }
 
     @Override
@@ -131,6 +201,7 @@ public class SuperStructure implements Subsystem {
         mDownFlywheel.setDebug(_debug);
         mUpFlywheel.setDebug(_debug);
         mElevator.setDebug(_debug);
+        mConveyor.setDebug(_debug);
         
     }
 
@@ -141,6 +212,7 @@ public class SuperStructure implements Subsystem {
         mDownFlywheel.retractAll();
         mUpFlywheel.retractAll();
         mElevator.retractAll();
+        mConveyor.retractAll();
         
     }
 
@@ -154,13 +226,17 @@ public class SuperStructure implements Subsystem {
         mBackIntake.wantIntaking();
         mElevator.goToSetpointInches(0.0);
     }
-
-    public void wantPrepareShot(shot wantedShot){
-        mSuperStructureStates = SuperStructureStates.PrepareLaunch;
+    public void wantPrepareShot(Shot wantedShot){
+        if(mSuperStructureStates != SuperStructureStates.Launching)
+        {
+            mLaunchingStates = LaunchingStates.kPreparingLaunch;
+        }
+        mSuperStructureStates = SuperStructureStates.Launching;
+        mWantedShot = wantedShot;
     }
 
     public void wantConfirmLaunch(Boolean shouldShoot){
-        // todo 
+        mWantConfirmShot = shouldShoot;
     }
 
     public static SuperStructure getInstance(){
