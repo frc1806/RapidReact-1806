@@ -184,6 +184,10 @@ public class XboxController extends Joystick {
 		}
 	}
 
+	public XboxControllerConfigValues getConfigValues(){
+		return mConfigValues;
+	}
+
 	public void configValueDisplay()
 	{
 		

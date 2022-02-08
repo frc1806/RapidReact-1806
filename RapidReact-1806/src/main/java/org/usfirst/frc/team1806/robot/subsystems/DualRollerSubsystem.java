@@ -18,6 +18,7 @@ public class DualRollerSubsystem implements Subsystem{
         rollerOne = new TalonSRX(RobotMap.roller1);
         rollerTwo = new TalonSRX(RobotMap.roller2);
         rollerTwo.setInverted(true);
+    }
 
 
 

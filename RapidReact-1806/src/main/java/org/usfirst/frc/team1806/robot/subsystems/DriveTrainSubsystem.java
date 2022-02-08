@@ -577,8 +577,8 @@ public class DriveTrainSubsystem implements Subsystem {
 			mDriveStates = DriveStates.DRIVING;
 			setNeutralMode(false);
 		}
-		leaderLeft.setVoltage(signal.getLeft());
-		leaderRight.setVoltage(signal.getRight());
+		leaderLeft.setVoltage(signal.getLeft() * 12.0);
+		leaderRight.setVoltage(signal.getRight() * 12.0);
 	}
 
 	/**

@@ -136,13 +136,10 @@ public class SuperStructure implements Subsystem {
     private Conveyor mConveyor;
     private LunchboxAngler mLunchboxAngler;
     private SuperStructureStates mSuperStructureStates;
-<<<<<<< HEAD
-    private CANifier mCanifier = new CANifier(0);
     private final I2C.Port i2cPort1 = I2C.Port.kOnboard;
     private final I2C.Port i2cPort2 = I2C.Port.kMXP;
     ColorSensorV3 m_colorSensorFront;
     ColorSensorV3 m_colorSensorRear;
-=======
     private LaunchingStates mLaunchingStates;
     private Boolean mWantConfirmShot;
     private CANifier mCanifierUp = new CANifier(0);
@@ -150,19 +147,12 @@ public class SuperStructure implements Subsystem {
     private Shot mWantedShot; //make sure to null check this
 
     private SuperStructure(){
->>>>>>> 0e1cfb9557a1cd25fac893bf388785409df9f566
 
         mFrontIntake = new IntakeSubsystem(RobotMap.frontIntake, RobotMap.frontIntakeExtend, RobotMap.backIntakeExtend);
         mBackIntake = new IntakeSubsystem(RobotMap.rearIntake, RobotMap.backIntakeExtend, RobotMap.backIntakeRetract);
-<<<<<<< HEAD
-        mUpFlywheel = new FlywheelSubsystem(RobotMap.upFlywheel, Constants.kTopFlywheelKp, Constants.kTopFlywheelKi, Constants.kTopFlywheelKd, Constants.kTopFlywheelKf, Constants.kTopFlywheelIzone, false, Constants.kTopFlywheelConversionFactor, RobotMap.upFlywheel, Constants.kTopFlywheelKs, Constants.kTopFlywheelKv, mCanifier);
-        m_colorSensorFront = new ColorSensorV3(i2cPort1);
-        m_colorSensorFront = new ColorSensorV3(i2cPort2);
-=======
         mUpFlywheel = new FlywheelSubsystem(RobotMap.upFlywheel, Constants.kTopFlywheelKp, Constants.kTopFlywheelKi, Constants.kTopFlywheelKd, Constants.kTopFlywheelKf, Constants.kTopFlywheelIzone, false, Constants.kTopFlywheelConversionFactor, RobotMap.upFlywheel, Constants.kTopFlywheelKs, Constants.kTopFlywheelKv, mCanifierUp);
         mDownFlywheel =  new FlywheelSubsystem(RobotMap.downFlywheel, Constants.kTopFlywheelKp, Constants.kTopFlywheelKi, Constants.kTopFlywheelKd, Constants.kTopFlywheelKf, Constants.kTopFlywheelIzone, false, Constants.kTopFlywheelConversionFactor, RobotMap.upFlywheel, Constants.kTopFlywheelKs, Constants.kTopFlywheelKv, mCanitiferDown);
         mConveyor = new Conveyor(mCanifierUp);
->>>>>>> 0e1cfb9557a1cd25fac893bf388785409df9f566
     }
 
     @Override

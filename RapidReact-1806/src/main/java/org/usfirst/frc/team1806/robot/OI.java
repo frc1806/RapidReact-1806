@@ -7,11 +7,18 @@
 
 package org.usfirst.frc.team1806.robot;
 
+import java.util.function.DoubleSupplier;
+import java.util.function.Function;
+
+import javax.lang.model.util.ElementScanner6;
+
 import org.usfirst.frc.team1806.robot.subsystems.*;
+import org.usfirst.frc.team1806.robot.subsystems.SuperStructure.SuperStructureStates;
 import org.usfirst.frc.team1806.robot.util.CheesyDriveHelper;
 import org.usfirst.frc.team1806.robot.util.Latch;
 import org.usfirst.frc.team1806.robot.util.XboxController;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 /**
@@ -19,47 +26,256 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
  * interface to the commands and command groups that allow control of the robot.
  */
 
+public class OI {
+	private SendableChooser<DriverConrollerConfigs> controllerConfigChooser;
 
+	protected static XboxController driverController = new XboxController(0, "Driver",
+			Constants.kDriverControllerDefaultConfig);
+	protected static XboxController operatorController = new XboxController(1, "Operator",
+			Constants.kOperatorControllerDefaultConfig);
+	protected static XboxController debugController = new XboxController(2, "Debug", null);
 
+	private enum DriverConrollerConfigs{
+		 kRetroGranTurismo(
+			 new DoubleSupplier(){
 
- public class OI {
-	 private SendableChooser controllerConfigChooser;
+			@Override
+			public double getAsDouble() {
+				//throttle
+				return driverController.getConfigValues().getRightYMinimumOutput();
+			} }, new DoubleSupplier(){
 
-	 private enum DriverConrollerConfigs{
-		 kRetroGranTurismo,
-		 kCallOfDuty,
-		 kForza
+			@Override
+			public double getAsDouble() {
+				//wheel
+				return driverController.getConfigValues().getLeftXMinimumOutput();
+			} }),
+		 kCallOfDuty(
+			new DoubleSupplier(){
+
+		   @Override
+		   public double getAsDouble() {
+			   //throttle
+			   return driverController.getConfigValues().getLeftYMinimumOutput();
+		   } }, new DoubleSupplier(){
+
+		   @Override
+		   public double getAsDouble() {
+			   //wheel
+			   return driverController.getConfigValues().getRightXMinimumOutput();
+		   } }),
+		 kForza(
+			new DoubleSupplier(){
+
+		   @Override
+		   public double getAsDouble() {
+			   //throttle
+			   return driverController.getConfigValues().getTriggerMinimumOutput();
+		   } }, new DoubleSupplier(){
+
+		   @Override
+		   public double getAsDouble() {
+			   //wheel
+			   return driverController.getConfigValues().getLeftXMinimumOutput();
+		   } });
+
+		 DoubleSupplier throttleDeadBandGetter, wheelDeadBandGetter;
+		 private DriverConrollerConfigs(DoubleSupplier throttleDeadbandGetter, DoubleSupplier wheelDeadbandGetter)
+		 {
+			this.throttleDeadBandGetter = throttleDeadbandGetter;
+			this.wheelDeadBandGetter = wheelDeadbandGetter;
+		 }
+
+		 public double getThrottleDeadBand(){
+			 return throttleDeadBandGetter.getAsDouble();
+		 }
+
+		 public double getWheelDeadBand(){
+			 return wheelDeadBandGetter.getAsDouble();
+		 }
+
+		 public CheesyDriveHelper getCheesyDriveHelper(){
+			 return new CheesyDriveHelper(getWheelDeadBand(), getThrottleDeadBand());
+		 }
 	 }
-	//snag some subsystem instances
+
+	// snag some subsystem instances
 	private DriveTrainSubsystem mDriveTrainSubsystem = DriveTrainSubsystem.getInstance();
-	private ElevatorSubsystem mElevatorSubsystem = ElevatorSubsystem.getInstance();
+	private SuperStructure mSuperStructure = SuperStructure.getInstance();
 
-	//initialise controllers & ish
-	private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
-	private XboxController driverController = new XboxController(0, "Driver", Constants.kDriverControllerDefaultConfig);
-	private XboxController operatorController = new XboxController(1, "Operator", Constants.kOperatorControllerDefaultConfig);
-	private XboxController debugController = new XboxController(2, "Debug", null);
+	// initialise controllers & ish
+	private CheesyDriveHelper mCheesyDriveHelper;
 
-	public OI(){
+	private DriverConrollerConfigs lastDriverControllerConfig;
+
+	// Forza Config member vars
+	double leftTriggerTimestamp = Double.MAX_VALUE;
+	double rightTriggerTimestamp = Double.MAX_VALUE;
+
+	public OI() {
 		controllerConfigChooser = new SendableChooser<DriverConrollerConfigs>();
 		controllerConfigChooser.addOption("Retro Gran Turismo", DriverConrollerConfigs.kRetroGranTurismo);
+		controllerConfigChooser.addOption("Call Of Duty", DriverConrollerConfigs.kCallOfDuty);
+		controllerConfigChooser.addOption("Forza", DriverConrollerConfigs.kForza);
+
+		mCheesyDriveHelper = DriverConrollerConfigs.kRetroGranTurismo.getCheesyDriveHelper();
+		lastDriverControllerConfig = DriverConrollerConfigs.kRetroGranTurismo;
 	}
 
-	//start up button trackers
+	// start up button trackers
 	private Latch autoInTeleOp = new Latch();
 	private Boolean wasShift = false;
 	private Boolean wasParkingBrake = false;
-	public void runCommands(){
+
+	public void runCommands() {
+		double timestamp = Timer.getFPGATimestamp();
+
+		// handle config switching
+		DriverConrollerConfigs currentControllerConfig = controllerConfigChooser.getSelected();
+		if (currentControllerConfig != lastDriverControllerConfig) {
+			mCheesyDriveHelper = controllerConfigChooser.getSelected().getCheesyDriveHelper();
+		}
+		lastDriverControllerConfig = currentControllerConfig;
+
+		// driver controls based on current config
+		switch (currentControllerConfig) {
+			case kCallOfDuty:{
+				// buttons
+				boolean quickTurn = driverController.getPOVLeft(); // Will Map to paddle
+				boolean visionLineup = driverController.getPOVRight(); // Will map to paddle
+				boolean shiftHighGear = driverController.getButtonRB();
+				boolean shiftLowGear = driverController.getButtonLB();
+
+				boolean intakeFront = driverController.getRightTriggerAsDigital();
+				boolean intakeBack = driverController.getLeftTriggerAsDigital();
+				boolean feedThroughFromFront = driverController.getPOVUp();
+				boolean feedTrhoughFromBack = driverController.getPOVDown();
+				// face buttons are all unused.
+
+				// Superstructure stuff
+				if (intakeFront) {
+					mSuperStructure.wantIntakeFront();
+				} else if (intakeBack) {
+					mSuperStructure.wantIntakeBack();
+				}
+
+				// Handle shfting
+				if (shiftHighGear) {
+					mDriveTrainSubsystem.setHighGear(true);
+				} else if (shiftLowGear) {
+					mDriveTrainSubsystem.setHighGear(false);
+				}
+				// decide throttle with triggers
+
+				double throttle = driverController.getLeftJoyY();
+
+				double turn = visionLineup ? driverController.getRightJoyX() : 0.0; // TODO: Add Vision Lineup code
+
+				mDriveTrainSubsystem.setOpenLoop(
+						mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, mDriveTrainSubsystem.isHighGear()));
+			}
+				break;
+			case kForza: {
+				// Tunable things
+				double MIN_SPEED_TO_CONSIDER_MOVING = 1.0; // inches per second
+
+				// buttons
+				boolean quickTurn = driverController.getButtonA();
+				boolean visionLineup = driverController.getButtonX();
+				boolean shiftHighGear = driverController.getButtonY();
+				boolean shiftLowGear = driverController.getButtonB();
+
+				boolean intakeFront = driverController.getButtonRB();
+				boolean intakeBack = driverController.getButtonLB();
+				boolean feedThroughFromFront = driverController.getPOVUp();
+				boolean feedTrhoughFromBack = driverController.getPOVDown();
+				// POV Left and right are still unused, as is the right stick, and forward/back
+				// buttons.
+
+				// Superstructure stuff
+				if (intakeFront) {
+					mSuperStructure.wantIntakeFront();
+				} else if (intakeBack) {
+					mSuperStructure.wantIntakeBack();
+				}
+
+				// Handle shfting
+				if (shiftHighGear) {
+					mDriveTrainSubsystem.setHighGear(true);
+				} else if (shiftLowGear) {
+					mDriveTrainSubsystem.setHighGear(false);
+				}
+				// decide throttle with triggers
+
+				// know which trigger was pressed first if both
+				leftTriggerTimestamp = driverController.getLeftTrigger() > 0 ? timestamp : Double.MAX_VALUE;
+				rightTriggerTimestamp = driverController.getRightTrigger() > 0 ? timestamp : Double.MAX_VALUE;
+
+				double throttle = 0.0;
+				if (leftTriggerTimestamp < rightTriggerTimestamp) {
+					throttle = -driverController.getLeftTrigger() * (1.0 - driverController.getRightTrigger());
+				} else if (rightTriggerTimestamp <= leftTriggerTimestamp) {
+					throttle = driverController.getRightTrigger() * (1.0 - driverController.getLeftTrigger());
+				}
+
+				double turn = visionLineup ? driverController.getLeftJoyX() : 0.0; // TODO: Add Vision Lineup code
+
+				mDriveTrainSubsystem.setOpenLoop(
+						mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, mDriveTrainSubsystem.isHighGear()));
+			}
+				break;
+			default:
+			case kRetroGranTurismo: {
+				// buttons
+				boolean quickTurn = driverController.getPOVLeft(); // Will Map to paddle
+				boolean visionLineup = driverController.getPOVRight(); // Will map to paddle
+				boolean shiftHighGear = driverController.getButtonRB();
+				boolean shiftLowGear = driverController.getButtonLB();
+
+				boolean intakeFront = driverController.getRightTriggerAsDigital();
+				boolean intakeBack = driverController.getLeftTriggerAsDigital();
+				boolean feedThroughFromFront = driverController.getPOVUp();
+				boolean feedTrhoughFromBack = driverController.getPOVDown();
+				// face buttons are all unused.
+
+				// Superstructure stuff
+				if (intakeFront) {
+					mSuperStructure.wantIntakeFront();
+				} else if (intakeBack) {
+					mSuperStructure.wantIntakeBack();
+				}
+
+				// Handle shfting
+				if (shiftHighGear) {
+					mDriveTrainSubsystem.setHighGear(true);
+				} else if (shiftLowGear) {
+					mDriveTrainSubsystem.setHighGear(false);
+				}
+				// decide throttle with triggers
+
+				double throttle = driverController.getRightJoyY();
+
+				double turn = visionLineup ? driverController.getLeftJoyX() : 0.0; // TODO: Add Vision Lineup code
+
+				mDriveTrainSubsystem.setOpenLoop(
+						mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, mDriveTrainSubsystem.isHighGear()));
+			}
+				break;
+
+		}
+		// This will be the Forza Config
+		if (true) // TODO: Check for Forza Config
+		{
+
+		}
+
 		return;
 	}
 
-
-	
-
-
-	public void updateConfigs(){
+	public void updateConfigs() {
 		driverController.updateConfig();
 		operatorController.updateConfig();
 		debugController.updateConfig();
+		mCheesyDriveHelper = controllerConfigChooser.getSelected().getCheesyDriveHelper();
 	}
 }

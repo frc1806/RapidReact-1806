@@ -9,8 +9,8 @@ package org.usfirst.frc.team1806.robot.util;
  */
 public class CheesyDriveHelper {
 
-    private static final double kThrottleDeadband = 0.05; //.15
-    private static final double kWheelDeadband = 0.10;
+    private static double kThrottleDeadband; //.15
+    private static double kWheelDeadband;
 
     // These factor determine how fast the wheel traverses the "non linear" sine curve.
     private static final double kHighWheelNonLinearity = 0.45;
@@ -36,6 +36,12 @@ public class CheesyDriveHelper {
     private double mOldWheel = 0.0;
     private double mQuickStopAccumlator = 0.0;
     private double mNegInertiaAccumlator = 0.0;
+
+    public CheesyDriveHelper(double wheelDeadband, double throttleDeadband)
+    {
+        kThrottleDeadband = throttleDeadband;
+        kWheelDeadband = wheelDeadband;
+    }
 
     public DriveSignal cheesyDrive(double throttle, double wheel, boolean isQuickTurn,
             boolean isHighGear) {
