@@ -12,12 +12,14 @@ public class DualRollerSubsystem implements Subsystem{
 
     private TalonSRX rollerOne;
     private TalonSRX rollerTwo;
-      
+    
+    
     public DualRollerSubsystem(){
         rollerOne = new TalonSRX(RobotMap.rollerOne);
         rollerTwo = new TalonSRX(RobotMap.rollerTwo);
         rollerTwo.setInverted(true);
-    }
+
+
 
     public void startRoller() {
 
