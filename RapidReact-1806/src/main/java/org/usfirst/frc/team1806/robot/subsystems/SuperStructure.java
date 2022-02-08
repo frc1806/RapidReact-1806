@@ -32,6 +32,11 @@ public class SuperStructure implements Subsystem {
         kLaunching
     }
 
+    public enum IdleStates {
+        GoingHome,
+        AtHome
+    }
+
     private Loop mLoop = new Loop() {
 
         @Override
@@ -97,13 +102,28 @@ public class SuperStructure implements Subsystem {
                     return;
                 default:
                 case Idle:
-                    mUpFlywheel.stop();
-                    mDownFlywheel.stop();
-                    mElevator.stop();
-                    mFrontIntake.stop();
-                    mBackIntake.stop();
-                    mDualRollerSubsystem.stop();
-                    mConveyor.stop();
+                    switch(mIdleStates){
+                        default:
+                        case GoingHome:
+                            mUpFlywheel.stop();
+                            mDownFlywheel.stop();
+                            mElevator.goToSetpointInches(0.0);
+                            mFrontIntake.stop();
+                            mBackIntake.stop();
+                            mDualRollerSubsystem.stop();
+                            mConveyor.stop();
+                            mIdleStates = IdleStates.AtHome;
+                            //todo add angle adjuster and logic
+                        case AtHome:
+                            mUpFlywheel.stop();
+                            mDownFlywheel.stop();
+                            mElevator.stop();
+                            mFrontIntake.stop();
+                            mBackIntake.stop();
+                            mDualRollerSubsystem.stop();
+                            mConveyor.stop();
+                            break;
+                    }
                     return;
                 case Climbing:
                     mUpFlywheel.stop();
@@ -164,6 +184,7 @@ public class SuperStructure implements Subsystem {
     private CANifier mCanifierUp = new CANifier(0);
     private CANifier mCanitiferDown = new CANifier(1);
     private Shot mWantedShot; // make sure to null check this
+    private IdleStates mIdleStates;
 
     private SuperStructure() {
 
@@ -204,12 +225,6 @@ public class SuperStructure implements Subsystem {
     @Override
     public void stop() {
         mSuperStructureStates = SuperStructureStates.Idle;
-        mFrontIntake.stop();
-        mBackIntake.stop();
-        mUpFlywheel.stop();
-        mDownFlywheel.stop();
-        mElevator.stop();
-        mConveyor.stop();
 
     }
 
