@@ -79,6 +79,16 @@ public class DualRollerSubsystem implements Subsystem{
         
     }
 
+    public void feedForward(){
+        rollerOne.set(ControlMode.PercentOutput, -1);
+        rollerTwo.set(ControlMode.PercentOutput, 1);
+    }
+
+    public void feedBackwards(){
+        rollerOne.set(ControlMode.PercentOutput, 1);
+        rollerTwo.set(ControlMode.PercentOutput, -1);
+    }
+
     public static DualRollerSubsystem getInstance(){
         return DUAL_ROLLER_SUBSYSTEM;
     }

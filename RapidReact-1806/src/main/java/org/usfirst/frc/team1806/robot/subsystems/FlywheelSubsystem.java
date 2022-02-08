@@ -164,9 +164,6 @@ public class FlywheelSubsystem implements Subsystem {
     }
 
     private Boolean isSpeedInRange(){
-        if (getCurrentRPM() >= mWantedSpeed + withinLeniency && getCurrentRPM() >= mWantedSpeed - withinLeniency){
-            return false;
-        }
-        return true;
+        return !(getCurrentRPM() >= mWantedSpeed + withinLeniency && getCurrentRPM() >= mWantedSpeed - withinLeniency);
     }
 }
