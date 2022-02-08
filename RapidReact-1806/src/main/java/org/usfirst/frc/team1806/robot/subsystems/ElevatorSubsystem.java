@@ -305,4 +305,11 @@ public class ElevatorSubsystem implements Subsystem {
 	public void retractAll() {
 		goToSetpointInches(Constants.kMaxElevatorHeightToNeedToExtendIntake + Constants.kSafeElevatorHeightOffsetToNotHitIntake);
 	}
+
+	public Boolean isLiftInRange(){
+		if (getHeightInInches() >= 0.5){
+			return false;
+		}
+		return true;
+	}
 }

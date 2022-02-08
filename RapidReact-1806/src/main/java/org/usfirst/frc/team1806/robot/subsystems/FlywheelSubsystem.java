@@ -19,6 +19,7 @@ public class FlywheelSubsystem implements Subsystem {
     private PIDController mFlywheelPIDController;
     private SimpleMotorFeedforward mFeedforwardController;
     private CANifier mCanifier;
+    private Integer withinLeniency = 50;
 
 
     private Loop mLoop = new Loop(){
@@ -128,10 +129,20 @@ public class FlywheelSubsystem implements Subsystem {
 
     public void setWantedSpeed(Double speed){
         if(speed == 0.0){
-            stop();
+            mFlywheelStates = FlywheelStates.kIdle;
             return;
         }
         mWantedSpeed = speed;
+        mFlywheelStates = FlywheelStates.kPositionControl;
+        mFlywheelMotor.setVoltage(mFeedforwardController.calculate(rpmToCounts(mWantedSpeed)) + mFlywheelPIDController.calculate(mCanifier.getQuadratureVelocity(), rpmToCounts(mWantedSpeed)));
+    }
+
+    public void setReverseSpeed(Double speed){
+        if(speed == 0.0){
+            mFlywheelStates = FlywheelStates.kIdle;
+            return;
+        }
+        mWantedSpeed = -speed;
         mFlywheelStates = FlywheelStates.kPositionControl;
         mFlywheelMotor.setVoltage(mFeedforwardController.calculate(rpmToCounts(mWantedSpeed)) + mFlywheelPIDController.calculate(mCanifier.getQuadratureVelocity(), rpmToCounts(mWantedSpeed)));
     }
@@ -150,5 +161,12 @@ public class FlywheelSubsystem implements Subsystem {
 
     private Double countsToRPM(Double counts){
         return counts / Constants.kRPMToCounts;
+    }
+
+    private Boolean isSpeedInRange(){
+        if (getCurrentRPM() >= mWantedSpeed + withinLeniency && getCurrentRPM() >= mWantedSpeed - withinLeniency){
+            return false;
+        }
+        return true;
     }
 }

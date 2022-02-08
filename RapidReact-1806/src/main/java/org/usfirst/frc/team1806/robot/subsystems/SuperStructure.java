@@ -8,7 +8,8 @@ import edu.wpi.first.wpilibj.util.Color;
 
 import org.usfirst.frc.team1806.robot.Constants;
 import org.usfirst.frc.team1806.robot.RobotMap;
-import org.usfirst.frc.team1806.robot.game.shot;
+import org.usfirst.frc.team1806.robot.loop.Loop;
+import org.usfirst.frc.team1806.robot.game.Shot;
 import org.usfirst.frc.team1806.robot.loop.Looper;
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.ColorMatchResult;
@@ -20,41 +21,168 @@ public class SuperStructure implements Subsystem {
     public enum SuperStructureStates{
         IntakingFront,
         IntakingBack,
-        PrepareLaunch,
         Launching,
         Idle,
         Climbing,
     };
+
+    public enum LaunchingStates{
+        kPreparingLaunch,
+        kLaunching
+    }
+
+    private Loop mLoop = new Loop(){
+
+        @Override
+        public void onStart(double timestamp) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void onLoop(double timestamp) {
+            switch(mSuperStructureStates){
+                case IntakingFront:
+                    mElevator.goToSetpointInches(0);
+                    mFrontIntake.wantIntaking();
+                    mBackIntake.stop();
+                    mDualRollerSubsystem.startRoller();
+                    mConveyor.loadConveyor();
+                    mUpFlywheel.setReverseSpeed(1500.0);
+                    mDownFlywheel.setReverseSpeed(1500.0);
+                    return;
+                case IntakingBack:
+                    mElevator.goToSetpointInches(0);
+                    mFrontIntake.stop();
+                    mBackIntake.wantIntaking();
+                    mDualRollerSubsystem.startRoller();
+                    mConveyor.loadConveyor();
+                    mUpFlywheel.setReverseSpeed(1500.0);
+                    mDownFlywheel.setReverseSpeed(1500.0);
+                    return;
+                case Launching:
+                    switch(mLaunchingStates){
+                        default:
+                        case kPreparingLaunch:
+                            mElevator.goToSetpointInches(mWantedShot.getLiftHeight());
+                            mLunchboxAngler.goToAngle(mWantedShot.getLauncherAngle());
+                            mUpFlywheel.setWantedSpeed(mWantedShot.getTopSpeed());
+                            mDownFlywheel.setWantedSpeed(mWantedShot.getBottomSpeed());
+                            mFrontIntake.stop();
+                            mBackIntake.stop();
+                            mDualRollerSubsystem.stop();
+                            mConveyor.prepareForLaunch();;
+                            if(mWantConfirmShot) //TODO: And a bunch of other logic
+                            {
+                                mLaunchingStates = LaunchingStates.kLaunching;
+                            }
+                            break;
+                        case kLaunching:
+                            mElevator.goToSetpointInches(mWantedShot.getLiftHeight());
+                            mUpFlywheel.setWantedSpeed(mWantedShot.getTopSpeed());
+                            mLunchboxAngler.goToAngle(mWantedShot.getLauncherAngle());
+                            mDownFlywheel.setWantedSpeed(mWantedShot.getBottomSpeed());
+                            mFrontIntake.stop();
+                            mBackIntake.stop();
+                            mConveyor.launch();
+                            mDualRollerSubsystem.stop();
+                            if(!mWantConfirmShot) //TODO: And a bunch of other logic
+                            {
+                                mLaunchingStates = LaunchingStates.kPreparingLaunch;
+                            }
+                            break;
+                    }
+                    return;
+                default:
+                case Idle:
+                    mUpFlywheel.stop();
+                    mDownFlywheel.stop();
+                    mElevator.stop();
+                    mFrontIntake.stop();
+                    mBackIntake.stop();
+                    mDualRollerSubsystem.stop();
+                    mConveyor.stop();
+                    return;
+                case Climbing:
+                    mUpFlywheel.stop();
+                    mDownFlywheel.stop();
+                    mElevator.stop();
+                    mFrontIntake.stop();
+                    mBackIntake.stop();
+                    mDualRollerSubsystem.stop();
+                    mConveyor.stop();
+                    return;
+            }
+            
+        }
+
+        @Override
+        public void onStop(double timestamp) {
+            // TODO Auto-generated method stub
+            
+        }
+        
+    };
+
+    private static SuperStructure SUPER_STRUCTURE = new SuperStructure();
+
 
     private IntakeSubsystem mFrontIntake;
     private IntakeSubsystem mBackIntake;
     private FlywheelSubsystem mUpFlywheel;
     private FlywheelSubsystem mDownFlywheel;
     private ElevatorSubsystem mElevator;
+    private DualRollerSubsystem mDualRollerSubsystem = DualRollerSubsystem.getInstance();
+    private Conveyor mConveyor;
+    private LunchboxAngler mLunchboxAngler;
     private SuperStructureStates mSuperStructureStates;
+<<<<<<< HEAD
     private CANifier mCanifier = new CANifier(0);
     private final I2C.Port i2cPort1 = I2C.Port.kOnboard;
     private final I2C.Port i2cPort2 = I2C.Port.kMXP;
     ColorSensorV3 m_colorSensorFront;
     ColorSensorV3 m_colorSensorRear;
+=======
+    private LaunchingStates mLaunchingStates;
+    private Boolean mWantConfirmShot;
+    private CANifier mCanifierUp = new CANifier(0);
+    private CANifier mCanitiferDown = new CANifier(1);
+    private Shot mWantedShot; //make sure to null check this
 
-    public SuperStructure(){
+    private SuperStructure(){
+>>>>>>> 0e1cfb9557a1cd25fac893bf388785409df9f566
+
         mFrontIntake = new IntakeSubsystem(RobotMap.frontIntake, RobotMap.frontIntakeExtend, RobotMap.backIntakeExtend);
         mBackIntake = new IntakeSubsystem(RobotMap.rearIntake, RobotMap.backIntakeExtend, RobotMap.backIntakeRetract);
+<<<<<<< HEAD
         mUpFlywheel = new FlywheelSubsystem(RobotMap.upFlywheel, Constants.kTopFlywheelKp, Constants.kTopFlywheelKi, Constants.kTopFlywheelKd, Constants.kTopFlywheelKf, Constants.kTopFlywheelIzone, false, Constants.kTopFlywheelConversionFactor, RobotMap.upFlywheel, Constants.kTopFlywheelKs, Constants.kTopFlywheelKv, mCanifier);
         m_colorSensorFront = new ColorSensorV3(i2cPort1);
         m_colorSensorFront = new ColorSensorV3(i2cPort2);
+=======
+        mUpFlywheel = new FlywheelSubsystem(RobotMap.upFlywheel, Constants.kTopFlywheelKp, Constants.kTopFlywheelKi, Constants.kTopFlywheelKd, Constants.kTopFlywheelKf, Constants.kTopFlywheelIzone, false, Constants.kTopFlywheelConversionFactor, RobotMap.upFlywheel, Constants.kTopFlywheelKs, Constants.kTopFlywheelKv, mCanifierUp);
+        mDownFlywheel =  new FlywheelSubsystem(RobotMap.downFlywheel, Constants.kTopFlywheelKp, Constants.kTopFlywheelKi, Constants.kTopFlywheelKd, Constants.kTopFlywheelKf, Constants.kTopFlywheelIzone, false, Constants.kTopFlywheelConversionFactor, RobotMap.upFlywheel, Constants.kTopFlywheelKs, Constants.kTopFlywheelKv, mCanitiferDown);
+        mConveyor = new Conveyor(mCanifierUp);
+>>>>>>> 0e1cfb9557a1cd25fac893bf388785409df9f566
     }
 
     @Override
     public void writeToLog() {
-        // TODO Auto-generated method stub
+        mBackIntake.writeToLog();
+        mFrontIntake.writeToLog();
+        mDownFlywheel.writeToLog();
+        mUpFlywheel.writeToLog();
+        mElevator.writeToLog();
         
     }
 
     @Override
     public void outputToSmartDashboard() {
-        // TODO Auto-generated method stub
+        mBackIntake.outputToSmartDashboard();
+        mFrontIntake.outputToSmartDashboard();
+        mDownFlywheel.outputToSmartDashboard();
+        mUpFlywheel.outputToSmartDashboard();
+        mElevator.outputToSmartDashboard();
+        mConveyor.outputToSmartDashboard();
         
     }
 
@@ -64,47 +192,79 @@ public class SuperStructure implements Subsystem {
         mFrontIntake.stop();
         mBackIntake.stop();
         mUpFlywheel.stop();
+        mDownFlywheel.stop();
+        mElevator.stop();
+        mConveyor.stop();
         
     }
 
     @Override
     public void zeroSensors() {
-        // TODO Auto-generated method stub
+        mBackIntake.zeroSensors();
+        mFrontIntake.zeroSensors();
+        mDownFlywheel.zeroSensors();
+        mUpFlywheel.zeroSensors();
+        mElevator.zeroSensors();
         
     }
 
     @Override
     public void registerEnabledLoops(Looper enabledLooper) {
-        // TODO Auto-generated method stub
-        
+        mBackIntake.registerEnabledLoops(enabledLooper);
+        mFrontIntake.registerEnabledLoops(enabledLooper);
+        mDownFlywheel.registerEnabledLoops(enabledLooper);
+        mUpFlywheel.registerEnabledLoops(enabledLooper);
+        mElevator.registerEnabledLoops(enabledLooper);
+        mConveyor.registerEnabledLoops(enabledLooper);
     }
 
     @Override
     public void setDebug(boolean _debug) {
-        // TODO Auto-generated method stub
+        mBackIntake.setDebug(_debug);
+        mFrontIntake.setDebug(_debug);
+        mDownFlywheel.setDebug(_debug);
+        mUpFlywheel.setDebug(_debug);
+        mElevator.setDebug(_debug);
+        mConveyor.setDebug(_debug);
         
     }
 
     @Override
     public void retractAll() {
-        // TODO Auto-generated method stub
+        mBackIntake.retractAll();
+        mFrontIntake.retractAll();
+        mDownFlywheel.retractAll();
+        mUpFlywheel.retractAll();
+        mElevator.retractAll();
+        mConveyor.retractAll();
         
     }
 
     public void wantIntakeFront(){
-        // do this later
+        mFrontIntake.wantIntaking();
+        mElevator.goToSetpointInches(0.0);
+
     };
 
     public void wantIntakeBack(){
-        // todo
+        mBackIntake.wantIntaking();
+        mElevator.goToSetpointInches(0.0);
     }
-
-    public void wantPrepareShot(shot wantedShot){
-        // todo
+    public void wantPrepareShot(Shot wantedShot){
+        if(mSuperStructureStates != SuperStructureStates.Launching)
+        {
+            mLaunchingStates = LaunchingStates.kPreparingLaunch;
+        }
+        mSuperStructureStates = SuperStructureStates.Launching;
+        mWantedShot = wantedShot;
     }
 
     public void wantConfirmLaunch(Boolean shouldShoot){
-        // todo 
+        mWantConfirmShot = shouldShoot;
+    }
+
+    public static SuperStructure getInstance(){
+        return SUPER_STRUCTURE;
     }
     
 }

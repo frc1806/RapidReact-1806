@@ -1,22 +1,39 @@
 package org.usfirst.frc.team1806.robot.game;
 
-public class shot {
-    Double liftHeight, launcherAngle, baseSpeed, baseSpin;
+public class Shot {
+
+    Double MAX_LEGAL_HEIGHT = 52.0;
+    Double MIN_PIVOT_HEIGHT = 32.0;
+    Double CORNER_ANGLE_OFFSET = 2.0;
+    Double CORNER_TO_PIVOT_DISTANCE = 20.0;
+    Double launcherAngle, topSpeed, bottomSpeed;
+    Boolean isPreciseShot;
+    Boolean isFlipped;
+
+    public static Shot CLOSE_SHOT = new Shot(175.0, 2500.0, 2300.0, false, false);
+
+
+    public Shot(Double launcherAngle, Double topSpeed, Double bottomSpeed, Boolean isPreciseShot, Boolean isFlipped) {
+        this.launcherAngle = launcherAngle;
+        this.topSpeed = topSpeed;
+        this.bottomSpeed = bottomSpeed;
+        this.isPreciseShot = isPreciseShot;
+    }
 
     public Double getLiftHeight() {
-        return liftHeight;
+        return (MAX_LEGAL_HEIGHT - MIN_PIVOT_HEIGHT) - Math.asin(launcherAngle - 90 + CORNER_ANGLE_OFFSET) * CORNER_TO_PIVOT_DISTANCE;
     }
 
     public Double getLauncherAngle() {
-        return launcherAngle;
+        return isFlipped? -launcherAngle : launcherAngle;
     }
 
-    public Double getBaseSpeed() {
-        return baseSpeed;
+    public Double getTopSpeed() {
+        return isFlipped? bottomSpeed : topSpeed;
     }
 
-    public Double getBaseSpin() {
-        return baseSpin;
+    public Double getBottomSpeed() {
+        return isFlipped? topSpeed : bottomSpeed;
     }
 
 
@@ -24,14 +41,7 @@ public class shot {
         return isPreciseShot;
     }
 
-    Boolean isPreciseShot;
-
-    public shot(Double liftHeight, Double launcherAngle, Double baseSpeed, Double baseSpin, Boolean isPreciseShot) {
-        this.liftHeight = liftHeight;
-        this.launcherAngle = launcherAngle;
-        this.baseSpeed = baseSpeed;
-        this.baseSpin = baseSpin;
-        this.isPreciseShot = isPreciseShot;
-    }
-    
+    public Boolean getIsFlipped(){
+        return isFlipped;
+    }   
 }
