@@ -23,6 +23,8 @@ public class SuperStructure implements Subsystem {
         Launching,
         Idle,
         Climbing,
+        FrontIntakeFeedThrough,
+        BackIntakeFeedThrough
     };
 
     public enum LaunchingStates {
@@ -110,6 +112,24 @@ public class SuperStructure implements Subsystem {
                     mFrontIntake.stop();
                     mBackIntake.stop();
                     mDualRollerSubsystem.stop();
+                    mConveyor.stop();
+                    return;
+                case FrontIntakeFeedThrough:
+                    mUpFlywheel.stop();
+                    mDownFlywheel.stop();
+                    mElevator.stop();
+                    mFrontIntake.wantIntaking();
+                    mBackIntake.stop();
+                    mDualRollerSubsystem.feedBackwards();
+                    mConveyor.stop();
+                    return;
+                case BackIntakeFeedThrough:
+                    mUpFlywheel.stop();
+                    mDownFlywheel.stop();
+                    mElevator.stop();
+                    mFrontIntake.stop();
+                    mBackIntake.wantIntaking();
+                    mDualRollerSubsystem.feedForward();
                     mConveyor.stop();
                     return;
             }

@@ -36,8 +36,8 @@ public class RobotMap {
 	public static int rearIntake = 22;
 
 	//Conveyor
-	public static int roller1 = 30;
-	public static int roller2 = 31;
+	public static int frontRoller = 30;
+	public static int rearRoller = 31;
 	public static int lowerConveyor = 32;
 
 	//Flywheel

@@ -10,29 +10,29 @@ import org.usfirst.frc.team1806.robot.loop.Looper;
 
 public class DualRollerSubsystem implements Subsystem{
 
-    private TalonSRX rollerOne;
-    private TalonSRX rollerTwo;
+    private TalonSRX frontRoller;
+    private TalonSRX backRoller;
     private static DualRollerSubsystem DUAL_ROLLER_SUBSYSTEM;
 
     private DualRollerSubsystem(){
-        rollerOne = new TalonSRX(RobotMap.roller1);
-        rollerTwo = new TalonSRX(RobotMap.roller2);
-        rollerTwo.setInverted(true);
+        frontRoller = new TalonSRX(RobotMap.frontRoller);
+        backRoller = new TalonSRX(RobotMap.rearRoller);
+        backRoller.setInverted(true);
     }
 
 
 
     public void startRoller() {
 
-        rollerOne.set(ControlMode.PercentOutput, 1.00);
-        rollerTwo.set(ControlMode.PercentOutput, 1.00);
+        frontRoller.set(ControlMode.PercentOutput, 1.00);
+        backRoller.set(ControlMode.PercentOutput, 1.00);
     }
 
 
     public void stopRoller() {
 
-        rollerOne.set(ControlMode.PercentOutput, 0);
-        rollerTwo.set(ControlMode.PercentOutput, 0);
+        frontRoller.set(ControlMode.PercentOutput, 0);
+        backRoller.set(ControlMode.PercentOutput, 0);
 
     }
 
@@ -80,13 +80,13 @@ public class DualRollerSubsystem implements Subsystem{
     }
 
     public void feedForward(){
-        rollerOne.set(ControlMode.PercentOutput, -1);
-        rollerTwo.set(ControlMode.PercentOutput, 1);
+        frontRoller.set(ControlMode.PercentOutput, -1);
+        backRoller.set(ControlMode.PercentOutput, 1);
     }
 
     public void feedBackwards(){
-        rollerOne.set(ControlMode.PercentOutput, 1);
-        rollerTwo.set(ControlMode.PercentOutput, -1);
+        frontRoller.set(ControlMode.PercentOutput, 1);
+        backRoller.set(ControlMode.PercentOutput, -1);
     }
 
     public static DualRollerSubsystem getInstance(){
