@@ -149,7 +149,7 @@ public class OI {
 				boolean intakeFront = driverController.getRightTriggerAsDigital();
 				boolean intakeBack = driverController.getLeftTriggerAsDigital();
 				boolean feedThroughFromFront = driverController.getPOVUp();
-				boolean feedTrhoughFromBack = driverController.getPOVDown();
+				boolean feedThroughFromBack = driverController.getPOVDown();
 				// face buttons are all unused.
 
 				// Superstructure stuff
@@ -157,6 +157,12 @@ public class OI {
 					mSuperStructure.wantIntakeFront();
 				} else if (intakeBack) {
 					mSuperStructure.wantIntakeBack();
+				}
+
+				else if (feedThroughFromFront){
+					mSuperStructure.wantFeedFrontIntake();
+				} else if (feedThroughFromBack) {
+					mSuperStructure.wantFeedBackIntake();
 				}
 
 				// Handle shfting
@@ -188,7 +194,7 @@ public class OI {
 				boolean intakeFront = driverController.getButtonRB();
 				boolean intakeBack = driverController.getButtonLB();
 				boolean feedThroughFromFront = driverController.getPOVUp();
-				boolean feedTrhoughFromBack = driverController.getPOVDown();
+				boolean feedThroughFromBack = driverController.getPOVDown();
 				// POV Left and right are still unused, as is the right stick, and forward/back
 				// buttons.
 
@@ -198,6 +204,13 @@ public class OI {
 				} else if (intakeBack) {
 					mSuperStructure.wantIntakeBack();
 				}
+
+				else if (feedThroughFromFront){
+					mSuperStructure.wantFeedFrontIntake();
+				} else if (feedThroughFromBack) {
+					mSuperStructure.wantFeedBackIntake();
+				}
+
 
 				// Handle shfting
 				if (shiftHighGear) {
@@ -235,7 +248,7 @@ public class OI {
 				boolean intakeFront = driverController.getRightTriggerAsDigital();
 				boolean intakeBack = driverController.getLeftTriggerAsDigital();
 				boolean feedThroughFromFront = driverController.getPOVUp();
-				boolean feedTrhoughFromBack = driverController.getPOVDown();
+				boolean feedThroughFromBack = driverController.getPOVDown();
 				// face buttons are all unused.
 
 				// Superstructure stuff
@@ -244,6 +257,13 @@ public class OI {
 				} else if (intakeBack) {
 					mSuperStructure.wantIntakeBack();
 				}
+
+				else if (feedThroughFromFront){
+					mSuperStructure.wantFeedFrontIntake();
+				} else if (feedThroughFromBack) {
+					mSuperStructure.wantFeedBackIntake();
+				}
+
 
 				// Handle shfting
 				if (shiftHighGear) {

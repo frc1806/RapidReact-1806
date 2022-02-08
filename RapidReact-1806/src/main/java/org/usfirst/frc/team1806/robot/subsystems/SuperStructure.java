@@ -277,6 +277,15 @@ public class SuperStructure implements Subsystem {
     public void wantConfirmLaunch(Boolean shouldShoot) {
         mWantConfirmShot = shouldShoot;
     }
+    
+    public void wantFeedFrontIntake(){
+        mSuperStructureStates = SuperStructureStates.FrontIntakeFeedThrough;
+    }
+
+    public void wantFeedBackIntake(){
+        mSuperStructureStates = SuperStructureStates.BackIntakeFeedThrough;
+
+    }
 
     public static SuperStructure getInstance() {
         return SUPER_STRUCTURE;
