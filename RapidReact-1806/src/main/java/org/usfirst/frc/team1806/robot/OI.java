@@ -263,11 +263,6 @@ public class OI {
 				break;
 
 		}
-		// This will be the Forza Config
-		if (true) // TODO: Check for Forza Config
-		{
-
-		}
 
 		return;
 	}
