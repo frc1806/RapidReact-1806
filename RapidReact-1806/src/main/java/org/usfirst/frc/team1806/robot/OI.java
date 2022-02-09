@@ -163,6 +163,8 @@ public class OI {
 					mSuperStructure.wantFeedFrontIntake();
 				} else if (feedThroughFromBack) {
 					mSuperStructure.wantFeedBackIntake();
+				} else {
+					mSuperStructure.stop();
 				}
 
 				// Handle shfting
@@ -170,7 +172,7 @@ public class OI {
 					mDriveTrainSubsystem.setHighGear(true);
 				} else if (shiftLowGear) {
 					mDriveTrainSubsystem.setHighGear(false);
-				}
+				} 
 				// decide throttle with triggers
 
 				double throttle = driverController.getLeftJoyY();
@@ -209,6 +211,8 @@ public class OI {
 					mSuperStructure.wantFeedFrontIntake();
 				} else if (feedThroughFromBack) {
 					mSuperStructure.wantFeedBackIntake();
+				} else {
+					mSuperStructure.stop();
 				}
 
 
@@ -262,6 +266,8 @@ public class OI {
 					mSuperStructure.wantFeedFrontIntake();
 				} else if (feedThroughFromBack) {
 					mSuperStructure.wantFeedBackIntake();
+				} else {
+					mSuperStructure.stop();
 				}
 
 
