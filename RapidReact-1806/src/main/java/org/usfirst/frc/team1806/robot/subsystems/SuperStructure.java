@@ -56,6 +56,7 @@ public class SuperStructure implements Subsystem {
                     mConveyor.loadConveyor();
                     mUpFlywheel.setReverseSpeed(1500.0);
                     mDownFlywheel.setReverseSpeed(1500.0);
+                    mLunchboxAngler.goToAngle(0.0);;
                     return;
                 case IntakingBack:
                     mElevator.goToSetpointInches(0);
@@ -65,6 +66,7 @@ public class SuperStructure implements Subsystem {
                     mConveyor.loadConveyor();
                     mUpFlywheel.setReverseSpeed(1500.0);
                     mDownFlywheel.setReverseSpeed(1500.0);
+                    mLunchboxAngler.goToAngle(0.0);;
                     return;
                 case Launching:
                     switch (mLaunchingStates) {
@@ -79,7 +81,7 @@ public class SuperStructure implements Subsystem {
                             mDualRollerSubsystem.stop();
                             mConveyor.prepareForLaunch();
                             ;
-                            if (mWantConfirmShot) // TODO: And a bunch of other logic
+                            if (mWantConfirmShot && mLunchboxAngler.isAtAngle() && mElevator.isAtPosition() && mUpFlywheel.isSpeedInRange() && mDownFlywheel.isSpeedInRange()) 
                             {
                                 mLaunchingStates = LaunchingStates.kLaunching;
                             }
@@ -93,7 +95,7 @@ public class SuperStructure implements Subsystem {
                             mBackIntake.stop();
                             mConveyor.launch();
                             mDualRollerSubsystem.stop();
-                            if (!mWantConfirmShot) // TODO: And a bunch of other logic
+                            if (!mWantConfirmShot || !mLunchboxAngler.isAtAngle() || !mElevator.isAtPosition() || !mUpFlywheel.isSpeedInRange() || !mDownFlywheel.isSpeedInRange()) // TODO: And a bunch of other logic
                             {
                                 mLaunchingStates = LaunchingStates.kPreparingLaunch;
                             }
@@ -113,7 +115,11 @@ public class SuperStructure implements Subsystem {
                             mDualRollerSubsystem.stop();
                             mConveyor.stop();
                             mIdleStates = IdleStates.AtHome;
-                            //todo add angle adjuster and logic
+                            mLunchboxAngler.goToAngle(0.0);
+                            if(mElevator.isAtPosition() && mLunchboxAngler.isAtAngle())
+                            {
+                                mIdleStates = IdleStates.AtHome;
+                            }
                         case AtHome:
                             mUpFlywheel.stop();
                             mDownFlywheel.stop();
@@ -122,6 +128,7 @@ public class SuperStructure implements Subsystem {
                             mBackIntake.stop();
                             mDualRollerSubsystem.stop();
                             mConveyor.stop();
+                            mLunchboxAngler.stop();
                             break;
                     }
                     return;
@@ -133,6 +140,7 @@ public class SuperStructure implements Subsystem {
                     mBackIntake.stop();
                     mDualRollerSubsystem.stop();
                     mConveyor.stop();
+                    mLunchboxAngler.stop();
                     return;
                 case FrontIntakeFeedThrough:
                     mUpFlywheel.stop();
@@ -142,6 +150,7 @@ public class SuperStructure implements Subsystem {
                     mBackIntake.stop();
                     mDualRollerSubsystem.feedBackwards();
                     mConveyor.stop();
+                    mLunchboxAngler.goToAngle(0.0);;
                     return;
                 case BackIntakeFeedThrough:
                     mUpFlywheel.stop();
@@ -151,6 +160,7 @@ public class SuperStructure implements Subsystem {
                     mBackIntake.wantIntaking();
                     mDualRollerSubsystem.feedForward();
                     mConveyor.stop();
+                    mLunchboxAngler.goToAngle(0.0);;
                     return;
             }
 
@@ -224,6 +234,7 @@ public class SuperStructure implements Subsystem {
 
     @Override
     public void stop() {
+        mIdleStates = IdleStates.AtHome;
         mSuperStructureStates = SuperStructureStates.Idle;
 
     }

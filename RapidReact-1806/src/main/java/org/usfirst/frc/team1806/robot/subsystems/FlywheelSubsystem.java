@@ -163,7 +163,7 @@ public class FlywheelSubsystem implements Subsystem {
         return counts / Constants.kRPMToCounts;
     }
 
-    private Boolean isSpeedInRange(){
+    public Boolean isSpeedInRange(){
         return !(getCurrentRPM() >= mWantedSpeed + withinLeniency && getCurrentRPM() >= mWantedSpeed - withinLeniency);
     }
 }
