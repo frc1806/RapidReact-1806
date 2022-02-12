@@ -343,7 +343,28 @@ public class SuperStructure implements Subsystem {
 				return mDownFlywheel.getCurrentRPM();
 			}
 
+
         }).withWidget(BuiltInWidgets.kDial).withPosition(1,1).withSize(2,2); //add .withProperties if neccesary
+
+
+
+
+        Robot.getMainDriverTab().addNumber("Up Wanted Flywheel Speed", new DoubleSupplier() {
+
+            @Override
+			public double getAsDouble() {
+				return mUpFlywheel.getWantedRPM();
+			}
+
+        }).withWidget(BuiltInWidgets.kDial).withPosition(10,1).withSize(2,2); //add .withProperties if neccesary
+
+
+        Robot.getMainDriverTab().addNumber("Down Wanted Flywheel Speed", new DoubleSupplier() {
+
+            @Override
+			public double getAsDouble() {
+				return mDownFlywheel.getWantedRPM();
+			}
 
 
 
