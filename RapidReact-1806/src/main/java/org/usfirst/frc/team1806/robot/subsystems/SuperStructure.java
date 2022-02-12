@@ -1,19 +1,25 @@
 package org.usfirst.frc.team1806.robot.subsystems;
 
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix.CANifier;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 
 import org.usfirst.frc.team1806.robot.Constants;
+import org.usfirst.frc.team1806.robot.Robot;
 import org.usfirst.frc.team1806.robot.RobotMap;
 import org.usfirst.frc.team1806.robot.loop.Loop;
 import org.usfirst.frc.team1806.robot.game.Shot;
 import org.usfirst.frc.team1806.robot.loop.Looper;
 import com.revrobotics.ColorSensorV3;
+import com.revrobotics.MotorFeedbackSensor;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorMatch;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 
 public class SuperStructure implements Subsystem {
 
@@ -317,4 +323,34 @@ public class SuperStructure implements Subsystem {
         return SUPER_STRUCTURE;
     }
 
-}
+    @Override
+    public void setupDriverTab() {
+
+        Robot.getMainDriverTab().addNumber("Up Flywheel Speed", new DoubleSupplier() {
+
+            @Override
+			public double getAsDouble() {
+				return mUpFlywheel.getCurrentRPM();
+			}
+
+        }).withWidget(BuiltInWidgets.kDial).withPosition(1,1); //add .withProperties if neccesary
+
+
+        Robot.getMainDriverTab().addNumber("Down Flywheel Speed", new DoubleSupplier() {
+
+            @Override
+			public double getAsDouble() {
+				return mDownFlywheel.getCurrentRPM();
+			}
+
+        }).withWidget(BuiltInWidgets.kDial).withPosition(1,1); //add .withProperties if neccesary
+
+
+            
+        }
+
+        // TODO Auto-generated method stub
+        
+    }
+
+

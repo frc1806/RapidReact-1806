@@ -116,4 +116,10 @@ public class IntakeSubsystem implements Subsystem {
     public void wantSweep(){
         mIntakeState = IntakeStates.SWEEP;
     }
+
+    @Override
+    public void setupDriverTab() {
+        // TODO Auto-generated method stub
+        
+    }
 }

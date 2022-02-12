@@ -1,5 +1,7 @@
 package org.usfirst.frc.team1806.robot.subsystems;
 
+import java.util.function.DoubleSupplier;
+
 //import org.omg.CORBA.PRIVATE_MEMBER;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
@@ -10,8 +12,11 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+
 import org.usfirst.frc.team1806.robot.Constants;
 import org.usfirst.frc.team1806.robot.Kinematics;
+import org.usfirst.frc.team1806.robot.Robot;
 import org.usfirst.frc.team1806.robot.RobotMap;
 import org.usfirst.frc.team1806.robot.RobotState;
 import org.usfirst.frc.team1806.robot.loop.Loop;
@@ -243,6 +248,7 @@ public class DriveTrainSubsystem implements Subsystem {
 		reloadGains();
 		mDriveStates = DriveStates.NOTHING;
 		setLowGearPositionControlMaxDrivePower(12);
+		setupDriverTab();
 	}
 
 	private synchronized void configureForPositionControl() {
@@ -383,7 +389,7 @@ public class DriveTrainSubsystem implements Subsystem {
 			SmartDashboard.putNumber(Constants.kDriveTrainKey + "amps leaderRight", leaderRight.getOutputCurrent());
 			SmartDashboard.putNumber(Constants.kDriveTrainKey + "amps rightA", rightA.getOutputCurrent());
 			SmartDashboard.putNumber(Constants.kDriveTrainKey + "amps rightB", rightB.getOutputCurrent());
-
+		
 		}
 	}
 
@@ -939,5 +945,35 @@ public class DriveTrainSubsystem implements Subsystem {
 
 	public void retractAll() {
 		// nothing to do here
+	}
+
+
+
+
+
+
+	public void setupDriverTab(){
+
+
+		Robot.getMainDriverTab().addNumber("Left Drive Power", new DoubleSupplier() {
+
+			@Override
+			public double getAsDouble() {
+				return leaderLeft.getAppliedOutput();
+			}
+			
+		}).withWidget(BuiltInWidgets.kNumberBar).withPosition(1,1); //add .withProperties if neccesary
+
+
+		Robot.getMainDriverTab().addNumber("Right Drive Power", new DoubleSupplier() {
+
+			@Override
+			public double getAsDouble() {
+				return leaderLeft.getAppliedOutput();
+			}
+			
+		}).withWidget(BuiltInWidgets.kNumberBar).withPosition(1,1); //add .withProperties if neccesary
+
+
 	}
 }

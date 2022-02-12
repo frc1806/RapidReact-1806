@@ -16,4 +16,6 @@ public interface Subsystem {
     public abstract void setDebug(boolean _debug);
 
     public abstract void retractAll();
+
+    public abstract void setupDriverTab();
 }

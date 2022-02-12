@@ -75,4 +75,10 @@ public class VisionSubsystem implements Subsystem {
     public void turnLEDOff(){
         leds.setData(offBuffer);
     }
+
+    @Override
+    public void setupDriverTab() {
+        // TODO Auto-generated method stub
+        
+    }
 }

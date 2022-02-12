@@ -19,7 +19,12 @@ public class Shot {
         SPEED_SELECT_PROPS.put("Max", 3000.0d);
     }
 
-    private static NetworkTableEntry customTopRollerSpeedEntry = shotTab.addPersistent("Custom Top Roller Speed", 0).withWidget(BuiltInWidgets.kDial).withProperties(SPEED_SELECT_PROPS).getEntry();
+    private static NetworkTableEntry customTopRollerSpeedEntry = shotTab
+        .addPersistent("Custom Top Roller Speed", 0).withWidget(BuiltInWidgets.kDial).withProperties(SPEED_SELECT_PROPS)
+        .withSize(2,1).withPosition(0,0).getEntry();
+    private static NetworkTableEntry customBottomRollerEntry = shotTab
+        .addPersistent("Custom Bottom Roller Speed", 0).withWidget(BuiltInWidgets.kDial).withProperties(SPEED_SELECT_PROPS)
+        .withSize(2,1).withPosition(2,0).getEntry();
     Double MAX_LEGAL_HEIGHT = 52.0;
     Double MIN_PIVOT_HEIGHT = 32.0;
     Double CORNER_ANGLE_OFFSET = 2.0;

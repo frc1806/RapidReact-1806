@@ -122,4 +122,10 @@ public class LunchboxAngler implements Subsystem {
     public static LunchboxAngler getInstance(){
         return LUNCH_BOX_ANGLER;
     }
+
+    @Override
+    public void setupDriverTab() {
+        // TODO Auto-generated method stub
+        
+    }
 }

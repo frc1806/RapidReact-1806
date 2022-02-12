@@ -92,5 +92,13 @@ public class DualRollerSubsystem implements Subsystem{
     public static DualRollerSubsystem getInstance(){
         return DUAL_ROLLER_SUBSYSTEM;
     }
+
+
+
+    @Override
+    public void setupDriverTab() {
+        // TODO Auto-generated method stub
+        
+    }
     
 }

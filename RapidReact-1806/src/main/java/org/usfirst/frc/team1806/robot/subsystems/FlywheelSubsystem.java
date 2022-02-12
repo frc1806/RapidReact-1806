@@ -166,4 +166,10 @@ public class FlywheelSubsystem implements Subsystem {
     public Boolean isSpeedInRange(){
         return !(getCurrentRPM() >= mWantedSpeed + withinLeniency && getCurrentRPM() >= mWantedSpeed - withinLeniency);
     }
+
+    @Override
+    public void setupDriverTab() {
+        // TODO Auto-generated method stub
+        
+    }
 }

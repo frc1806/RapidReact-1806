@@ -312,4 +312,10 @@ public class ElevatorSubsystem implements Subsystem {
 		}
 		return true;
 	}
+
+	@Override
+	public void setupDriverTab() {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -119,5 +119,11 @@ public class Conveyor implements Subsystem {
     public void launch(){
         mConveyorStates = ConveyorStates.kLaunch;
     }
+
+    @Override
+    public void setupDriverTab() {
+        // TODO Auto-generated method stub
+        
+    }
     
 }
