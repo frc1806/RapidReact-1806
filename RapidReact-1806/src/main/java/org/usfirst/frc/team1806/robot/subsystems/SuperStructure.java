@@ -333,7 +333,7 @@ public class SuperStructure implements Subsystem {
 				return mUpFlywheel.getCurrentRPM();
 			}
 
-        }).withWidget(BuiltInWidgets.kDial).withPosition(1,1); //add .withProperties if neccesary
+        }).withWidget(BuiltInWidgets.kDial).withPosition(10,1).withSize(2,2); //add .withProperties if neccesary
 
 
         Robot.getMainDriverTab().addNumber("Down Flywheel Speed", new DoubleSupplier() {
@@ -343,10 +343,24 @@ public class SuperStructure implements Subsystem {
 				return mDownFlywheel.getCurrentRPM();
 			}
 
-        }).withWidget(BuiltInWidgets.kDial).withPosition(1,1); //add .withProperties if neccesary
+        }).withWidget(BuiltInWidgets.kDial).withPosition(1,1).withSize(2,2); //add .withProperties if neccesary
 
 
-            
+
+        Robot.getMainDriverTab().addNumber("Shooter Angle", new DoubleSupplier() {
+
+            @Override
+            public double getAsDouble() {
+                return mLunchboxAngler.getCurrentAngle();
+
+
+            }
+        
+
+        }).withWidget(BuiltInWidgets.kDial).withPosition(1,1).withSize(1,1); //add .withProperties if neccesary
+
+
+
         }
 
         // TODO Auto-generated method stub

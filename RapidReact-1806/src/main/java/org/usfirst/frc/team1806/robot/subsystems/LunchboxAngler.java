@@ -121,6 +121,10 @@ public class LunchboxAngler implements Subsystem {
         return false;
     }
 
+    public double getCurrentAngle(){
+        return mEncoder.getDistance();
+    }
+
     public Boolean angleToCheck(Double angle){
         if (angle >= mWantedSetPoint + angleLeniency && angle >= mWantedSetPoint - angleLeniency) return false;
         return true;

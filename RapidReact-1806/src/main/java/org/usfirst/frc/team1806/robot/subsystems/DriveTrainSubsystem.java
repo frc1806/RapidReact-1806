@@ -971,7 +971,7 @@ public class DriveTrainSubsystem implements Subsystem {
 				return leaderLeft.getAppliedOutput();
 			}
 			
-		}).withWidget(BuiltInWidgets.kNumberBar).withPosition(1,1); //add .withProperties if neccesary
+		}).withWidget(BuiltInWidgets.kNumberBar).withPosition(1,2); //add .withProperties if neccesary
 
 
 	}
