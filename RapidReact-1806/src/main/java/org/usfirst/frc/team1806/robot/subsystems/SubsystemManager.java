@@ -36,4 +36,6 @@ public class SubsystemManager {
     }
 
     public void retractAll() { mAllSubsystems.forEach((s) -> s.retractAll());}
+
+    public void setUpDriverTab(){mAllSubsystems.forEach((s) -> s.setupDriverTab());}
 }

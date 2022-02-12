@@ -247,8 +247,7 @@ public class DriveTrainSubsystem implements Subsystem {
 
 		reloadGains();
 		mDriveStates = DriveStates.NOTHING;
-		setLowGearPositionControlMaxDrivePower(12);
-		setupDriverTab();
+		setLowGearPositionControlMaxDrivePower(12);    
 	}
 
 	private synchronized void configureForPositionControl() {

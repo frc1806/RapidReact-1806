@@ -43,7 +43,7 @@ public class Robot extends TimedRobot {
 
 
     private static final SubsystemManager S_SubsystemManager = new SubsystemManager(
-            Arrays.asList(DriveTrainSubsystem.getInstance(), ElevatorSubsystem.getInstance())); ///TODO RE ADD IN SUBSYSTEMS
+            Arrays.asList(DriveTrainSubsystem.getInstance(), SuperStructure.getInstance())); ///TODO RE ADD IN SUBSYSTEMS
 
     private Looper mEnabledLooper = new Looper();
     private Looper mDisabledLooper = new Looper();
@@ -60,7 +60,7 @@ public class Robot extends TimedRobot {
     public static AutoModeBase currentSequence;
 
     //Global Dashboard tabs
-    private static ShuffleboardTab competitionTab = Shuffleboard.getTab("Competition View");
+    private static ShuffleboardTab competitionTab;
 
     public static ShuffleboardTab getMainDriverTab()
     {
@@ -106,6 +106,8 @@ public class Robot extends TimedRobot {
       } catch (InterruptedException e){
         System.out.println(e);
       }
+      competitionTab = Shuffleboard.getTab("Main Competition Tab");
+      S_SubsystemManager.setUpDriverTab();
     }
 
     public enum SequenceState{

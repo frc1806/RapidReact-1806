@@ -17,6 +17,7 @@ public class LunchboxAngler implements Subsystem {
     private PIDController mPIDController;
     private static LunchboxAngler LUNCH_BOX_ANGLER;
     private Double mKp, mKi, mKd, mWantedSetPoint;
+    private Double angleLeniency = 0.75;
     private enum LunchboxStates{
         Idle,
         GoingToPosition,
@@ -82,7 +83,7 @@ public class LunchboxAngler implements Subsystem {
 
     @Override
     public void stop() {
-        mLaunchMotor.set(ControlMode.PercentOutput, 0.0);
+        mLunchboxStates = LunchboxStates.Idle;
         
     }
 
@@ -111,12 +112,18 @@ public class LunchboxAngler implements Subsystem {
     }
 
     public void goToAngle(Double Angle){
-        
+        mWantedSetPoint = Angle;
+        mLunchboxStates = LunchboxStates.GoingToPosition;
     }
     
     public Boolean isAtAngle(){
         //TODO
         return false;
+    }
+
+    public Boolean angleToCheck(Double angle){
+        if (angle >= mWantedSetPoint + angleLeniency && angle >= mWantedSetPoint - angleLeniency) return false;
+        return true;
     }
 
     public static LunchboxAngler getInstance(){
