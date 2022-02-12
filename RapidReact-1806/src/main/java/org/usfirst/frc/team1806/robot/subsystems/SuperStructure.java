@@ -211,7 +211,7 @@ public class SuperStructure implements Subsystem {
                 Constants.kTopFlywheelConversionFactor, RobotMap.upFlywheel, Constants.kTopFlywheelKs,
                 Constants.kTopFlywheelKv, mCanifierUp);
         mDownFlywheel = new FlywheelSubsystem(RobotMap.downFlywheel, Constants.kTopFlywheelKp, Constants.kTopFlywheelKi,
-                Constants.kTopFlywheelKd, Constants.kTopFlywheelKf, Constants.kTopFlywheelIzone, false,
+                Constants.kTopFlywheelKd, Constants.kTopFlywheelKf, Constants.kTopFlywheelIzone, true,
                 Constants.kTopFlywheelConversionFactor, RobotMap.upFlywheel, Constants.kTopFlywheelKs,
                 Constants.kTopFlywheelKv, mCanitiferDown);
         mConveyor = new Conveyor(mCanifierUp);

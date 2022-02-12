@@ -208,21 +208,21 @@ public class Constants {
     //public final static Double kLaunchingSpeed = NOT KNOWN YET
 
     
-    public static Double kRPMToCounts;
+    public static Double kRPMToCounts = 1.0;
 
-public static Double kTopFlywheelKp = 0.0;
+public static Double kTopFlywheelKp =0.0;
 
-public static Double kTopFlywheelKi = 0.0;
+public static Double kTopFlywheelKi =0.0;
 
-public static Double kTopFlywheelKd = 0.0;
+public static Double kTopFlywheelKd =0.0;
 
-public static Double kTopFlywheelKf = 0.0;
+public static Double kTopFlywheelKf =0.0;
 
-public static Double kTopFlywheelIzone = 0.0;
+public static Double kTopFlywheelIzone =0.0;
 
-public static Double kTopFlywheelConversionFactor = 0.0;
+public static Double kTopFlywheelConversionFactor =0.0;
 
-public static Double kTopFlywheelKs = 0.0;
+public static Double kTopFlywheelKs =0.0;
 
 public static Double kTopFlywheelKv = 0.0;
 

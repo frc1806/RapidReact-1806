@@ -305,6 +305,5 @@ public class OI {
 		{
 			mCheesyDriveHelper = DriverConrollerConfigs.kRetroGranTurismo.getCheesyDriveHelper();
 		}
-
 	}
 }
