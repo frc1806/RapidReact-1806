@@ -34,6 +34,8 @@ public class ElevatorSubsystem implements Subsystem {
 	private double inchesPerCount;
 	private double lastTimeStamp;
 	private double elevatorWantedPosition;
+	private Double heightLeniency = 0.25;
+
 	private AnalogInput mStringPotentiometer;
 	private PIDController mPidController;
 
@@ -310,6 +312,11 @@ public class ElevatorSubsystem implements Subsystem {
 		if (getHeightInInches() >= 0.5){
 			return false;
 		}
+		return true;
+	}
+
+	public Boolean heightToCheck(Double height){
+		if (height >= getHeightInInches() + heightLeniency && height >= getHeightInInches() - heightLeniency) return false;
 		return true;
 	}
 }
