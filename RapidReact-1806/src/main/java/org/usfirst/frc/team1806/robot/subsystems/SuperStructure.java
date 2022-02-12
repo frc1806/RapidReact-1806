@@ -203,7 +203,7 @@ public class SuperStructure implements Subsystem {
     private IdleStates mIdleStates;
 
     private SuperStructure() {
-
+        mElevator = ElevatorSubsystem.getInstance();
         mFrontIntake = new IntakeSubsystem(RobotMap.frontIntake, RobotMap.frontIntakeExtend, RobotMap.frontIntakeRetract);
         mBackIntake = new IntakeSubsystem(RobotMap.rearIntake, RobotMap.backIntakeExtend, RobotMap.backIntakeRetract);
         mUpFlywheel = new FlywheelSubsystem(RobotMap.upFlywheel, Constants.kTopFlywheelKp, Constants.kTopFlywheelKi,
@@ -333,7 +333,7 @@ public class SuperStructure implements Subsystem {
 				return mUpFlywheel.getCurrentRPM();
 			}
 
-        }).withWidget(BuiltInWidgets.kDial).withPosition(1,1); //add .withProperties if neccesary
+        }).withWidget(BuiltInWidgets.kDial).withPosition(10,1).withSize(2,2); //add .withProperties if neccesary
 
 
         Robot.getMainDriverTab().addNumber("Down Flywheel Speed", new DoubleSupplier() {
@@ -343,7 +343,7 @@ public class SuperStructure implements Subsystem {
 				return mDownFlywheel.getCurrentRPM();
 			}
 
-        }).withWidget(BuiltInWidgets.kDial).withPosition(1,1); //add .withProperties if neccesary
+        }).withWidget(BuiltInWidgets.kDial).withPosition(1,1).withSize(2,2); //add .withProperties if neccesary
 
 
             
