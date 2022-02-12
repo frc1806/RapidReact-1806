@@ -297,6 +297,13 @@ public class OI {
 		driverController.updateConfig();
 		operatorController.updateConfig();
 		debugController.updateConfig();
-		mCheesyDriveHelper = controllerConfigChooser.getSelected().getCheesyDriveHelper();
+		if(controllerConfigChooser.getSelected() != null)
+		{
+			mCheesyDriveHelper = controllerConfigChooser.getSelected().getCheesyDriveHelper();
+		}
+		else
+		{
+			mCheesyDriveHelper = DriverConrollerConfigs.kRetroGranTurismo.getCheesyDriveHelper();
+		}
 	}
 }
