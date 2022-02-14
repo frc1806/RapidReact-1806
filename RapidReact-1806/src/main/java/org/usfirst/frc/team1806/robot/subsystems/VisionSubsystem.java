@@ -4,23 +4,35 @@ import org.photonvision.PhotonCamera;
 import org.usfirst.frc.team1806.robot.Robot;
 import org.usfirst.frc.team1806.robot.loop.Loop;
 import org.usfirst.frc.team1806.robot.loop.Looper;
+import org.usfirst.frc.team1806.robot.util.LED.CompositeLEDPattern;
+import org.usfirst.frc.team1806.robot.util.LED.LEDPattern;
+import org.usfirst.frc.team1806.robot.util.LED.LEDPatternSegment;
+import org.usfirst.frc.team1806.robot.util.LED.ScrollingLEDPattern;
 
 import edu.wpi.first.util.net.PortForwarder;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 
 public class VisionSubsystem implements Subsystem {
 
-    private AddressableLED ringLEDs;
-    private AddressableLEDBuffer onBuffer;
-    private AddressableLEDBuffer offBuffer;
+    private static VisionSubsystem VISION_SUBSYSTEM = new VisionSubsystem();
+
+    public static VisionSubsystem getInstance(){
+        return VISION_SUBSYSTEM;
+    }
     private PhotonCamera frontCamera = new PhotonCamera("frontGoalPhoton");
     private PhotonCamera backCamera = new PhotonCamera("backGoalPhoton");
     private PhotonCamera frontDriverCam = new PhotonCamera("frontDriverCam");
     private PhotonCamera backDriverCam = new PhotonCamera("backDriverCamm");
+
+    private boolean isDSAttached;
+    private Alliance currentAlliance;
+    private double lastCheckedDS;
 
 
     private Loop mLoop = new Loop(){
@@ -33,7 +45,7 @@ public class VisionSubsystem implements Subsystem {
 
         @Override
         public void onLoop(double timestamp) {
-            // TODO Auto-generated method stub
+
             
         }
 
@@ -45,38 +57,31 @@ public class VisionSubsystem implements Subsystem {
         
     };
 
-    public VisionSubsystem(){
+    private VisionSubsystem(){
+        isDSAttached = DriverStation.isDSAttached();
+        if(isDSAttached)
+        {
+            currentAlliance = DriverStation.getAlliance();
+        }
+
         PortForwarder.add(5800, "frontGoalPhoton.local", 5800);
         PortForwarder.add(5800, "rearGoalPhoton.local", 5800);
-        ringLEDs = new AddressableLED(24);
-        onBuffer = new AddressableLEDBuffer(24);
-        for(int i = 0; i < 24; i++)
-        {
-            onBuffer.setLED(i, Color.kGreen);
-        }
-        offBuffer = new AddressableLEDBuffer(24);
-        for(int i = 0; i < 24; i++)
-        {
-            offBuffer.setLED(i, Color.kBlack);
-        }
     }
 
     @Override
     public void writeToLog() {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void outputToSmartDashboard() {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void stop() {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -87,8 +92,7 @@ public class VisionSubsystem implements Subsystem {
 
     @Override
     public void registerEnabledLoops(Looper enabledLooper) {
-        // TODO Auto-generated method stub
-        
+        enabledLooper.register(mLoop);
     }
 
     @Override
@@ -102,14 +106,6 @@ public class VisionSubsystem implements Subsystem {
         // TODO Auto-generated method stub
         
     }
-    
-    public void turnLEDOn(){
-        ringLEDs.setData(onBuffer);
-    }
-
-    public void turnLEDOff(){
-        ringLEDs.setData(offBuffer);
-    }
 
     @Override
     public void setupDriverTab() {
@@ -121,6 +117,7 @@ public class VisionSubsystem implements Subsystem {
     public boolean isBestTargetInFront(){
         return true;
     }
+
 
 
 }

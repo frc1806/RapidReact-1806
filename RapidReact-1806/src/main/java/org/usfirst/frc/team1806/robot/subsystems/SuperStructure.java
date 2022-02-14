@@ -189,7 +189,7 @@ public class SuperStructure implements Subsystem {
     private ElevatorSubsystem mElevator;
     private DualRollerSubsystem mDualRollerSubsystem = DualRollerSubsystem.getInstance();
     private Conveyor mConveyor;
-    private LunchboxAngler mLunchboxAngler;
+    private LaunchBoxAngler mLunchboxAngler;
     private SuperStructureStates mSuperStructureStates;
     private final I2C.Port i2cPort1 = I2C.Port.kOnboard;
     private final I2C.Port i2cPort2 = I2C.Port.kMXP;
@@ -215,6 +215,7 @@ public class SuperStructure implements Subsystem {
                 Constants.kTopFlywheelConversionFactor, RobotMap.upFlywheel, Constants.kTopFlywheelKs,
                 Constants.kTopFlywheelKv, mCanitiferDown);
         mConveyor = new Conveyor(mCanifierUp);
+        mLunchboxAngler = LaunchBoxAngler.getInstance();
     }
 
     @Override
@@ -365,6 +366,7 @@ public class SuperStructure implements Subsystem {
 			public double getAsDouble() {
 				return mDownFlywheel.getWantedRPM();
 			}
+        });
 
 
 
@@ -373,13 +375,10 @@ public class SuperStructure implements Subsystem {
             @Override
             public double getAsDouble() {
                 return mLunchboxAngler.getCurrentAngle();
-
-
             }
         
 
         }).withWidget(BuiltInWidgets.kDial).withPosition(1,1).withSize(1,1); //add .withProperties if neccesary
-
 
 
         }

@@ -1,6 +1,8 @@
 
 package org.usfirst.frc.team1806.robot;
 
+import edu.wpi.first.wpilibj.DutyCycle;
+
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
  * to a variable name. This provides flexibility changing wiring, makes checking
@@ -9,7 +11,9 @@ package org.usfirst.frc.team1806.robot;
  */
 public class RobotMap {
 
-	///////////// Analog Inputs
+	
+
+    ///////////// Analog Inputs
 	public static int mStringPotentiometer = 0;
     ///////////// CAN ports 
 	
@@ -21,6 +25,8 @@ public class RobotMap {
 	public static int rightLeader = 4;
 	public static int rightFollowerA = 5;
 	public static int rightFollowerB = 6;
+	
+	//drive encoder dios
 	public static int leftDriveEncoder = 0;
 	public static int leftDriveEncoderB = 1;
 	public static int rightDriveEncoder = 2;
@@ -30,6 +36,8 @@ public class RobotMap {
 	public static int elevatorLeader = 10;
 	public static int elevatorFollower = 11;
 
+	public static int launchBoxAngler = 15;
+	public static final int launchBoxAngleEncoder = 4;
 	//Intake CAN Ports
 	public static int frontIntake = 20;
 
@@ -74,6 +82,8 @@ public class RobotMap {
 	//CANifier IDs
 	public static int UpFlywheelCANifier = 1;
 	public static int DownFlywheelCANifier = 2;
+
+
 
 
 }

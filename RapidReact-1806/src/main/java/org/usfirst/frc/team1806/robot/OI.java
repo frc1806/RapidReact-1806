@@ -131,11 +131,21 @@ public class OI {
 		double timestamp = Timer.getFPGATimestamp();
 
 		// handle config switching
-		DriverConrollerConfigs currentControllerConfig = controllerConfigChooser.getSelected();
-		if (currentControllerConfig != lastDriverControllerConfig) {
-			mCheesyDriveHelper = controllerConfigChooser.getSelected().getCheesyDriveHelper();
+		DriverConrollerConfigs currentControllerConfig;
+		if(controllerConfigChooser.getSelected() != null)
+		{
+			currentControllerConfig = controllerConfigChooser.getSelected();
+			if (currentControllerConfig != lastDriverControllerConfig) {
+				mCheesyDriveHelper = controllerConfigChooser.getSelected().getCheesyDriveHelper();
+			}
+			lastDriverControllerConfig = currentControllerConfig;
 		}
-		lastDriverControllerConfig = currentControllerConfig;
+		else
+		{
+			currentControllerConfig = DriverConrollerConfigs.kRetroGranTurismo;
+		}
+
+
 
 		// driver controls based on current config
 		switch (currentControllerConfig) {
