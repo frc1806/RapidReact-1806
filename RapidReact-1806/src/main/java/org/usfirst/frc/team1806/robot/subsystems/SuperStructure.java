@@ -35,6 +35,7 @@ public class SuperStructure implements Subsystem {
 
     public enum LaunchingStates {
         kPreparingLaunch,
+        kChangeShot,
         kLaunching
     }
 
@@ -89,9 +90,17 @@ public class SuperStructure implements Subsystem {
                             ;
                             if (mWantConfirmShot && mLunchboxAngler.isAtAngle() && mElevator.isAtPosition() && mUpFlywheel.isSpeedInRange() && mDownFlywheel.isSpeedInRange()) 
                             {
-                                mLaunchingStates = LaunchingStates.kLaunching;
+                                mLaunchingStates = LaunchingStates.kChangeShot;
                             }
                             break;
+                        case kChangeShot:
+                            if (!isShotAngleIncreasing){
+                                mLunchboxAngler.goToAngle(mWantedShot.getLauncherAngle());
+                                if(mLunchboxAngler.isAtAngle()); mLaunchingStates = LaunchingStates.kLaunching;
+                            } else {
+                                mElevator.goToSetpointInches(mWantedShot.getLiftHeight());
+                                if (mElevator.isAtPosition()); mLaunchingStates = LaunchingStates.kLaunching;
+                            }
                         case kLaunching:
                             mElevator.goToSetpointInches(mWantedShot.getLiftHeight());
                             mUpFlywheel.setWantedSpeed(mWantedShot.getTopSpeed());
@@ -190,6 +199,8 @@ public class SuperStructure implements Subsystem {
     private DualRollerSubsystem mDualRollerSubsystem = DualRollerSubsystem.getInstance();
     private Conveyor mConveyor;
     private LunchboxAngler mLunchboxAngler;
+    private Shot mShot;
+    private Boolean isShotAngleIncreasing = false;
     private SuperStructureStates mSuperStructureStates;
     private final I2C.Port i2cPort1 = I2C.Port.kOnboard;
     private final I2C.Port i2cPort2 = I2C.Port.kMXP;
@@ -301,6 +312,13 @@ public class SuperStructure implements Subsystem {
     public void wantPrepareShot(Shot wantedShot) {
         if (mSuperStructureStates != SuperStructureStates.Launching) {
             mLaunchingStates = LaunchingStates.kPreparingLaunch;
+        }
+        else
+        {
+            if (mWantedShot != wantedShot){
+                isShotAngleIncreasing = Math.abs(wantedShot.getLauncherAngle()) > Math.abs(mWantedShot.getLauncherAngle()); 
+                mLaunchingStates = LaunchingStates.kChangeShot;
+            }
         }
         mSuperStructureStates = SuperStructureStates.Launching;
         mWantedShot = wantedShot;
