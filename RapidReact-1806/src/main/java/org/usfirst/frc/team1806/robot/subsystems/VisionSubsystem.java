@@ -30,9 +30,6 @@ public class VisionSubsystem implements Subsystem {
     private PhotonCamera frontDriverCam = new PhotonCamera("frontDriverCam");
     private PhotonCamera backDriverCam = new PhotonCamera("backDriverCamm");
 
-    private boolean isDSAttached;
-    private Alliance currentAlliance;
-    private double lastCheckedDS;
 
 
     private Loop mLoop = new Loop(){
@@ -58,11 +55,6 @@ public class VisionSubsystem implements Subsystem {
     };
 
     private VisionSubsystem(){
-        isDSAttached = DriverStation.isDSAttached();
-        if(isDSAttached)
-        {
-            currentAlliance = DriverStation.getAlliance();
-        }
 
         PortForwarder.add(5800, "frontGoalPhoton.local", 5800);
         PortForwarder.add(5800, "rearGoalPhoton.local", 5800);
