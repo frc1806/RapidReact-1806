@@ -63,7 +63,7 @@ public class SuperStructure implements Subsystem {
                     mConveyor.loadConveyor();
                     mUpFlywheel.setReverseSpeed(1500.0);
                     mDownFlywheel.setReverseSpeed(1500.0);
-                    mLunchboxAngler.goToAngle(0.0);;
+                    mLunchboxAngler.goToAngle(0.0);
                     return;
                 case IntakingBack:
                     mElevator.goToSetpointInches(0);
@@ -73,7 +73,7 @@ public class SuperStructure implements Subsystem {
                     mConveyor.loadConveyor();
                     mUpFlywheel.setReverseSpeed(1500.0);
                     mDownFlywheel.setReverseSpeed(1500.0);
-                    mLunchboxAngler.goToAngle(0.0);;
+                    mLunchboxAngler.goToAngle(0.0);
                     return;
                 case Launching:
                     switch (mLaunchingStates) {
@@ -87,7 +87,6 @@ public class SuperStructure implements Subsystem {
                             mBackIntake.stop();
                             mDualRollerSubsystem.stop();
                             mConveyor.prepareForLaunch();
-                            ;
                             if (mWantConfirmShot && mLunchboxAngler.isAtAngle() && mElevator.isAtPosition() && mUpFlywheel.isSpeedInRange() && mDownFlywheel.isSpeedInRange()) 
                             {
                                 mLaunchingStates = LaunchingStates.kChangeShot;
@@ -165,7 +164,7 @@ public class SuperStructure implements Subsystem {
                     mBackIntake.stop();
                     mDualRollerSubsystem.feedBackwards();
                     mConveyor.stop();
-                    mLunchboxAngler.goToAngle(0.0);;
+                    mLunchboxAngler.goToAngle(0.0);
                     return;
                 case BackIntakeFeedThrough:
                     mUpFlywheel.stop();
@@ -175,7 +174,7 @@ public class SuperStructure implements Subsystem {
                     mBackIntake.wantIntaking();
                     mDualRollerSubsystem.feedForward();
                     mConveyor.stop();
-                    mLunchboxAngler.goToAngle(0.0);;
+                    mLunchboxAngler.goToAngle(0.0);
                     return;
             }
 

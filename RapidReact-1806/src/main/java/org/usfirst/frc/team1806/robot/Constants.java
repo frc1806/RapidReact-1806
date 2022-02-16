@@ -3,6 +3,8 @@ package org.usfirst.frc.team1806.robot;
 import org.usfirst.frc.team1806.robot.util.Translation2d;
 import org.usfirst.frc.team1806.robot.util.XboxControllerConfigValues;
 
+import edu.wpi.first.math.util.Units;
+
 public class Constants {
 
     public static final XboxControllerConfigValues kDriverControllerDefaultConfig = XboxControllerConfigValues.Builder
@@ -232,5 +234,10 @@ public static Double kLaunchBoxAnglerKp = 0.0;
 public static Double kLaunchBoxAnglerKi = 0.0;
 public static Double kLaunchBoxAnglerKd = 0.0;
 
+
+//VISION
+public static Double kCameraHeightMeters = Units.inchesToMeters(30);
+public static Double kTargetHeightMeters = Units.inchesToMeters(72);
+public static Double kCameraPitchRadians = Units.degreesToRadians(20);
 
 }
