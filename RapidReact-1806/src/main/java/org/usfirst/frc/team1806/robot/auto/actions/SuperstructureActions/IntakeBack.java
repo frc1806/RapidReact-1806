@@ -1,8 +1,11 @@
 package org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions;
 
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.Action;
+import org.usfirst.frc.team1806.robot.subsystems.SuperStructure;
 
 public class IntakeBack implements Action{
+
+    private SuperStructure mSuperStructure;
 
     @Override
     public boolean isFinished() {
@@ -12,8 +15,7 @@ public class IntakeBack implements Action{
 
     @Override
     public void update() {
-        // TODO Auto-generated method stub
-        
+        mSuperStructure.wantIntakeBack();        
     }
 
     @Override
@@ -24,7 +26,7 @@ public class IntakeBack implements Action{
 
     @Override
     public void start() {
-        // TODO Auto-generated method stub
+        mSuperStructure.wantIntakeBack();
         
     }
     

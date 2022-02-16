@@ -198,13 +198,9 @@ public class SuperStructure implements Subsystem {
     private ElevatorSubsystem mElevator;
     private DualRollerSubsystem mDualRollerSubsystem = DualRollerSubsystem.getInstance();
     private Conveyor mConveyor;
-<<<<<<< HEAD
-    private LunchboxAngler mLunchboxAngler;
     private Shot mShot;
     private Boolean isShotAngleIncreasing = false;
-=======
     private LaunchBoxAngler mLunchboxAngler;
->>>>>>> 0208274b8ea7e1bc9e32fbf7d48cdc52d72561e8
     private SuperStructureStates mSuperStructureStates;
     private final I2C.Port i2cPort1 = I2C.Port.kOnboard;
     private final I2C.Port i2cPort2 = I2C.Port.kMXP;

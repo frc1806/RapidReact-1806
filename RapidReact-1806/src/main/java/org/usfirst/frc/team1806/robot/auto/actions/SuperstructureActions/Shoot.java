@@ -1,8 +1,15 @@
 package org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions;
 
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.Action;
+import org.usfirst.frc.team1806.robot.game.Shot;
 
 public class Shoot implements Action {
+
+    private Shot mShot;
+
+    private Shoot(Shot shot){
+        mShot = shot;
+    }
 
     @Override
     public boolean isFinished() {
