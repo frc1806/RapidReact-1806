@@ -3,6 +3,8 @@ package org.usfirst.frc.team1806.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import org.usfirst.frc.team1806.robot.Constants;
+import org.usfirst.frc.team1806.robot.RobotMap;
 import org.usfirst.frc.team1806.robot.loop.Loop;
 import org.usfirst.frc.team1806.robot.loop.Looper;
 
@@ -10,12 +12,12 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 
 
-public class LunchboxAngler implements Subsystem {
+public class LaunchBoxAngler implements Subsystem {
 
     private TalonSRX mLaunchMotor;
     private DutyCycleEncoder mEncoder;
     private PIDController mPIDController;
-    private static LunchboxAngler LUNCH_BOX_ANGLER;
+    private static LaunchBoxAngler LUNCH_BOX_ANGLER = new LaunchBoxAngler();
     private Double mKp, mKi, mKd, mWantedSetPoint;
     private Double angleLeniency = 0.75;
     private enum LunchboxStates{
@@ -56,16 +58,17 @@ public class LunchboxAngler implements Subsystem {
         
     };
 
-    public LunchboxAngler(TalonSRX LaunchMotor, Double kp, Double ki, Double kd){
+    private LaunchBoxAngler(){
+        mEncoder = new DutyCycleEncoder(RobotMap.launchBoxAngleEncoder);
         mEncoder.setConnectedFrequencyThreshold(975);
         mEncoder.setDutyCycleRange(1.0/1025.0, 1024.0/1025.0);
         mEncoder.setDistancePerRotation(360);
 
-        mKp = kp;
-        mKi = ki;
-        mKd = kd;
-        mLaunchMotor = LaunchMotor;
-        mPIDController.setPID(mKp, mKi, mKd);;
+        mKp = Constants.kLaunchBoxAnglerKp;
+        mKi = Constants.kLaunchBoxAnglerKi;
+        mKd = Constants.kLaunchBoxAnglerKd;
+        mLaunchMotor = new TalonSRX(RobotMap.launchBoxAngler);
+        mPIDController = new PIDController(mKp, mKi, mKd);
         
    }
 
@@ -121,12 +124,16 @@ public class LunchboxAngler implements Subsystem {
         return false;
     }
 
+    public double getCurrentAngle(){
+        return mEncoder.getDistance();
+    }
+
     public Boolean angleToCheck(Double angle){
         if (angle >= mWantedSetPoint + angleLeniency && angle >= mWantedSetPoint - angleLeniency) return false;
         return true;
     }
 
-    public static LunchboxAngler getInstance(){
+    public static LaunchBoxAngler getInstance(){
         return LUNCH_BOX_ANGLER;
     }
 

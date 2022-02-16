@@ -116,11 +116,6 @@ public class FlywheelSubsystem implements Subsystem {
     }
     
     public void reloadGames() {
-        mFlywheelMotor.getPIDController().setP(mKp);
-        mFlywheelMotor.getPIDController().setI(mKi);
-        mFlywheelMotor.getPIDController().setD(mKd);
-        mFlywheelMotor.getPIDController().setFF(mKf);
-        mFlywheelMotor.getPIDController().setIZone(mIzone);
 
         mFlywheelPIDController = new PIDController(mKp, mKi, mKd);
         mFeedforwardController = new SimpleMotorFeedforward(mks, mkv);

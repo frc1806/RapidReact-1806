@@ -25,13 +25,11 @@ public class DumbMode implements PathContainer {
 
 	@Override
 	public RigidTransform2d getStartPose() {
-		// TODO Auto-generated method stub
 		return new RigidTransform2d(new Translation2d(0, 0), Rotation2d.fromDegrees(0.0));
 	}
 
 	@Override
 	public boolean isReversed() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

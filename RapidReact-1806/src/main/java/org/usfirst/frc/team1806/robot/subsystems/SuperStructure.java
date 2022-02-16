@@ -198,9 +198,13 @@ public class SuperStructure implements Subsystem {
     private ElevatorSubsystem mElevator;
     private DualRollerSubsystem mDualRollerSubsystem = DualRollerSubsystem.getInstance();
     private Conveyor mConveyor;
+<<<<<<< HEAD
     private LunchboxAngler mLunchboxAngler;
     private Shot mShot;
     private Boolean isShotAngleIncreasing = false;
+=======
+    private LaunchBoxAngler mLunchboxAngler;
+>>>>>>> 0208274b8ea7e1bc9e32fbf7d48cdc52d72561e8
     private SuperStructureStates mSuperStructureStates;
     private final I2C.Port i2cPort1 = I2C.Port.kOnboard;
     private final I2C.Port i2cPort2 = I2C.Port.kMXP;
@@ -214,7 +218,7 @@ public class SuperStructure implements Subsystem {
     private IdleStates mIdleStates;
 
     private SuperStructure() {
-
+        mElevator = ElevatorSubsystem.getInstance();
         mFrontIntake = new IntakeSubsystem(RobotMap.frontIntake, RobotMap.frontIntakeExtend, RobotMap.frontIntakeRetract);
         mBackIntake = new IntakeSubsystem(RobotMap.rearIntake, RobotMap.backIntakeExtend, RobotMap.backIntakeRetract);
         mUpFlywheel = new FlywheelSubsystem(RobotMap.upFlywheel, Constants.kTopFlywheelKp, Constants.kTopFlywheelKi,
@@ -222,10 +226,11 @@ public class SuperStructure implements Subsystem {
                 Constants.kTopFlywheelConversionFactor, RobotMap.upFlywheel, Constants.kTopFlywheelKs,
                 Constants.kTopFlywheelKv, mCanifierUp);
         mDownFlywheel = new FlywheelSubsystem(RobotMap.downFlywheel, Constants.kTopFlywheelKp, Constants.kTopFlywheelKi,
-                Constants.kTopFlywheelKd, Constants.kTopFlywheelKf, Constants.kTopFlywheelIzone, false,
+                Constants.kTopFlywheelKd, Constants.kTopFlywheelKf, Constants.kTopFlywheelIzone, true,
                 Constants.kTopFlywheelConversionFactor, RobotMap.upFlywheel, Constants.kTopFlywheelKs,
                 Constants.kTopFlywheelKv, mCanitiferDown);
         mConveyor = new Conveyor(mCanifierUp);
+        mLunchboxAngler = LaunchBoxAngler.getInstance();
     }
 
     @Override
@@ -351,7 +356,7 @@ public class SuperStructure implements Subsystem {
 				return mUpFlywheel.getCurrentRPM();
 			}
 
-        }).withWidget(BuiltInWidgets.kDial).withPosition(1,1); //add .withProperties if neccesary
+        }).withWidget(BuiltInWidgets.kDial).withPosition(10,1).withSize(2,2); //add .withProperties if neccesary
 
 
         Robot.getMainDriverTab().addNumber("Down Flywheel Speed", new DoubleSupplier() {
@@ -361,10 +366,43 @@ public class SuperStructure implements Subsystem {
 				return mDownFlywheel.getCurrentRPM();
 			}
 
-        }).withWidget(BuiltInWidgets.kDial).withPosition(1,1); //add .withProperties if neccesary
+
+        }).withWidget(BuiltInWidgets.kDial).withPosition(1,1).withSize(2,2); //add .withProperties if neccesary
 
 
-            
+
+
+        Robot.getMainDriverTab().addNumber("Up Wanted Flywheel Speed", new DoubleSupplier() {
+
+            @Override
+			public double getAsDouble() {
+				return mUpFlywheel.getWantedRPM();
+			}
+
+        }).withWidget(BuiltInWidgets.kDial).withPosition(10,1).withSize(2,2); //add .withProperties if neccesary
+
+
+        Robot.getMainDriverTab().addNumber("Down Wanted Flywheel Speed", new DoubleSupplier() {
+
+            @Override
+			public double getAsDouble() {
+				return mDownFlywheel.getWantedRPM();
+			}
+        });
+
+
+
+        Robot.getMainDriverTab().addNumber("Shooter Angle", new DoubleSupplier() {
+
+            @Override
+            public double getAsDouble() {
+                return mLunchboxAngler.getCurrentAngle();
+            }
+        
+
+        }).withWidget(BuiltInWidgets.kDial).withPosition(1,1).withSize(1,1); //add .withProperties if neccesary
+
+
         }
 
         // TODO Auto-generated method stub
