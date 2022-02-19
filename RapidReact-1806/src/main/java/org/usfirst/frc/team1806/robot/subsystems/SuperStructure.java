@@ -197,7 +197,6 @@ public class SuperStructure implements Subsystem {
     private ElevatorSubsystem mElevator;
     private DualRollerSubsystem mDualRollerSubsystem = DualRollerSubsystem.getInstance();
     private Conveyor mConveyor;
-    private Shot mShot;
     private Boolean isShotAngleIncreasing = false;
     private LaunchBoxAngler mLunchboxAngler;
     private SuperStructureStates mSuperStructureStates;
@@ -207,8 +206,6 @@ public class SuperStructure implements Subsystem {
     ColorSensorV3 m_colorSensorRear;
     private LaunchingStates mLaunchingStates;
     private Boolean mWantConfirmShot;
-    private CANifier mCanifierUp = new CANifier(0);
-    private CANifier mCanitiferDown = new CANifier(1);
     private Shot mWantedShot; // make sure to null check this
     private IdleStates mIdleStates;
 
@@ -217,14 +214,13 @@ public class SuperStructure implements Subsystem {
         mFrontIntake = new IntakeSubsystem(RobotMap.frontIntake, RobotMap.frontIntakeExtend, RobotMap.frontIntakeRetract);
         mBackIntake = new IntakeSubsystem(RobotMap.rearIntake, RobotMap.backIntakeExtend, RobotMap.backIntakeRetract);
         mUpFlywheel = new FlywheelSubsystem(RobotMap.upFlywheel, Constants.kTopFlywheelKp, Constants.kTopFlywheelKi,
-                Constants.kTopFlywheelKd, Constants.kTopFlywheelKf, Constants.kTopFlywheelIzone, false,
-                Constants.kTopFlywheelConversionFactor, RobotMap.upFlywheel, Constants.kTopFlywheelKs,
-                Constants.kTopFlywheelKv, mCanifierUp);
+                Constants.kTopFlywheelKd, Constants.kTopFlywheelKf, Constants.kTopFlywheelIzone, false,  Constants.kTopFlywheelKs,
+                Constants.kTopFlywheelKv, RobotMap.upFlyWheelEncoderA, RobotMap.upFlywheelEncoderB);
         mDownFlywheel = new FlywheelSubsystem(RobotMap.downFlywheel, Constants.kTopFlywheelKp, Constants.kTopFlywheelKi,
                 Constants.kTopFlywheelKd, Constants.kTopFlywheelKf, Constants.kTopFlywheelIzone, true,
-                Constants.kTopFlywheelConversionFactor, RobotMap.upFlywheel, Constants.kTopFlywheelKs,
-                Constants.kTopFlywheelKv, mCanitiferDown);
-        mConveyor = new Conveyor(mCanifierUp);
+                 Constants.kTopFlywheelKs,
+                Constants.kTopFlywheelKv, RobotMap.downFlywheelEncoderA, RobotMap.downFlywheelEncoderB);
+        mConveyor = new Conveyor();
         mLunchboxAngler = LaunchBoxAngler.getInstance();
     }
 
@@ -274,6 +270,7 @@ public class SuperStructure implements Subsystem {
         mUpFlywheel.registerEnabledLoops(enabledLooper);
         mElevator.registerEnabledLoops(enabledLooper);
         mConveyor.registerEnabledLoops(enabledLooper);
+        enabledLooper.register(mLoop);
     }
 
     @Override
@@ -289,6 +286,7 @@ public class SuperStructure implements Subsystem {
 
     @Override
     public void retractAll() {
+        mSuperStructureStates = SuperStructureStates.Idle;
         mBackIntake.retractAll();
         mFrontIntake.retractAll();
         mDownFlywheel.retractAll();
@@ -299,14 +297,12 @@ public class SuperStructure implements Subsystem {
     }
 
     public void wantIntakeFront() {
-        mFrontIntake.wantIntaking();
-        mElevator.goToSetpointInches(0.0);
+        mSuperStructureStates = SuperStructureStates.IntakingFront;
 
     };
 
     public void wantIntakeBack() {
-        mBackIntake.wantIntaking();
-        mElevator.goToSetpointInches(0.0);
+        mSuperStructureStates = SuperStructureStates.IntakingBack;
     }
 
     public void wantPrepareShot(Shot wantedShot) {

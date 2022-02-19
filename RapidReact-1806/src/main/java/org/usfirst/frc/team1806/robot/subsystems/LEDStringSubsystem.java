@@ -21,6 +21,7 @@ import org.usfirst.frc.team1806.robot.util.LED.CompositeLEDPattern;
 import org.usfirst.frc.team1806.robot.util.LED.GlitchyLEDPattern;
 import org.usfirst.frc.team1806.robot.util.LED.LEDPattern;
 import org.usfirst.frc.team1806.robot.util.LED.LEDPatternSegment;
+import org.usfirst.frc.team1806.robot.util.LED.RGBWaveLEDPattern;
 import org.usfirst.frc.team1806.robot.util.LED.ScrollingLEDPattern;
 
 public class LEDStringSubsystem implements Subsystem {
@@ -34,8 +35,9 @@ public class LEDStringSubsystem implements Subsystem {
 
     //2022 Specific
     private LEDPattern visionRingsPattern, leftDriveBasePatern, middleDriveBasePattern, rightDriveBasePattern, leftLaunchboxPattern, rightLaunchBoxPattern;
+    private static final int LEDs = 274;
 
-    private static LEDStringSubsystem LED_STRING_SUBSYSTEM = new LEDStringSubsystem(0, 174, false);
+    private static LEDStringSubsystem LED_STRING_SUBSYSTEM = new LEDStringSubsystem(0, LEDs, false);
 
     public static LEDStringSubsystem getInstance(){
         return LED_STRING_SUBSYSTEM;
@@ -45,9 +47,13 @@ public class LEDStringSubsystem implements Subsystem {
     boolean isDSAttached;
     Alliance currentAlliance;
 
+    double launchBoxMotionSpeed;
+    double visionDisplayAngle;
+
     private DriveBaseLEDMode driveBaseLEDMode;
     private LaunchBoxLEDMode launchBoxLEDMode;
     private VisionRingLEDMode visionRingLEDMode;
+    private WholeRobotLEDMode wholeRobotLEDMode;
     
     enum VisionRingLEDMode{
         kVision,
@@ -62,6 +68,13 @@ public class LEDStringSubsystem implements Subsystem {
     enum LaunchBoxLEDMode{
         kAlliance,
         kMotion
+    }
+
+    enum WholeRobotLEDMode{
+        kSubControlled,
+        kGlitchy,
+        kClimbComplete,
+        kOff
     }
 
     //LED string constructor is private for 2022
@@ -84,19 +97,34 @@ public class LEDStringSubsystem implements Subsystem {
         driveBaseLEDMode = DriveBaseLEDMode.kAlliance;
         launchBoxLEDMode = LaunchBoxLEDMode.kAlliance;
         visionRingLEDMode = VisionRingLEDMode.kOff;
+        wholeRobotLEDMode = WholeRobotLEDMode.kSubControlled;
 
         //TODO: Replace thse with the methods to update the modes.
         visionRingsPattern = ScrollingLEDPattern.VISION_GREEN;
         leftDriveBasePatern = ScrollingLEDPattern.NO_ALLIANCE;
         middleDriveBasePattern = ScrollingLEDPattern.NO_ALLIANCE;
         rightDriveBasePattern = ScrollingLEDPattern.NO_ALLIANCE;
-        leftLaunchboxPattern = new GlitchyLEDPattern(ScrollingLEDPattern.NO_ALLIANCE, 30, 1);
-        rightLaunchBoxPattern = new GlitchyLEDPattern(ScrollingLEDPattern.NO_ALLIANCE, 30, 1);//ScrollingLEDPattern.NO_ALLIANCE;
+        leftLaunchboxPattern = ScrollingLEDPattern.NO_ALLIANCE;
+        rightLaunchBoxPattern = ScrollingLEDPattern.NO_ALLIANCE;
         buildLEDPattern();
     }
 
     private void buildLEDPattern(){
-        this.setPattern(new CompositeLEDPattern(new LEDPatternSegment(24, visionRingsPattern, false), new LEDPatternSegment(30, leftDriveBasePatern, false), new LEDPatternSegment(30, middleDriveBasePattern, true), new LEDPatternSegment(30, rightDriveBasePattern, false), new LEDPatternSegment(30, leftLaunchboxPattern, false), new LEDPatternSegment(30, rightLaunchBoxPattern, true)));
+        switch(wholeRobotLEDMode){
+            case kClimbComplete:         
+            case kOff:
+                
+                break;
+            default:
+            case kSubControlled:
+                this.setPattern(new CompositeLEDPattern(new LEDPatternSegment(24, visionRingsPattern, false), new LEDPatternSegment(50, leftDriveBasePatern, false), new LEDPatternSegment(50, middleDriveBasePattern, true), new LEDPatternSegment(50, rightDriveBasePattern, false), new LEDPatternSegment(50, leftLaunchboxPattern, false), new LEDPatternSegment(50, rightLaunchBoxPattern, true)));
+                break;
+
+            case kGlitchy:
+                this.setPattern(new CompositeLEDPattern(new LEDPatternSegment(24, visionRingsPattern, false), new LEDPatternSegment(250, new GlitchyLEDPattern(currentPattern, 250, (int)Math.floor(Math.random()* 10)), (Math.random() > 0.5))));
+            
+        }
+        
     }
 
     private Loop mEnabledLoop = new Loop() {
@@ -279,15 +307,128 @@ public class LEDStringSubsystem implements Subsystem {
         buildLEDPattern();
     }
 
-    private void setDriveBaseLEDsToVision(){
+    public void setDriveBaseLEDsToVision(){
         driveBaseLEDMode = DriveBaseLEDMode.kVision;
         updateDriveBaseLEDPatternForVision();
     }
 
-    private void setDriveBaseLEDsToAllianceMode()
+    public void setDriveBaseLEDsToAllianceMode()
     {
         driveBaseLEDMode = DriveBaseLEDMode.kAlliance;
         updateDriveBaseLEDPatternForAlliance(isDSAttached, currentAlliance);
+    }
+
+    private void updateLaunchBoxLEDsForAlliance(boolean isDSAttached, Alliance alliance)
+    {
+        if(!isDSAttached)
+        {
+            leftLaunchboxPattern = ScrollingLEDPattern.NO_ALLIANCE;
+            rightLaunchBoxPattern = ScrollingLEDPattern.NO_ALLIANCE;
+        }
+        else{
+            switch(alliance){
+                case Blue:
+                    leftLaunchboxPattern = ScrollingLEDPattern.BLUE_ALLIANCE;
+                    rightLaunchBoxPattern = ScrollingLEDPattern.BLUE_ALLIANCE;
+                    break;
+                default:
+                case Invalid:
+                    leftLaunchboxPattern = ScrollingLEDPattern.NO_ALLIANCE;
+                    rightLaunchBoxPattern = ScrollingLEDPattern.NO_ALLIANCE;
+                    break;
+                case Red:
+                    leftLaunchboxPattern = ScrollingLEDPattern.RED_ALLIANCE;
+                    rightLaunchBoxPattern = ScrollingLEDPattern.RED_ALLIANCE;
+                    break;
+                
+            }
+        }
+        buildLEDPattern();
+    }
+
+    public void setLaunchBoxLEDsToAllianceMode()
+    {
+        launchBoxLEDMode = LaunchBoxLEDMode.kAlliance;
+        updateDriveBaseLEDPatternForAlliance(isDSAttached, currentAlliance);
+    }
+
+    public void setLaunchBoxLEDsMotion(double motionspeed)
+    {
+        launchBoxMotionSpeed = motionspeed;
+        launchBoxLEDMode = LaunchBoxLEDMode.kMotion;
+    }
+
+    private void updateLaunchBoxLEDsForMotion()
+    {
+        switch(currentAlliance){
+            case Blue:
+                leftLaunchboxPattern = ScrollingLEDPattern.GenerateBlueAllianceTracerPatternAtSpeed((int) launchBoxMotionSpeed);
+                rightLaunchBoxPattern = ScrollingLEDPattern.GenerateBlueAllianceTracerPatternAtSpeed((int) launchBoxMotionSpeed);
+                break;
+            case Invalid:          
+            case Red:
+            default:
+                leftLaunchboxPattern = ScrollingLEDPattern.GenerateRedAllianceTracerPatternAtSpeed((int) launchBoxMotionSpeed);
+                rightLaunchBoxPattern = ScrollingLEDPattern.GenerateRedAllianceTracerPatternAtSpeed((int) launchBoxMotionSpeed);
+                break;
+            
+        }
+    }
+    
+
+
+    public void setRobotLEDModeClimbComplete(){
+        if(wholeRobotLEDMode != WholeRobotLEDMode.kClimbComplete)
+        {
+            wholeRobotLEDMode = WholeRobotLEDMode.kClimbComplete;
+            this.setPattern(new RGBWaveLEDPattern(6, 60, LEDs));
+            buildLEDPattern();
+        }
+    }
+
+    public void setRobotLEDModeGlitchy(){
+        if(wholeRobotLEDMode != WholeRobotLEDMode.kGlitchy)
+        {
+            wholeRobotLEDMode = WholeRobotLEDMode.kGlitchy;
+            this.setPattern(new GlitchyLEDPattern(currentPattern, LEDs, 1));
+            buildLEDPattern();
+        }
+    }
+
+    public void setRobotLEDModeOff(){
+        if(wholeRobotLEDMode!= WholeRobotLEDMode.kOff)
+        {
+            this.setPattern(ScrollingLEDPattern.LIGHTS_OUT);
+            wholeRobotLEDMode = WholeRobotLEDMode.kOff;
+            buildLEDPattern();
+        }
+    }
+
+    public void setRobotLEDModeNormal(){
+        if(wholeRobotLEDMode != WholeRobotLEDMode.kSubControlled)
+        {
+            wholeRobotLEDMode = WholeRobotLEDMode.kSubControlled;
+            switch(driveBaseLEDMode){
+                default:
+                case kAlliance:
+                    updateDriveBaseLEDPatternForAlliance(isDSAttached, currentAlliance);
+                    break;
+                case kVision:
+                    updateDriveBaseLEDPatternForVision();
+                    break;       
+            }
+            switch(launchBoxLEDMode){
+                default:
+                case kAlliance:
+                    updateLaunchBoxLEDsForAlliance(isDSAttached, currentAlliance);
+                    break;
+                case kMotion:
+                    updateLaunchBoxLEDsForMotion();
+                    break;
+                
+            }
+            buildLEDPattern();
+        }
     }
     
 }
