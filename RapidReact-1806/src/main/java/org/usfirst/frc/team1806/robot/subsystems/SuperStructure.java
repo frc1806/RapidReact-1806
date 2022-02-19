@@ -347,7 +347,7 @@ public class SuperStructure implements Subsystem {
 				return mUpFlywheel.getCurrentRPM();
 			}
 
-        }).withWidget(BuiltInWidgets.kDial).withPosition(10,1).withSize(2,2); //add .withProperties if neccesary
+        }).withWidget(BuiltInWidgets.kDial).withPosition(9,1).withSize(2,2); //add .withProperties if neccesary
 
 
         Robot.getMainDriverTab().addNumber("Down Flywheel Speed", new DoubleSupplier() {
@@ -358,7 +358,7 @@ public class SuperStructure implements Subsystem {
 			}
 
 
-        }).withWidget(BuiltInWidgets.kDial).withPosition(1,1).withSize(2,2); //add .withProperties if neccesary
+        }).withWidget(BuiltInWidgets.kDial).withPosition(9,3).withSize(2,2); //add .withProperties if neccesary
 
 
 
@@ -370,7 +370,7 @@ public class SuperStructure implements Subsystem {
 				return mUpFlywheel.getWantedRPM();
 			}
 
-        }).withWidget(BuiltInWidgets.kDial).withPosition(10,1).withSize(2,2); //add .withProperties if neccesary
+        }).withWidget(BuiltInWidgets.kDial).withPosition(7,1).withSize(2,2); //add .withProperties if neccesary
 
 
         Robot.getMainDriverTab().addNumber("Down Wanted Flywheel Speed", new DoubleSupplier() {
@@ -381,7 +381,7 @@ public class SuperStructure implements Subsystem {
 			}
         
 
-        }).withWidget(BuiltInWidgets.kDial).withPosition(1,1).withSize(2,2); //add .withProperties if neccesary
+        }).withWidget(BuiltInWidgets.kDial).withPosition(7,3).withSize(2,2); //add .withProperties if neccesary
 
 
 
@@ -393,7 +393,7 @@ public class SuperStructure implements Subsystem {
             }
         
 
-        }).withWidget(BuiltInWidgets.kDial).withPosition(1,1).withSize(1,1); //add .withProperties if neccesary
+        }).withWidget(BuiltInWidgets.kDial).withPosition(-1,-1).withSize(1,1); //add .withProperties if neccesary
 
 
         }
