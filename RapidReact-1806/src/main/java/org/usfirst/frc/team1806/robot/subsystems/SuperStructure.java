@@ -383,7 +383,9 @@ public class SuperStructure implements Subsystem {
 			public double getAsDouble() {
 				return mDownFlywheel.getWantedRPM();
 			}
-        });
+        
+
+        }).withWidget(BuiltInWidgets.kDial).withPosition(1,1).withSize(2,2); //add .withProperties if neccesary
 
 
 
