@@ -24,6 +24,16 @@ public class ScrollingLEDPattern implements LEDPattern {
         return new ScrollingLEDPattern(Arrays.asList(new Color(0.0, 0.0, 1.0), new Color(0.0, 0.0, 1.0), new Color(0.0, 0.0, 1.0), new Color(0.2, 0.2, 1.0), new Color(0.0, 0.0, 1.0),new Color(0.2, 0.2, 1.0), new Color(0.0, 0.0, 1.0),new Color(0.2, 0.2, 1.0), new Color(0.0, 0.0, 1.0), new Color(0.2, 0.2, 1.0), new Color(0.2, 0.2, 1.0), new Color(0.2, 0.2, 1.0)), speed, 24);
     }
 
+    public static ScrollingLEDPattern GenerateRedAllianceTracerPatternAtSpeed(int speed)
+    {
+        return new ScrollingLEDPattern(Arrays.asList(new Color(.1, 0.0, 0.0),new Color(.2, 0.0, 0.0), new Color(.4, 0.0, 0.0), new Color(.8, 0.0, 0.0), new Color(1.0, 0.0, 0.0), new Color(1.0, 0.0, 0.0), new Color(1.0, 0.0, 0.0), new Color(0.8, 0.0, 0.0), new Color(0.4, 0.0, 0.0), new Color(0.2, 0.0, 0.0), new Color(0.1, 0.0, 0.0), new Color(0.0, 0.0, 0.0), new Color(0.0, 0.0, 0.0), new Color(0.0, 0.0, 0.0), new Color(0.0, 0.0, 0.0), new Color(0.0, 0.0, 0.0), new Color(0.0, 0.0, 0.0), new Color(0.0, 0.0, 0.0), new Color(0.0, 0.0, 0.0), new Color(0.0, 0.0, 0.0), new Color(0.0, 0.0, 0.0), new Color(0.0, 0.0, 0.0)), speed, 24);
+    }
+
+    public static ScrollingLEDPattern GenerateBlueAllianceTracerPatternAtSpeed(int speed)
+    {
+        return new ScrollingLEDPattern(Arrays.asList(new Color(0.0, 0.0, 0.1),new Color(0.0, 0.0, 0.2), new Color(0.0, 0.0, 0.4), new Color(0.0, 0.0, 0.8), new Color(0.0, 0.0, 1.0), new Color(0.0, 0.0, 1.0), new Color(0.0, 0.0, 1.0), new Color(0.0, 0.0, 0.8), new Color(0.0, 0.0, 0.4), new Color(0.0, 0.0, 0.2), new Color(0.0, 0.0, 0.1), new Color(0.0, 0.0, 0.0), new Color(0.0, 0.0, 0.0), new Color(0.0, 0.0, 0.0), new Color(0.0, 0.0, 0.0), new Color(0.0, 0.0, 0.0), new Color(0.0, 0.0, 0.0), new Color(0.0, 0.0, 0.0), new Color(0.0, 0.0, 0.0), new Color(0.0, 0.0, 0.0), new Color(0.0, 0.0, 0.0), new Color(0.0, 0.0, 0.0)), speed, 24);
+    }
+
     private List<Color> pattern;
     private int animationStepAmount;
     private int currentAnimationStep;

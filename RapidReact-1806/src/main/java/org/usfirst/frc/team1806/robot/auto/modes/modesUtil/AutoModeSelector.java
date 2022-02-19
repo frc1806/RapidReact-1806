@@ -1,15 +1,16 @@
 package org.usfirst.frc.team1806.robot.auto.modes.modesUtil;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.reflections.Reflections;
+import org.usfirst.frc.team1806.robot.Robot;
 import org.usfirst.frc.team1806.robot.auto.modes.DummyMode;
 import org.usfirst.frc.team1806.robot.loop.Loop;
 import org.usfirst.frc.team1806.robot.loop.Looper;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Set;
 
 /**
@@ -17,7 +18,6 @@ import java.util.Set;
  */
 public class AutoModeSelector {
 
-    public static final String AUTO_OPTIONS_DASHBOARD_KEY = "Auto Options";
     public static final String SELECTED_AUTO_MODE_DASHBOARD_KEY = "Selected Auto Mode";
     public static final String AUTO_MODES_PACKAGE = "org.usfirst.frc.team1806.robot.auto.modes";
     private static SendableChooser<String> AUTO_CHOOSER = new SendableChooser<>();
@@ -31,7 +31,7 @@ public class AutoModeSelector {
         for (Class<?> mode : modes) {
             AUTO_CHOOSER.addOption(mode.getSimpleName(), mode.getName());
         }
-        SmartDashboard.putData(AUTO_OPTIONS_DASHBOARD_KEY, AUTO_CHOOSER);
+        Robot.getMainDriverTab().add("Select An Autonomous Mode:", AUTO_CHOOSER).withSize(3, 1).withPosition(0, 4);
     }
 
 
@@ -95,9 +95,6 @@ public class AutoModeSelector {
 
             @Override
             public void onLoop(double timestamp) {
-                if (AUTO_CHOOSER.getSelected() != null) {
-                    SmartDashboard.putString(SELECTED_AUTO_MODE_DASHBOARD_KEY, AUTO_CHOOSER.getSelected());
-                }
 
             }
 

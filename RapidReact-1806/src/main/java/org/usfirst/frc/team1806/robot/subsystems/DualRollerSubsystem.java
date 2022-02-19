@@ -12,7 +12,7 @@ public class DualRollerSubsystem implements Subsystem{
 
     private TalonSRX frontRoller;
     private TalonSRX backRoller;
-    private static DualRollerSubsystem DUAL_ROLLER_SUBSYSTEM;
+    private static DualRollerSubsystem DUAL_ROLLER_SUBSYSTEM = new DualRollerSubsystem();
 
     private DualRollerSubsystem(){
         frontRoller = new TalonSRX(RobotMap.frontRoller);

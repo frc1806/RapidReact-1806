@@ -56,8 +56,7 @@ public class Conveyor implements Subsystem {
     };
     private TalonSRX mTalonMotor;
 
-    public Conveyor(CANifier canifier){
-        canifier = canifier;
+    public Conveyor(){
         mConveyorStates = ConveyorStates.kIdle;
     }
 

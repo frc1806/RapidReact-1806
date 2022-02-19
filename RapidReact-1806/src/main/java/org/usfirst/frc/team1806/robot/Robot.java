@@ -83,6 +83,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         selectedModeName = "";
         lastSelectedModeName = "";
+        competitionTab = Shuffleboard.getTab("Main Competition Tab");
       m_oi = new OI();
       zeroAllSensors();
       //mDrive.setDebug(true);
@@ -106,7 +107,6 @@ public class Robot extends TimedRobot {
       } catch (InterruptedException e){
         System.out.println(e);
       }
-      competitionTab = Shuffleboard.getTab("Main Competition Tab");
       S_SubsystemManager.setUpDriverTab();
     }
 
@@ -136,7 +136,6 @@ public class Robot extends TimedRobot {
       mEnabledLooper.stop();
         if(mAutoModeExecuter != null) {
             mAutoModeExecuter.stop();
-            AutoModeSelector.initAutoModeSelector();
             selectedAuto = AutoModeSelector.getSelectedAutoMode();
         }
         if(mAutomatedSequenceExecuter != null) {

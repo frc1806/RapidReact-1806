@@ -20,7 +20,6 @@ public class IntakeSubsystem implements Subsystem {
     };
     private DoubleSolenoid mExtendSolenoid;
     private CANSparkMax intakeMotor;
-    private Double mIntakeSpeed = 0.0;
     private IntakeStates mIntakeState;
     private Loop mLoop = new Loop(){
 

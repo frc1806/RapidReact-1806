@@ -52,6 +52,11 @@ public class RobotMap {
 	public static int upFlywheel = 40;
 	public static int downFlywheel = 42;
 
+	public static int upFlyWheelEncoderA = 5;
+	public static int upFlywheelEncoderB = 6;
+	public static int downFlywheelEncoderA = 7;
+	public static int downFlywheelEncoderB = 8;
+
 
 	////////// These are all of the solenoids for the robotri
 	public static int module1Number = 0;

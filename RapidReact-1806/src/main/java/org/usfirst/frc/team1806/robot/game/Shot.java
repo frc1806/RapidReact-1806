@@ -25,7 +25,7 @@ public class Shot {
         private static ShuffleboardTab ShotTuningTab = Shuffleboard.getTab("Shot Tuning");
         private static NetworkTableEntry TopSpeedEntry = ShotTuningTab.addPersistent("Top Speed", 1500).withWidget(BuiltInWidgets.kField).getEntry();
         private static NetworkTableEntry BottomSpeedEntry = ShotTuningTab.addPersistent("Bottom Speed", 1500).withWidget(BuiltInWidgets.kField).getEntry();
-        private static NetworkTableEntry Angle = ShotTuningTab.addPersistent("Angle", 85).withWidget(BuiltInWidgets.kField).getEntry();
+        private static NetworkTableEntry Angle = ShotTuningTab.addPersistent("Angle", 175).withWidget(BuiltInWidgets.kField).getEntry();
         private static NetworkTableEntry IsPreciseShot = ShotTuningTab.addPersistent("Is Precise Shot?", false).withWidget(BuiltInWidgets.kBooleanBox).getEntry();
         private static NetworkTableEntry IsFlipped = ShotTuningTab.addPersistent("Flipped?", false).withWidget(BuiltInWidgets.kBooleanBox).getEntry();
         
@@ -49,7 +49,7 @@ public class Shot {
     //A map from inches to launcher angle
     private static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> LAUNCHER_ANGLE_FROM_DISTANCE_MAP = new InterpolatingTreeMap<>(30);
     static{
-        LAUNCHER_ANGLE_FROM_DISTANCE_MAP.put(new InterpolatingDouble(30.0), new InterpolatingDouble(85.0)); //untested default
+        LAUNCHER_ANGLE_FROM_DISTANCE_MAP.put(new InterpolatingDouble(30.0), new InterpolatingDouble(175.0)); //untested default
     }
 
     /**

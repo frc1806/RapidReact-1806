@@ -102,6 +102,7 @@ public class OI {
 	// snag some subsystem instances
 	private DriveTrainSubsystem mDriveTrainSubsystem = DriveTrainSubsystem.getInstance();
 	private SuperStructure mSuperStructure = SuperStructure.getInstance();
+	private LEDStringSubsystem mLedStringSubsystem = LEDStringSubsystem.getInstance();
 
 	// initialise controllers & ish
 	private CheesyDriveHelper mCheesyDriveHelper;
@@ -117,6 +118,7 @@ public class OI {
 		controllerConfigChooser.addOption("Retro Gran Turismo", DriverConrollerConfigs.kRetroGranTurismo);
 		controllerConfigChooser.addOption("Call Of Duty", DriverConrollerConfigs.kCallOfDuty);
 		controllerConfigChooser.addOption("Forza", DriverConrollerConfigs.kForza);
+		Robot.getMainDriverTab().add("Controller Config", controllerConfigChooser);
 
 		mCheesyDriveHelper = DriverConrollerConfigs.kRetroGranTurismo.getCheesyDriveHelper();
 		lastDriverControllerConfig = DriverConrollerConfigs.kRetroGranTurismo;
@@ -129,6 +131,20 @@ public class OI {
 
 	public void runCommands() {
 		double timestamp = Timer.getFPGATimestamp();
+
+		//LED Controlls
+		if(operatorController.getPOVUp()){
+			mLedStringSubsystem.setRobotLEDModeGlitchy();
+		}
+		else if (operatorController.getPOVDown()){
+			mLedStringSubsystem.setRobotLEDModeOff();
+		}
+		else if (operatorController.getPOVRight()){
+			mLedStringSubsystem.setRobotLEDModeClimbComplete();
+		}
+		else{
+			mLedStringSubsystem.setRobotLEDModeNormal();
+		}
 
 		// handle config switching
 		DriverConrollerConfigs currentControllerConfig;
@@ -187,7 +203,7 @@ public class OI {
 
 				double throttle = driverController.getLeftJoyY();
 
-				double turn = visionLineup ? driverController.getRightJoyX() : 0.0; // TODO: Add Vision Lineup code
+				double turn = visionLineup ? 0.0:driverController.getRightJoyX(); // TODO: Add Vision Lineup code
 
 				mDriveTrainSubsystem.setOpenLoop(
 						mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, mDriveTrainSubsystem.isHighGear()));
@@ -235,17 +251,32 @@ public class OI {
 				// decide throttle with triggers
 
 				// know which trigger was pressed first if both
-				leftTriggerTimestamp = driverController.getLeftTrigger() > 0 ? timestamp : Double.MAX_VALUE;
-				rightTriggerTimestamp = driverController.getRightTrigger() > 0 ? timestamp : Double.MAX_VALUE;
+				if(leftTriggerTimestamp == Double.MAX_VALUE)
+				{
+					leftTriggerTimestamp = driverController.getLeftTrigger() > 0 ? timestamp : Double.MAX_VALUE;
+				}
+				else{
+					if(driverController.getLeftTrigger() == 0) leftTriggerTimestamp = Double.MAX_VALUE;
+				}
+				
+				if(rightTriggerTimestamp == Double.MAX_VALUE)
+				{
+					rightTriggerTimestamp = driverController.getRightTrigger() > 0 ? timestamp : Double.MAX_VALUE;
+				}
+				else{
+					if(driverController.getRightTrigger() == 0) rightTriggerTimestamp = Double.MAX_VALUE;
+				}
+				
+				
 
 				double throttle = 0.0;
 				if (leftTriggerTimestamp < rightTriggerTimestamp) {
-					throttle = -driverController.getLeftTrigger() * (1.0 - driverController.getRightTrigger());
+					throttle = (-driverController.getLeftTrigger()) * (1.0 - driverController.getRightTrigger());
 				} else if (rightTriggerTimestamp <= leftTriggerTimestamp) {
 					throttle = driverController.getRightTrigger() * (1.0 - driverController.getLeftTrigger());
 				}
 
-				double turn = visionLineup ? driverController.getLeftJoyX() : 0.0; // TODO: Add Vision Lineup code
+				double turn = visionLineup ? 0.0:driverController.getLeftJoyX(); // TODO: Add Vision Lineup code
 
 				mDriveTrainSubsystem.setOpenLoop(
 						mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, mDriveTrainSubsystem.isHighGear()));
@@ -291,7 +322,7 @@ public class OI {
 
 				double throttle = driverController.getRightJoyY();
 
-				double turn = visionLineup ? driverController.getLeftJoyX() : 0.0; // TODO: Add Vision Lineup code
+				double turn = visionLineup ? 0.0:driverController.getLeftJoyX(); // TODO: Add Vision Lineup code
 
 				mDriveTrainSubsystem.setOpenLoop(
 						mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, mDriveTrainSubsystem.isHighGear()));

@@ -11,15 +11,16 @@ import org.usfirst.frc.team1806.robot.loop.Looper;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.Encoder;
 
 public class FlywheelSubsystem implements Subsystem {
 
     private CANSparkMax mFlywheelMotor;
-    private Double mKp, mKi, mKd, mKf, mIzone, mConversionFactor, mWantedSpeed, mks, mkv;
+    private Double mKp, mKi, mKd, mKf, mIzone, mWantedSpeed, mks, mkv;
     private PIDController mFlywheelPIDController;
     private SimpleMotorFeedforward mFeedforwardController;
-    private CANifier mCanifier;
     private Integer withinLeniency = 50;
+    private Encoder mEncoder;
 
 
     private Loop mLoop = new Loop(){
@@ -55,8 +56,9 @@ public class FlywheelSubsystem implements Subsystem {
 
     private FlywheelStates mFlywheelStates;
 
-    public FlywheelSubsystem(Integer canID, Double kp, Double ki, Double kd, Double kf, Double izone, Boolean isInverted, Double conversionFactor, Integer CANifierID, Double ks, Double kv, CANifier canifier){
+    public FlywheelSubsystem(Integer canID, Double kp, Double ki, Double kd, Double kf, Double izone, Boolean isInverted, Double ks, Double kv,  Integer quadA, Integer quadB){
         mFlywheelMotor = new CANSparkMax(canID, MotorType.kBrushless);
+        mFlywheelMotor.setInverted(isInverted);
         mKp = kp;
         mKi = ki;
         mKd = kd;
@@ -64,11 +66,11 @@ public class FlywheelSubsystem implements Subsystem {
         mks = ks;
         mkv = kv;
         mIzone = izone;
-        mConversionFactor = conversionFactor;
         mWantedSpeed = 0.0;
         mFlywheelStates = FlywheelStates.kIdle;
-        mCanifier = canifier;
-
+        mEncoder = new Encoder(quadA, quadB);
+        mEncoder.setDistancePerPulse((1.0/8192.0) * 60); //8192 CPR encoder, change RPS to RPM
+        mEncoder.setReverseDirection(isInverted);
         reloadGames();
     }
 
@@ -129,7 +131,7 @@ public class FlywheelSubsystem implements Subsystem {
         }
         mWantedSpeed = speed;
         mFlywheelStates = FlywheelStates.kPositionControl;
-        mFlywheelMotor.setVoltage(mFeedforwardController.calculate(rpmToCounts(mWantedSpeed)) + mFlywheelPIDController.calculate(mCanifier.getQuadratureVelocity(), rpmToCounts(mWantedSpeed)));
+        mFlywheelMotor.setVoltage(mFeedforwardController.calculate(rpmToCounts(mWantedSpeed)) + mFlywheelPIDController.calculate(mEncoder.getRate(), rpmToCounts(mWantedSpeed)));
     }
 
     public void setReverseSpeed(Double speed){
@@ -139,7 +141,7 @@ public class FlywheelSubsystem implements Subsystem {
         }
         mWantedSpeed = -speed;
         mFlywheelStates = FlywheelStates.kPositionControl;
-        mFlywheelMotor.setVoltage(mFeedforwardController.calculate(rpmToCounts(mWantedSpeed)) + mFlywheelPIDController.calculate(mCanifier.getQuadratureVelocity(), rpmToCounts(mWantedSpeed)));
+        mFlywheelMotor.setVoltage(mFeedforwardController.calculate(rpmToCounts(mWantedSpeed)) + mFlywheelPIDController.calculate(mEncoder.getRate(), rpmToCounts(mWantedSpeed)));
     }
 
     public Double getWantedRPM(){
