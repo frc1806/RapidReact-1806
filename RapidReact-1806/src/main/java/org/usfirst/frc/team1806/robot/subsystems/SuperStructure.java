@@ -2,6 +2,9 @@ package org.usfirst.frc.team1806.robot.subsystems;
 
 import java.util.function.DoubleSupplier;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.ctre.phoenix.CANifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
@@ -337,6 +340,16 @@ public class SuperStructure implements Subsystem {
         return SUPER_STRUCTURE;
     }
 
+
+
+    private static Map<String, Object> FLYWHEEL_SPEEDS = new HashMap<>();
+
+    static {
+        FLYWHEEL_SPEEDS.put("Min", 0.0d);
+        FLYWHEEL_SPEEDS.put("Max", 3000d);
+        FLYWHEEL_SPEEDS.put("Block increment", 1.0d);
+    }
+
     @Override
     public void setupDriverTab() {
 
@@ -347,7 +360,7 @@ public class SuperStructure implements Subsystem {
 				return mUpFlywheel.getCurrentRPM();
 			}
 
-        }).withWidget(BuiltInWidgets.kDial).withPosition(9,1).withSize(2,2); //add .withProperties if neccesary
+        }).withWidget(BuiltInWidgets.kDial).withPosition(9,1).withSize(2,2).withProperties(FLYWHEEL_SPEEDS); //add .withProperties if neccesary
 
 
         Robot.getMainDriverTab().addNumber("Down Flywheel Speed", new DoubleSupplier() {
@@ -358,7 +371,7 @@ public class SuperStructure implements Subsystem {
 			}
 
 
-        }).withWidget(BuiltInWidgets.kDial).withPosition(9,3).withSize(2,2); //add .withProperties if neccesary
+        }).withWidget(BuiltInWidgets.kDial).withPosition(9,3).withSize(2,2).withProperties(FLYWHEEL_SPEEDS); //add .withProperties if neccesary
 
 
 
@@ -370,7 +383,7 @@ public class SuperStructure implements Subsystem {
 				return mUpFlywheel.getWantedRPM();
 			}
 
-        }).withWidget(BuiltInWidgets.kDial).withPosition(7,1).withSize(2,2); //add .withProperties if neccesary
+        }).withWidget(BuiltInWidgets.kDial).withPosition(7,1).withSize(2,2).withProperties(FLYWHEEL_SPEEDS); //add .withProperties if neccesary
 
 
         Robot.getMainDriverTab().addNumber("Down Wanted Flywheel Speed", new DoubleSupplier() {
@@ -381,7 +394,7 @@ public class SuperStructure implements Subsystem {
 			}
         
 
-        }).withWidget(BuiltInWidgets.kDial).withPosition(7,3).withSize(2,2); //add .withProperties if neccesary
+        }).withWidget(BuiltInWidgets.kDial).withPosition(7,3).withSize(2,2).withProperties(FLYWHEEL_SPEEDS); //add .withProperties if neccesary
 
 
 
