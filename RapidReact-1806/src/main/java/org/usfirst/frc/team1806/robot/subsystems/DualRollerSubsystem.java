@@ -51,8 +51,7 @@ public class DualRollerSubsystem implements Subsystem{
 
     @Override
     public void stop() {
-        // TODO Auto-generated method stub
-        
+        stopRoller();
     }
 
     @Override

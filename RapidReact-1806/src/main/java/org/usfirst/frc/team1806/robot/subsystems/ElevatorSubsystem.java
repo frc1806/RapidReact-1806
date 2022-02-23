@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
  * so we can interact with our intake for doing things like shooting!
  */
 public class ElevatorSubsystem implements Subsystem {
-	boolean debug = false;
+	boolean debug = true;
 
 	public enum ElevatorStates {
 		POSITION_CONTROL,
@@ -51,10 +51,8 @@ public class ElevatorSubsystem implements Subsystem {
 		elevatorLead = new CANSparkMax(RobotMap.elevatorLeader, CANSparkMaxLowLevel.MotorType.kBrushless);
 		elevatorLead.setInverted(true);
 		mElevatorStates = ElevatorStates.IDLE;
-		elevatorWantedPosition = 0;
+		elevatorWantedPosition = Constants.kLiftBottomPivotHeight;
 		reloadGains();
-
-		elevatorLead.getEncoder().setPositionConversionFactor(48);
 
 		lastTimeStamp = 0;
 		mStringPotentiometer = new AnalogInput(0);
@@ -71,6 +69,7 @@ public class ElevatorSubsystem implements Subsystem {
 			SmartDashboard.putNumber(Constants.kLiftKey + "Wanted Height", elevatorWantedPosition);
 			SmartDashboard.putNumber(Constants.kLiftKey + "Lead Motor Temp", elevatorLead.getMotorTemperature());
 			SmartDashboard.putBoolean(Constants.kLiftKey + "is at position?", isAtPosition());
+			SmartDashboard.putNumber(Constants.kLiftKey + "Voltage", mStringPotentiometer.getVoltage());
 		}
 
 	}
@@ -83,17 +82,13 @@ public class ElevatorSubsystem implements Subsystem {
 
 	@Override
 	public synchronized void zeroSensors() {
-		elevatorLead.getEncoder().setPosition(0);
 	}
 
 	public synchronized void zeroSensorsAtTop() {
-		elevatorLead.getEncoder().setPosition(0);
-		mElevatorStates = ElevatorStates.POSITION_CONTROL;
+
 	}
 
 	public synchronized void zeroSensorsAtBottom() {
-		elevatorLead.getEncoder().setPosition(0);
-		mElevatorStates = ElevatorStates.POSITION_CONTROL;
 	}
 
 	@Override
@@ -187,11 +182,7 @@ public class ElevatorSubsystem implements Subsystem {
 	}
 
 	public double getHeightInInches() {
-		return getHeightInCounts() / inchesPerCount;
-	}
-
-	public double getHeightInCounts() {
-		return mStringPotentiometer.getAverageVoltage();
+		return -getExtensionLength(mStringPotentiometer.getVoltage()) + 65.5;
 	}
 
 	public boolean isOnTarget() {
@@ -229,9 +220,7 @@ public class ElevatorSubsystem implements Subsystem {
 			return false;
 		}
 		return Math
-				.abs(elevatorWantedPosition - elevatorLead.getEncoder().getPosition()) < Constants.kElevatorPositionTolerance
-				&&
-				Math.abs(elevatorLead.getEncoder().getVelocity()) < Constants.kElevatorVelocityTolerance;
+				.abs(elevatorWantedPosition - getHeightInInches()) < Constants.kElevatorPositionTolerance;
 	}
 
 	/**
@@ -249,13 +238,13 @@ public class ElevatorSubsystem implements Subsystem {
 	 */
 	public synchronized void setLiftIdle() {
 		mElevatorStates = ElevatorStates.IDLE;
-		elevatorLead.getPIDController().setReference(0, CANSparkMax.ControlType.kDutyCycle); // DutyCycle just means voltage on scale of
+		elevatorLead.setVoltage(0); // DutyCycle just means voltage on scale of
 																				// -1 to 1
 	}
 
 	public synchronized void setLiftHoldPosition() {
 		mElevatorStates = ElevatorStates.POSITION_CONTROL;
-		goToSetpointInches(getHeightInCounts());
+		goToSetpointInches(getHeightInInches());
 	}
 
 	/**
@@ -280,9 +269,9 @@ public class ElevatorSubsystem implements Subsystem {
 	 */
 	public synchronized void holdPosition() {
 		elevatorLead.getPIDController().setReference(Constants.kElevatorHoldPercentOutput +
-				(elevatorWantedPosition - getHeightInCounts()) * Constants.kElevatorHoldkPGain,
+				(elevatorWantedPosition - getHeightInInches()) * Constants.kElevatorHoldkPGain,
 				CANSparkMax.ControlType.kDutyCycle);
-		if (Math.abs(getHeightInCounts() - elevatorWantedPosition) > Constants.kElevatorPositionTolerance) {
+		if (Math.abs(getHeightInInches() - elevatorWantedPosition) > Constants.kElevatorPositionTolerance) {
 			mElevatorStates = ElevatorStates.POSITION_CONTROL;
 			goToSetpointInches(elevatorWantedPosition);
 		}
@@ -308,19 +297,18 @@ public class ElevatorSubsystem implements Subsystem {
 		goToSetpointInches(Constants.kMaxElevatorHeightToNeedToExtendIntake + Constants.kSafeElevatorHeightOffsetToNotHitIntake);
 	}
 
-	public Boolean isLiftInRange(){
-		if (getHeightInInches() >= 0.5){
-			return false;
-		}
-		return true;
-	}
-
 	@Override
 	public void setupDriverTab() {
 		// TODO Auto-generated method stub
+
 	}
 	public Boolean heightToCheck(Double height){
 		if (height >= getHeightInInches() + heightLeniency && height >= getHeightInInches() - heightLeniency) return false;
 		return true;
 	}
+
+	private Double getExtensionLength(Double X){
+		return -6.606 * X + 34.224;
+	}
+
 }

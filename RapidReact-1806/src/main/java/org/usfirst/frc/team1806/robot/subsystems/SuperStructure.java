@@ -56,7 +56,7 @@ public class SuperStructure implements Subsystem {
         public void onLoop(double timestamp) {
             switch (mSuperStructureStates) {
                 case IntakingFront:
-                    mElevator.goToSetpointInches(0);
+                    mElevator.goToSetpointInches(Constants.kLiftBottomPivotHeight);
                     mFrontIntake.wantIntaking();
                     mBackIntake.stop();
                     mDualRollerSubsystem.startRoller();
@@ -66,7 +66,7 @@ public class SuperStructure implements Subsystem {
                     mLunchboxAngler.goToAngle(0.0);
                     return;
                 case IntakingBack:
-                    mElevator.goToSetpointInches(0);
+                    mElevator.goToSetpointInches(Constants.kLiftBottomPivotHeight);
                     mFrontIntake.stop();
                     mBackIntake.wantIntaking();
                     mDualRollerSubsystem.startRoller();
@@ -123,7 +123,7 @@ public class SuperStructure implements Subsystem {
                         case GoingHome:
                             mUpFlywheel.stop();
                             mDownFlywheel.stop();
-                            mElevator.goToSetpointInches(0.0);
+                            mElevator.goToSetpointInches(Constants.kLiftBottomPivotHeight);
                             mFrontIntake.stop();
                             mBackIntake.stop();
                             mDualRollerSubsystem.stop();

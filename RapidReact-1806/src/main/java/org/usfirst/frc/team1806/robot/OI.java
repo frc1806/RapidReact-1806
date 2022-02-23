@@ -12,6 +12,7 @@ import java.util.function.Function;
 
 import javax.lang.model.util.ElementScanner6;
 
+import org.usfirst.frc.team1806.robot.game.Shot;
 import org.usfirst.frc.team1806.robot.subsystems.*;
 import org.usfirst.frc.team1806.robot.subsystems.SuperStructure.SuperStructureStates;
 import org.usfirst.frc.team1806.robot.util.CheesyDriveHelper;
@@ -129,6 +130,8 @@ public class OI {
 	private Boolean wasShift = false;
 	private Boolean wasParkingBrake = false;
 
+	boolean dashboardShot = debugController.getButtonA();
+
 	public void runCommands() {
 		double timestamp = Timer.getFPGATimestamp();
 
@@ -189,7 +192,10 @@ public class OI {
 					mSuperStructure.wantFeedFrontIntake();
 				} else if (feedThroughFromBack) {
 					mSuperStructure.wantFeedBackIntake();
-				} else {
+				} else if (dashboardShot){
+					mSuperStructure.wantPrepareShot(Shot.ShotDashboard.getDashboardShot());
+				}
+				 else {
 					mSuperStructure.stop();
 				}
 
@@ -237,6 +243,8 @@ public class OI {
 					mSuperStructure.wantFeedFrontIntake();
 				} else if (feedThroughFromBack) {
 					mSuperStructure.wantFeedBackIntake();
+				} else if (dashboardShot){
+					mSuperStructure.wantPrepareShot(Shot.ShotDashboard.getDashboardShot());
 				} else {
 					mSuperStructure.stop();
 				}
@@ -307,6 +315,8 @@ public class OI {
 					mSuperStructure.wantFeedFrontIntake();
 				} else if (feedThroughFromBack) {
 					mSuperStructure.wantFeedBackIntake();
+				} else if (dashboardShot){
+					mSuperStructure.wantPrepareShot(Shot.ShotDashboard.getDashboardShot());
 				} else {
 					mSuperStructure.stop();
 				}

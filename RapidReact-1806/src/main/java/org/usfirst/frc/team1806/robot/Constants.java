@@ -126,24 +126,25 @@ public class Constants {
     public final static double kElevatorInchesPerCountDefault = 1;
     public final static int kLiftPositionControlPIDSlot = 10;
     public final static int kLiftPositionPIDTimeout = 10;
-    public final static double kElevatorPositionkP = .0016;
-    public final static double kElevatorPositionkI =0.0004; ///0.02;
-    public final static double kElevatorPositionkD =0.00015; ///0.015;
-    public final static double kElevatorPositionkF =1 / 60000; //1 / 2000;
+    public final static double kElevatorPositionkP = 0.33;
+    public final static double kElevatorPositionkI =0.0; ///0.02;
+    public final static double kElevatorPositionkD =0.0; ///0.015;
+    public final static double kElevatorPositionkF =0.0; //1 / 2000;
     public final static int kElevatorPositionIZone = 25;// 800;
     public final static double kLiftPositionRampRate = 0;
     public final static int kBottomLimitTolerance = 50;
+    public final static double kLiftBottomPivotHeight = 34.18;
 
-    public final static int kElevatorPositionTolerance = 100;
+    public final static Double kElevatorPositionTolerance = 0.25;
     public final static int kElevatorVelocityTolerance = 500;
 
     public final static double elevatorResetSpeed = .2;
 
 
     public final static double kElevatorHoldkPGain = .00005;
-    public final static int kBumpEncoderPosition = 1000;
+    public final static double kBumpEncoderPosition = .5;
 
-    public final static int kLiftTopLimitSwitchPosition = 500;
+    public final static double kLiftTopLimitSwitchPosition = 12.0;
 
     //Compressor Control Constants
     public final static int kPressureSensorSamplingLoops = 60; //each loop is 1/200 of a second
