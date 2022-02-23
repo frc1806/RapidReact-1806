@@ -1,5 +1,7 @@
 package org.usfirst.frc.team1806.robot.game;
 
+import java.util.ArrayList;
+
 import org.usfirst.frc.team1806.robot.util.InterpolatingDouble;
 import org.usfirst.frc.team1806.robot.util.InterpolatingTreeMap;
 
@@ -11,6 +13,14 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 public class Shot {
 
+    private static ArrayList<PolarCoordinate> POINTS_OF_INTEREST_ON_LAUNCHBOX = new ArrayList<>();
+
+    static{
+        //TODO: Actually mesaure these.
+        POINTS_OF_INTEREST_ON_LAUNCHBOX.add(new PolarCoordinate(2.0, 20.0)); //CORNER OF BOX
+        POINTS_OF_INTEREST_ON_LAUNCHBOX.add(new PolarCoordinate(4.0, 18.0)); //EXAMPLE FLYWHEEL POINT
+    }
+
     Double MAX_LEGAL_HEIGHT = 52.0;
     Double MIN_PIVOT_HEIGHT = 32.0;
     Double CORNER_ANGLE_OFFSET = 2.0;
@@ -21,6 +31,8 @@ public class Shot {
 
     //A tab on the dashboard where we can enter in any shot params we want for tuning... or for extreme in-match emergencies.
     public static class ShotDashboard {
+
+
 
         private static ShuffleboardTab ShotTuningTab = Shuffleboard.getTab("Shot Tuning");
         private static NetworkTableEntry TopSpeedEntry = ShotTuningTab.addPersistent("Top Speed", 1500).withWidget(BuiltInWidgets.kField).getEntry();
@@ -84,7 +96,16 @@ public class Shot {
 
 
     public Double getLiftHeight() {
-        return (MAX_LEGAL_HEIGHT - MIN_PIVOT_HEIGHT) - Math.asin(launcherAngle - 90 + CORNER_ANGLE_OFFSET) * CORNER_TO_PIVOT_DISTANCE;
+        double maxLiftHeight = Double.MAX_VALUE;
+        for(PolarCoordinate coord : POINTS_OF_INTEREST_ON_LAUNCHBOX)
+        {
+            double pointLiftHeight = (MAX_LEGAL_HEIGHT - MIN_PIVOT_HEIGHT) - Math.asin(launcherAngle - 90 + coord.getAngle()) * coord.getDistance(); 
+            if(pointLiftHeight < maxLiftHeight)
+            {
+                maxLiftHeight = pointLiftHeight;
+            }
+        }
+        return maxLiftHeight;
     }
 
     public Double getLauncherAngle() {
