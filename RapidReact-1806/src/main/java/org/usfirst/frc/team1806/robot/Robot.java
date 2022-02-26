@@ -91,7 +91,7 @@ public class Robot extends TimedRobot {
         selectedModeName = "";
         lastSelectedModeName = "";
         competitionTab = Shuffleboard.getTab("Main Competition Tab");
-        setupMainCompetitionTab();
+        //setupMainCompetitionTab();
       m_oi = new OI();
       zeroAllSensors();
       //mDrive.setDebug(true);
@@ -343,11 +343,12 @@ public class Robot extends TimedRobot {
     }
 
 
-
+/*
     private void setupMainCompetitionTab(){
       NetworkTableEntry autoDelay;
 
       autoDelay = competitionTab.addPersistent("Auto Delay", 0)
                 .withWidget(BuiltInWidgets.kNumberSlider).withSize(2, 1).withPosition(0, 0).getEntry();
     }
+  */
 }
