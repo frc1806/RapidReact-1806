@@ -1,19 +1,29 @@
 package org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions;
 
+import java.security.Timestamp;
+
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.Action;
 import org.usfirst.frc.team1806.robot.game.Shot;
+import org.usfirst.frc.team1806.robot.subsystems.SuperStructure;
+
+import edu.wpi.first.wpilibj.Timer;
 
 public class Shoot implements Action {
 
+    private SuperStructure mSuperStructure;
     private Shot mShot;
-
-    public Shoot(Shot shot){
+    private Double start;
+    private Double end;
+    private Double mDelayTime;
+    public Shoot(Shot shot, Double delayTime){
         mShot = shot;
+        mDelayTime = delayTime;
     }
 
     @Override
     public boolean isFinished() {
-        // TODO Auto-generated method stub
+        end = Timer.getFPGATimestamp();
+        if ((end - start) >= mDelayTime) return true;
         return false;
     }
 
@@ -31,8 +41,9 @@ public class Shoot implements Action {
 
     @Override
     public void start() {
-        // TODO Auto-generated method stub
-        
+        start = Timer.getFPGATimestamp();
+        mSuperStructure.wantPrepareShot(mShot);
+        mSuperStructure.wantConfirmLaunch(true);
     }
 
     
