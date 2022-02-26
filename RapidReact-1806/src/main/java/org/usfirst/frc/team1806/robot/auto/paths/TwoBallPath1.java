@@ -1,10 +1,10 @@
-﻿package org.usfirst.frc.team1806.robot.auto.paths;
+package org.usfirst.frc.team1806.robot.auto.paths;
 
 import java.util.ArrayList;
 
 import org.usfirst.frc.team1806.robot.path.Path;
-import org.usfirst.frc.team1806.robot.path.PathBuilder;
 import org.usfirst.frc.team1806.robot.path.PathContainer;
+import org.usfirst.frc.team1806.robot.path.PathBuilder;
 import org.usfirst.frc.team1806.robot.path.PathBuilder.Waypoint;
 import org.usfirst.frc.team1806.robot.util.RigidTransform2d;
 import org.usfirst.frc.team1806.robot.util.Rotation2d;
@@ -15,14 +15,8 @@ public class TwoBallPath1 implements PathContainer {
     @Override
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
-<<<<<<< Updated upstream
-        sWaypoints.add(new Waypoint(300,85,0,0));
-        sWaypoints.add(new Waypoint(301,37,0,0));
-=======
         sWaypoints.add(new Waypoint(305,75,0,0));
         sWaypoints.add(new Waypoint(305,37,0,0));
->>>>>>> Stashed changes
-
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
     

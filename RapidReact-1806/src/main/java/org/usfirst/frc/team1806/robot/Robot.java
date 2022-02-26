@@ -1,5 +1,6 @@
 package org.usfirst.frc.team1806.robot;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -344,14 +345,9 @@ public class Robot extends TimedRobot {
 
 
     private void setupMainCompetitionTab(){
-      competitionTab.addNumber("Delay Auto", new DoubleSupplier() {
-        
+      NetworkTableEntry autoDelay;
 
-        @Override
-        public double getAsDouble() {
-          return WaitAction.mTimeToWait();
-        }
-          }).withWidget(BuiltInWidgets.kNumberSlider).withPosition(-1,-1).withSize(1,1).withProperties(DELAY); //add .withProperties if neccesary
-      }
-
+      autoDelay = competitionTab.addPersistent("Auto Delay", 0)
+                .withWidget(BuiltInWidgets.kNumberSlider).withSize(2, 1).withPosition(0, 0).getEntry();
     }
+}

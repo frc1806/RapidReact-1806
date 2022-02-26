@@ -11,7 +11,7 @@ import org.usfirst.frc.team1806.robot.auto.paths.ThreeBallPath;
 import org.usfirst.frc.team1806.robot.auto.paths.TwoBallPath1;
 import org.usfirst.frc.team1806.robot.game.Shot;
 
-public class ThreeBallBottomMode extends AutoModeBase {
+public class ThreeBallModeBottom extends AutoModeBase {
 
     @Override
     protected void routine() throws AutoModeEndedException {
