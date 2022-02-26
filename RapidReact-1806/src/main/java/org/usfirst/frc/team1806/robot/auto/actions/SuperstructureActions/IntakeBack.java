@@ -9,10 +9,9 @@ public class IntakeBack implements Action{
 
     @Override
     public boolean isFinished() {
-        // TODO Auto-generated method stub
-        return false;
+        return true;
     }
-
+    
     @Override
     public void update() {
         mSuperStructure.wantIntakeBack();        
