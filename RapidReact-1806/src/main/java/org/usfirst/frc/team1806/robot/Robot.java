@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import org.usfirst.frc.team1806.robot.auto.*;
+import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.WaitAction;
 import org.usfirst.frc.team1806.robot.auto.modes.VisionMode;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeBase;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeExecuter;
@@ -89,7 +90,7 @@ public class Robot extends TimedRobot {
         selectedModeName = "";
         lastSelectedModeName = "";
         competitionTab = Shuffleboard.getTab("Main Competition Tab");
-        //setupMainCompetitionTab();
+        setupMainCompetitionTab();
       m_oi = new OI();
       zeroAllSensors();
       //mDrive.setDebug(true);
@@ -332,26 +333,25 @@ public class Robot extends TimedRobot {
     }
 
 
-    //private static Map<String, Object> DELAY = new HashMap<>();
+    private static Map<String, Object> DELAY = new HashMap<>();
 
-    //static {
-      //DELAY.put("Min", 0.0d);
-      //DELAY.put("Max", 10.0d);
-      //DELAY.put("Block increment", 0.01d);
-  //}
+    static {
+      DELAY.put("Min", 0.0d);
+      DELAY.put("Max", 10.0d);
+      DELAY.put("Block increment", 0.01d);
+    }
 
 
 
-    //private void setupMainCompetitionTab(){
-      //competitionTab.addNumber("Delay_In_Seconds", new DoubleSupplier() {
+    private void setupMainCompetitionTab(){
+      competitionTab.addNumber("Delay Auto", new DoubleSupplier() {
         
 
-        //@Override
-        //public double getAsDouble() {
-          //return 
-
-      //}
-      
+        @Override
+        public double getAsDouble() {
+          return WaitAction.mTimeToWait();
+        }
+          }).withWidget(BuiltInWidgets.kNumberSlider).withPosition(-1,-1).withSize(1,1).withProperties(DELAY); //add .withProperties if neccesary
+      }
 
     }
-  //}
