@@ -30,7 +30,7 @@ public class SixBallPath3 implements PathContainer {
 
     @Override
     public boolean isReversed() {
-        return false; 
+        return true; 
     }
 	// WAYPOINT_DATA: [{"position":{"x":190,"y":150},"speed":60,"radius":0,"comment":""},{"position":{"x":190,"y":85},"speed":60,"radius":10,"comment":""},{"position":{"x":230,"y":20},"speed":60,"radius":10,"comment":""},{"position":{"x":280,"y":20},"speed":60,"radius":0,"comment":""}]
 	// IS_REVERSED: false
