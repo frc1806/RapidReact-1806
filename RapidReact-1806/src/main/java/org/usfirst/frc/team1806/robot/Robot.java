@@ -20,8 +20,11 @@ import org.usfirst.frc.team1806.robot.util.CrashTracker;
 import org.usfirst.frc.team1806.robot.util.DriveSignal;
 import org.usfirst.frc.team1806.robot.util.RigidTransform2d;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Arrays;
 import java.util.function.DoubleSupplier;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -86,6 +89,7 @@ public class Robot extends TimedRobot {
         selectedModeName = "";
         lastSelectedModeName = "";
         competitionTab = Shuffleboard.getTab("Main Competition Tab");
+        //setupMainCompetitionTab();
       m_oi = new OI();
       zeroAllSensors();
       //mDrive.setDebug(true);
@@ -326,9 +330,27 @@ public class Robot extends TimedRobot {
       allPeriodic();
     }
 
-    private void setupMainCompetitionTab(){
 
+    //private static Map<String, Object> DELAY = new HashMap<>();
+
+    //static {
+      //DELAY.put("Min", 0.0d);
+      //DELAY.put("Max", 10.0d);
+      //DELAY.put("Block increment", 0.01d);
+  //}
+
+
+
+    //private void setupMainCompetitionTab(){
+      //competitionTab.addNumber("Delay_In_Seconds", new DoubleSupplier() {
+        
+
+        //@Override
+        //public double getAsDouble() {
+          //return 
+
+      //}
       
 
     }
-  }
+  //}
