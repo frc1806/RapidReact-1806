@@ -13,6 +13,7 @@ import java.util.function.Function;
 import javax.lang.model.util.ElementScanner6;
 
 import org.usfirst.frc.team1806.robot.game.Shot;
+import org.usfirst.frc.team1806.robot.game.Shot.ShotDashboard;
 import org.usfirst.frc.team1806.robot.subsystems.*;
 import org.usfirst.frc.team1806.robot.subsystems.SuperStructure.SuperStructureStates;
 import org.usfirst.frc.team1806.robot.util.CheesyDriveHelper;
@@ -34,7 +35,7 @@ public class OI {
 			Constants.kDriverControllerDefaultConfig);
 	protected static XboxController operatorController = new XboxController(1, "Operator",
 			Constants.kOperatorControllerDefaultConfig);
-	protected static XboxController debugController = new XboxController(2, "Debug", null);
+	protected static XboxController debugController = new XboxController(2, "Debug", Constants.kOperatorControllerDefaultConfig);
 
 	private enum DriverConrollerConfigs{
 		 kRetroGranTurismo(
@@ -130,11 +131,12 @@ public class OI {
 	private Boolean wasShift = false;
 	private Boolean wasParkingBrake = false;
 
-	boolean dashboardShot = debugController.getButtonA();
+	
 
 	public void runCommands() {
 		double timestamp = Timer.getFPGATimestamp();
 
+		boolean dashboardShot = debugController.getButtonA();
 		//LED Controlls
 		if(operatorController.getPOVUp()){
 			mLedStringSubsystem.setRobotLEDModeGlitchy();
@@ -193,7 +195,7 @@ public class OI {
 				} else if (feedThroughFromBack) {
 					mSuperStructure.wantFeedBackIntake();
 				} else if (dashboardShot){
-					mSuperStructure.wantPrepareShot(Shot.ShotDashboard.getDashboardShot());
+					mSuperStructure.wantPrepareShot(Shot.TheShotDashboard.getDashboardShot());
 				}
 				 else {
 					mSuperStructure.stop();
@@ -244,7 +246,7 @@ public class OI {
 				} else if (feedThroughFromBack) {
 					mSuperStructure.wantFeedBackIntake();
 				} else if (dashboardShot){
-					mSuperStructure.wantPrepareShot(Shot.ShotDashboard.getDashboardShot());
+					mSuperStructure.wantPrepareShot(Shot.TheShotDashboard.getDashboardShot());
 				} else {
 					mSuperStructure.stop();
 				}
@@ -316,7 +318,7 @@ public class OI {
 				} else if (feedThroughFromBack) {
 					mSuperStructure.wantFeedBackIntake();
 				} else if (dashboardShot){
-					mSuperStructure.wantPrepareShot(Shot.ShotDashboard.getDashboardShot());
+					mSuperStructure.wantPrepareShot(Shot.TheShotDashboard.getDashboardShot());
 				} else {
 					mSuperStructure.stop();
 				}

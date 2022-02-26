@@ -153,14 +153,15 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
+      /*
       if(DriverStation.isDSAttached() ){
         if(DriverStation.getAlliance() == DriverStation.Alliance.Blue){
           isBlue = true;
         } else if(DriverStation.getAlliance() == DriverStation.Alliance.Red){
           isBlue = false;
         }
-        m_oi.updateConfigs();
-      }
+        */
+      m_oi.updateConfigs();
 
       allPeriodic();
       selectedModeName = SmartDashboard.getString(
@@ -211,7 +212,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
       allPeriodic();
-      CommandScheduler.getInstance().run();
+      //CommandScheduler.getInstance().run();
     }
 
     @Override
@@ -325,7 +326,7 @@ public class Robot extends TimedRobot {
      //SmartDashboard.putNumber("PDP Total", powerDistributionPanel.getTotalCurrent());
     }
     private void runTeleOp(){
-      CommandScheduler.getInstance().run();
+      //CommandScheduler.getInstance().run();
       m_oi.runCommands();
       allPeriodic();
     }

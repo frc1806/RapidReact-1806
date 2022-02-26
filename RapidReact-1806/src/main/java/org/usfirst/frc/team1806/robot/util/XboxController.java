@@ -30,21 +30,11 @@ public class XboxController extends Joystick {
 	private ShuffleboardTab mControllerConfigTab;
 	private XboxControllerConfigDashboard mControllerConfigDashboard;
 	private XboxControllerConfigValues mConfigValues;
-	Supplier<double[]> valueSupplier = new Supplier(){
-
-		@Override
-		public Object get() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-	};
 	
 	public XboxController(int port, String name, XboxControllerConfigValues defaultConfig) {
 		super(port);
 		mConfigValues = defaultConfig;
 		mName = name;
-		DriverStation.getInstance();
 		mPort = port;
 		mControllerConfigTab = Shuffleboard.getTab(mName.concat(" Controller Configuration"));
 		mControllerConfigDashboard = new XboxControllerConfigDashboard(mControllerConfigTab, defaultConfig);
@@ -87,7 +77,7 @@ public class XboxController extends Joystick {
 	}
 
 	public double getRightTrigger() {
-			return applyConfig(getRawAxis(3), mConfigValues.getTriggerDeadzone(), mConfigValues.getTriggerMinimumOutput(), mConfigValues.getTriggerLinearity());
+			return applyConfig( getRawAxis(3), mConfigValues.getTriggerDeadzone(), mConfigValues.getTriggerMinimumOutput(), mConfigValues.getTriggerLinearity());
 	}
 
 	public double getLeftTrigger() {
@@ -178,10 +168,7 @@ public class XboxController extends Joystick {
 
 	public void updateConfig()
 	{
-		if(DriverStation.isDSAttached())
-		{
 			mConfigValues = mControllerConfigDashboard.getUpdatedConfigValues();
-		}
 	}
 
 	public XboxControllerConfigValues getConfigValues(){
