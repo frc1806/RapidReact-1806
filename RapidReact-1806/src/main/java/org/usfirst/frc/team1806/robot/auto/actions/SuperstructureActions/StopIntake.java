@@ -1,25 +1,20 @@
 package org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions;
 
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.Action;
-import org.usfirst.frc.team1806.robot.game.Shot;
+import org.usfirst.frc.team1806.robot.subsystems.SuperStructure;
 
-public class Shoot implements Action {
+public class StopIntake implements Action {
 
-    private Shot mShot;
-
-    public Shoot(Shot shot){
-        mShot = shot;
-    }
+    private SuperStructure mSuperStructure;
 
     @Override
     public boolean isFinished() {
-        // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
     @Override
     public void update() {
-        // TODO Auto-generated method stub
+        mSuperStructure.stop();
         
     }
 
@@ -31,9 +26,7 @@ public class Shoot implements Action {
 
     @Override
     public void start() {
-        // TODO Auto-generated method stub
-        
+        mSuperStructure.stop();
     }
-
     
 }
