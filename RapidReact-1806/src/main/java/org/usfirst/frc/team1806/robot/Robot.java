@@ -1,6 +1,7 @@
 package org.usfirst.frc.team1806.robot;
 
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -20,6 +21,7 @@ import org.usfirst.frc.team1806.robot.util.DriveSignal;
 import org.usfirst.frc.team1806.robot.util.RigidTransform2d;
 
 import java.util.Arrays;
+import java.util.function.DoubleSupplier;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -322,5 +324,11 @@ public class Robot extends TimedRobot {
       CommandScheduler.getInstance().run();
       m_oi.runCommands();
       allPeriodic();
+    }
+
+    private void setupMainCompetitionTab(){
+
+      
+
     }
   }

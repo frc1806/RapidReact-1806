@@ -59,7 +59,7 @@ public class SuperStructure implements Subsystem {
         public void onLoop(double timestamp) {
             switch (mSuperStructureStates) {
                 case IntakingFront:
-                    mElevator.goToSetpointInches(Constants.kLiftBottomPivotHeight);
+                    mElevator.goToSetpointInches(0);
                     mFrontIntake.wantIntaking();
                     mBackIntake.stop();
                     mDualRollerSubsystem.startRoller();
@@ -69,7 +69,7 @@ public class SuperStructure implements Subsystem {
                     mLunchboxAngler.goToAngle(0.0);
                     return;
                 case IntakingBack:
-                    mElevator.goToSetpointInches(Constants.kLiftBottomPivotHeight);
+                    mElevator.goToSetpointInches(0);
                     mFrontIntake.stop();
                     mBackIntake.wantIntaking();
                     mDualRollerSubsystem.startRoller();
@@ -126,7 +126,7 @@ public class SuperStructure implements Subsystem {
                         case GoingHome:
                             mUpFlywheel.stop();
                             mDownFlywheel.stop();
-                            mElevator.goToSetpointInches(Constants.kLiftBottomPivotHeight);
+                            mElevator.goToSetpointInches(0.0);
                             mFrontIntake.stop();
                             mBackIntake.stop();
                             mDualRollerSubsystem.stop();
@@ -343,11 +343,19 @@ public class SuperStructure implements Subsystem {
 
 
     private static Map<String, Object> FLYWHEEL_SPEEDS = new HashMap<>();
+    private static Map<String, Object> SHOOTER_ANGLE = new HashMap<>();
 
     static {
         FLYWHEEL_SPEEDS.put("Min", 0.0d);
         FLYWHEEL_SPEEDS.put("Max", 3000d);
         FLYWHEEL_SPEEDS.put("Block increment", 1.0d);
+    }
+
+
+    static {
+        SHOOTER_ANGLE.put("Min", -180.0d);
+        SHOOTER_ANGLE.put("Max", 180d);
+        SHOOTER_ANGLE.put("Block increment", 0.1d);
     }
 
     @Override
@@ -396,7 +404,7 @@ public class SuperStructure implements Subsystem {
 
         }).withWidget(BuiltInWidgets.kDial).withPosition(7,3).withSize(2,2).withProperties(FLYWHEEL_SPEEDS); //add .withProperties if neccesary
 
-
+        
 
         Robot.getMainDriverTab().addNumber("Shooter Angle", new DoubleSupplier() {
 
@@ -406,13 +414,20 @@ public class SuperStructure implements Subsystem {
             }
         
 
-        }).withWidget(BuiltInWidgets.kDial).withPosition(-1,-1).withSize(1,1); //add .withProperties if neccesary
+        }).withWidget(BuiltInWidgets.kDial).withPosition(-1,-1).withSize(1,1).withProperties(SHOOTER_ANGLE); //add .withProperties if neccesary
 
 
         }
+       
+    
+
+
+
+
+
+
 
         // TODO Auto-generated method stub
         
     }
-
 
