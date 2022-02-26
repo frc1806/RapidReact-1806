@@ -10,6 +10,7 @@ import org.usfirst.frc.team1806.robot.loop.Looper;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class LaunchBoxAngler implements Subsystem {
@@ -69,7 +70,8 @@ public class LaunchBoxAngler implements Subsystem {
         mKd = Constants.kLaunchBoxAnglerKd;
         mLaunchMotor = new TalonSRX(RobotMap.launchBoxAngler);
         mPIDController = new PIDController(mKp, mKi, mKd);
-        
+        mLunchboxStates = LunchboxStates.Idle;
+        mWantedSetPoint = 0.0;
    }
 
     @Override
@@ -81,6 +83,9 @@ public class LaunchBoxAngler implements Subsystem {
     @Override
     public void outputToSmartDashboard() {
         // TODO Auto-generated method stub
+        SmartDashboard.putString("Launchbox State", mLunchboxStates.name());
+        SmartDashboard.putNumber("Launchbox Angle", mEncoder.getDistance());
+        SmartDashboard.putNumber("Launchbox Wanted Angle", mWantedSetPoint);
         
     }
 

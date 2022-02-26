@@ -10,6 +10,7 @@ import org.usfirst.frc.team1806.robot.loop.Looper;
 
 import com.revrobotics.CANSparkMax;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.AnalogInput;
 
@@ -30,9 +31,6 @@ public class ElevatorSubsystem implements Subsystem {
 	}
 
 	private CANSparkMax elevatorLead;
-
-	private double inchesPerCount;
-	private double lastTimeStamp;
 	private double elevatorWantedPosition;
 	private Double heightLeniency = 0.25;
 
@@ -47,14 +45,12 @@ public class ElevatorSubsystem implements Subsystem {
 	private static ElevatorSubsystem mElevatorSubsystem = new ElevatorSubsystem(); // only ever 1 lift
 
 	public ElevatorSubsystem() {
-		inchesPerCount = Constants.kElevatorInchesPerCountDefault;
 		elevatorLead = new CANSparkMax(RobotMap.elevatorLeader, CANSparkMaxLowLevel.MotorType.kBrushless);
 		elevatorLead.setInverted(true);
 		mElevatorStates = ElevatorStates.IDLE;
 		elevatorWantedPosition = Constants.kLiftBottomPivotHeight;
 		reloadGains();
 
-		lastTimeStamp = 0;
 		mStringPotentiometer = new AnalogInput(0);
 	}
 
@@ -131,14 +127,12 @@ public class ElevatorSubsystem implements Subsystem {
 						holdPosition();
 				}
 				elevatorStateLoop();
-
-				lastTimeStamp = timestamp;
 			}
 
 			private void elevatorStateLoop() {
 				switch (mElevatorStates) {
 					case POSITION_CONTROL:
-						elevatorLead.setVoltage(mPidController.calculate(getHeightInInches(), elevatorWantedPosition));
+						elevatorLead.set(MathUtil.clamp(mPidController.calculate(getHeightInInches(), elevatorWantedPosition), -1, 1));
 						return;
 					case HOLD_POSITION:
 						holdPosition();
@@ -146,7 +140,7 @@ public class ElevatorSubsystem implements Subsystem {
 					case MANUAL_CONTROL:
 						return;
 					case IDLE:
-						elevatorLead.setVoltage(0);
+						elevatorLead.set(0);
 						return;
 					default:
 						return;
@@ -173,6 +167,7 @@ public class ElevatorSubsystem implements Subsystem {
 	public synchronized void goToSetpointInches(double setpointInInches)
 	{
 		mElevatorStates = ElevatorStates.POSITION_CONTROL;
+		mPidController.reset();
 		elevatorWantedPosition = setpointInInches;
 	}
 
@@ -206,7 +201,7 @@ public class ElevatorSubsystem implements Subsystem {
 	}
 
 	public void reloadGains() {
-		mPidController = new PIDController(Constants.kElevatorPositionkP, Constants.kElevatorPositionkI, Constants.kElevatorPositionkD);
+		mPidController = new PIDController(Constants.kElevatorPositionkP, Constants.kElevatorPositionkI, Constants.kElevatorPositionkD, Constants.kLooperDt);
 
 	}
 
@@ -268,9 +263,8 @@ public class ElevatorSubsystem implements Subsystem {
 	 * Used to hold the cube when it is ready to be spat out
 	 */
 	public synchronized void holdPosition() {
-		elevatorLead.getPIDController().setReference(Constants.kElevatorHoldPercentOutput +
-				(elevatorWantedPosition - getHeightInInches()) * Constants.kElevatorHoldkPGain,
-				CANSparkMax.ControlType.kDutyCycle);
+		elevatorLead.set(Constants.kElevatorHoldPercentOutput +
+				(elevatorWantedPosition - getHeightInInches()) * Constants.kElevatorHoldkPGain);
 		if (Math.abs(getHeightInInches() - elevatorWantedPosition) > Constants.kElevatorPositionTolerance) {
 			mElevatorStates = ElevatorStates.POSITION_CONTROL;
 			goToSetpointInches(elevatorWantedPosition);

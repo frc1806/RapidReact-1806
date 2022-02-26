@@ -1,14 +1,19 @@
 package org.usfirst.frc.team1806.robot.game;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.usfirst.frc.team1806.robot.Constants;
 import org.usfirst.frc.team1806.robot.util.InterpolatingDouble;
 import org.usfirst.frc.team1806.robot.util.InterpolatingTreeMap;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class Shot {
@@ -17,33 +22,57 @@ public class Shot {
 
     static{
         //TODO: Actually mesaure these.
-        POINTS_OF_INTEREST_ON_LAUNCHBOX.add(new PolarCoordinate(2.0, 20.0)); //CORNER OF BOX
-        POINTS_OF_INTEREST_ON_LAUNCHBOX.add(new PolarCoordinate(4.0, 18.0)); //EXAMPLE FLYWHEEL POINT
+        POINTS_OF_INTEREST_ON_LAUNCHBOX.add(new PolarCoordinate(21.14609418, 14.206)); //CORNER OF BOX
+        //POINTS_OF_INTEREST_ON_LAUNCHBOX.add(new PolarCoordinate(4.0, 18.0)); //EXAMPLE FLYWHEEL POINT
     }
 
     Double MAX_LEGAL_HEIGHT = 52.0;
-    Double MIN_PIVOT_HEIGHT = 32.0;
     Double CORNER_ANGLE_OFFSET = 2.0;
     Double CORNER_TO_PIVOT_DISTANCE = 20.0;
     Double launcherAngle, topSpeed, bottomSpeed;
     Boolean isPreciseShot;
     Boolean isFlipped;
+    public static ShotDashboard TheShotDashboard = new ShotDashboard();
 
     //A tab on the dashboard where we can enter in any shot params we want for tuning... or for extreme in-match emergencies.
     public static class ShotDashboard {
 
+        private static Map<String, Object> FLYWHEEL_SPEED_SLIDER_PROPS = new HashMap<>();
 
+        static {
+            FLYWHEEL_SPEED_SLIDER_PROPS.put("Min", 0.0d);
+            FLYWHEEL_SPEED_SLIDER_PROPS.put("Max", 3000.0d);
+            FLYWHEEL_SPEED_SLIDER_PROPS.put("Block increment", 25d);
+        }
 
-        private static ShuffleboardTab ShotTuningTab = Shuffleboard.getTab("Shot Tuning");
-        private static NetworkTableEntry TopSpeedEntry = ShotTuningTab.addPersistent("Top Speed", 1500).withWidget(BuiltInWidgets.kField).getEntry();
-        private static NetworkTableEntry BottomSpeedEntry = ShotTuningTab.addPersistent("Bottom Speed", 1500).withWidget(BuiltInWidgets.kField).getEntry();
-        private static NetworkTableEntry Angle = ShotTuningTab.addPersistent("Angle", 175).withWidget(BuiltInWidgets.kField).getEntry();
-        private static NetworkTableEntry IsPreciseShot = ShotTuningTab.addPersistent("Is Precise Shot?", false).withWidget(BuiltInWidgets.kBooleanBox).getEntry();
-        private static NetworkTableEntry IsFlipped = ShotTuningTab.addPersistent("Flipped?", false).withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+        private static Map<String, Object> ANGLE_SLIDER_PROPS = new HashMap<>();
+
+        static {
+            ANGLE_SLIDER_PROPS.put("Min", -180.0d);
+            ANGLE_SLIDER_PROPS.put("Max", 180.0d);
+            ANGLE_SLIDER_PROPS.put("Block increment", 0.25d);
+        }
+        private ShuffleboardTab ShotTuningTab;
+        private NetworkTableEntry TopSpeedEntry;
+        private NetworkTableEntry BottomSpeedEntry;
+        private NetworkTableEntry Angle;
+        private NetworkTableEntry IsPreciseShot;
+        private NetworkTableEntry IsFlipped;
+
+        public ShotDashboard(){
+            ShotTuningTab = Shuffleboard.getTab("Shot Tuning");
+            TopSpeedEntry = ShotTuningTab.addPersistent("Top Speed", 1500).withWidget(BuiltInWidgets.kNumberSlider).withProperties(FLYWHEEL_SPEED_SLIDER_PROPS).getEntry();
+            BottomSpeedEntry = ShotTuningTab.addPersistent("Bottom Speed", 1500).withWidget(BuiltInWidgets.kNumberSlider).withProperties(FLYWHEEL_SPEED_SLIDER_PROPS).getEntry();
+            Angle =  ShotTuningTab.addPersistent("Angle", 175).withWidget(BuiltInWidgets.kNumberSlider).withProperties(ANGLE_SLIDER_PROPS).getEntry();
+            IsPreciseShot = ShotTuningTab.addPersistent("Is Precise Shot?", false).withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+            IsFlipped = ShotTuningTab.addPersistent("Flipped?", false).withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+        }
         
-        public static Shot getDashboardShot(){
+        public Shot getDashboardShot(){
             return new Shot(Angle.getDouble(85), TopSpeedEntry.getDouble(1500), BottomSpeedEntry.getDouble(1500), IsPreciseShot.getBoolean(false), IsFlipped.getBoolean(false));
         }
+
+
     }
 
     //A map from inches to top wheel speed
@@ -99,11 +128,14 @@ public class Shot {
         double maxLiftHeight = Double.MAX_VALUE;
         for(PolarCoordinate coord : POINTS_OF_INTEREST_ON_LAUNCHBOX)
         {
-            double pointLiftHeight = (MAX_LEGAL_HEIGHT - MIN_PIVOT_HEIGHT) - Math.asin(launcherAngle - 90 + coord.getAngle()) * coord.getDistance(); 
+            double pointLiftHeight = (MAX_LEGAL_HEIGHT) - (Math.asin(Units.degreesToRadians(launcherAngle - 90 + coord.getAngle())) * coord.getDistance()); 
             if(pointLiftHeight < maxLiftHeight)
             {
                 maxLiftHeight = pointLiftHeight;
             }
+        }
+        if(maxLiftHeight > MAX_LEGAL_HEIGHT - 2){
+            maxLiftHeight = MAX_LEGAL_HEIGHT - 2;
         }
         return maxLiftHeight;
     }

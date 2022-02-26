@@ -92,7 +92,7 @@ public class SuperStructure implements Subsystem {
                             mConveyor.prepareForLaunch();
                             if (mWantConfirmShot && mLunchboxAngler.isAtAngle() && mElevator.isAtPosition() && mUpFlywheel.isSpeedInRange() && mDownFlywheel.isSpeedInRange()) 
                             {
-                                mLaunchingStates = LaunchingStates.kChangeShot;
+                                mLaunchingStates = LaunchingStates.kLaunching;
                             }
                             break;
                         case kChangeShot:
@@ -103,6 +103,7 @@ public class SuperStructure implements Subsystem {
                                 mElevator.goToSetpointInches(mWantedShot.getLiftHeight());
                                 if (mElevator.isAtPosition()); mLaunchingStates = LaunchingStates.kLaunching;
                             }
+                            break;
                         case kLaunching:
                             mElevator.goToSetpointInches(mWantedShot.getLiftHeight());
                             mUpFlywheel.setWantedSpeed(mWantedShot.getTopSpeed());
@@ -137,15 +138,17 @@ public class SuperStructure implements Subsystem {
                             {
                                 mIdleStates = IdleStates.AtHome;
                             }
+                            break;
                         case AtHome:
                             mUpFlywheel.stop();
                             mDownFlywheel.stop();
-                            mElevator.stop();
+                            mElevator.goToSetpointInches(Constants.kLiftBottomPivotHeight);
                             mFrontIntake.stop();
                             mBackIntake.stop();
                             mDualRollerSubsystem.stop();
                             mConveyor.stop();
                             mLunchboxAngler.stop();
+
                             break;
                     }
                     return;
@@ -205,8 +208,8 @@ public class SuperStructure implements Subsystem {
     private SuperStructureStates mSuperStructureStates;
     private final I2C.Port i2cPort1 = I2C.Port.kOnboard;
     private final I2C.Port i2cPort2 = I2C.Port.kMXP;
-    ColorSensorV3 m_colorSensorFront;
-    ColorSensorV3 m_colorSensorRear;
+    //ColorSensorV3 m_colorSensorFront;
+    //ColorSensorV3 m_colorSensorRear;
     private LaunchingStates mLaunchingStates;
     private Boolean mWantConfirmShot;
     private Shot mWantedShot; // make sure to null check this
@@ -225,6 +228,10 @@ public class SuperStructure implements Subsystem {
                 Constants.kTopFlywheelKv, RobotMap.downFlywheelEncoderA, RobotMap.downFlywheelEncoderB);
         mConveyor = new Conveyor();
         mLunchboxAngler = LaunchBoxAngler.getInstance();
+        mSuperStructureStates = SuperStructureStates.Idle;
+        mLaunchingStates = LaunchingStates.kPreparingLaunch;
+        mIdleStates = IdleStates.GoingHome;
+        mWantConfirmShot = false;
     }
 
     @Override
@@ -245,12 +252,14 @@ public class SuperStructure implements Subsystem {
         mUpFlywheel.outputToSmartDashboard();
         mElevator.outputToSmartDashboard();
         mConveyor.outputToSmartDashboard();
-
+        SmartDashboard.putString("Superstructure State", mSuperStructureStates.name());
+        SmartDashboard.putString("Superstructure Launching State", mLaunchingStates.name());
+        SmartDashboard.putString("Superstructure Idle State", mIdleStates.name());
     }
 
     @Override
     public void stop() {
-        mIdleStates = IdleStates.AtHome;
+        mIdleStates = IdleStates.GoingHome;
         mSuperStructureStates = SuperStructureStates.Idle;
 
     }
@@ -314,7 +323,7 @@ public class SuperStructure implements Subsystem {
         }
         else
         {
-            if (mWantedShot != wantedShot){
+            if (mWantedShot != null && Math.abs(mWantedShot.getLauncherAngle() -wantedShot.getLauncherAngle()) > 0.001){
                 isShotAngleIncreasing = Math.abs(wantedShot.getLauncherAngle()) > Math.abs(mWantedShot.getLauncherAngle()); 
                 mLaunchingStates = LaunchingStates.kChangeShot;
             }

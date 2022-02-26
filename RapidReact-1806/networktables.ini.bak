@@ -31,6 +31,7 @@ double "/Shuffleboard/Driver Controller Configuration/Trigger As Digital Deadzon
 double "/Shuffleboard/Driver Controller Configuration/Trigger Deadzone"=0
 double "/Shuffleboard/Driver Controller Configuration/Trigger Linearity"=1
 double "/Shuffleboard/Driver Controller Configuration/Trigger Minimum Output"=0.04
+string "/Shuffleboard/Main Competition Tab/Auto Mode Confirmation:"="UNSELECTED"
 double "/Shuffleboard/Operator Controller Configuration/Left X Deadzone"=0.12
 double "/Shuffleboard/Operator Controller Configuration/Left X Linearity"=0.32
 double "/Shuffleboard/Operator Controller Configuration/Left X Minimum Output"=0.04
@@ -47,3 +48,4 @@ double "/Shuffleboard/Operator Controller Configuration/Trigger As Digital Deadz
 double "/Shuffleboard/Operator Controller Configuration/Trigger Deadzone"=0.2
 double "/Shuffleboard/Operator Controller Configuration/Trigger Linearity"=0.32
 double "/Shuffleboard/Operator Controller Configuration/Trigger Minimum Output"=0.04
+double "/Shuffleboard/Shot Tuning/Angle"=90
