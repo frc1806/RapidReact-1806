@@ -15,7 +15,7 @@ public class TwoBallPath1 implements PathContainer {
     @Override
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
-        sWaypoints.add(new Waypoint(300,100,0,0));
+        sWaypoints.add(new Waypoint(300,85,0,0));
         sWaypoints.add(new Waypoint(301,37,0,0));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
