@@ -174,12 +174,13 @@ public class ElevatorSubsystem implements Subsystem {
 
 	public synchronized void goToSetpointInches(double setpointInInches)
 	{
-		if(Math.abs(elevatorWantedPosition - setpointInInches) > 0.0001 || mElevatorStates != ElevatorStates.POSITION_CONTROL)
+		double setpoint = setpointInInches < Constants.kLiftBottomPivotHeight? Constants.kLiftBottomPivotHeight: setpointInInches;
+		if(Math.abs(elevatorWantedPosition - setpoint) > 0.0001 || mElevatorStates != ElevatorStates.POSITION_CONTROL)
 		{
 			mPidController.reset();
 		}
 
-		elevatorWantedPosition = setpointInInches;
+		elevatorWantedPosition = setpoint;
 		if(!isAtPosition()){
 		mElevatorStates = ElevatorStates.POSITION_CONTROL;
 		}
@@ -225,14 +226,22 @@ public class ElevatorSubsystem implements Subsystem {
 	 *         position for a cube to be deposited
 	 */
 	public synchronized boolean isAtPosition() {
+		return isAtArbitraryPosition(elevatorWantedPosition);
+	}
+
+	public synchronized boolean isAtArbitraryPosition(double height){
 		if (mElevatorStates == ElevatorStates.IDLE) {
 			return false;
 		}
-		if(elevatorWantedPosition <= Constants.kLiftBottomPivotHeight){
+		if(height <= Constants.kLiftBottomPivotHeight){
 			return getHeightInInches() < Constants.kLiftBottomPivotHeight;
 		}
 		return Math
-				.abs(elevatorWantedPosition - getHeightInInches()) < Constants.kElevatorPositionTolerance;
+				.abs(height - getHeightInInches()) < Constants.kElevatorPositionTolerance;
+	}
+
+	public synchronized boolean isAbovePosition(double height){
+		return getHeightInInches() > height;
 	}
 
 	/**
@@ -318,10 +327,6 @@ public class ElevatorSubsystem implements Subsystem {
 	public void setupDriverTab() {
 		// TODO Auto-generated method stub
 
-	}
-	public Boolean heightToCheck(Double height){
-		if (height >= getHeightInInches() + heightLeniency && height >= getHeightInInches() - heightLeniency) return false;
-		return true;
 	}
 
 	private Double getExtensionLength(Double X){

@@ -125,16 +125,15 @@ public class LaunchBoxAngler implements Subsystem {
     }
     
     public Boolean isAtAngle(){
-        //TODO
-        return false;
+        return checkIfAtArbitraryAngle(mWantedSetPoint);
     }
 
     public double getCurrentAngle(){
         return mEncoder.getDistance();
     }
 
-    public Boolean angleToCheck(Double angle){
-        if (angle >= mWantedSetPoint + angleLeniency && angle >= mWantedSetPoint - angleLeniency) return false;
+    public Boolean checkIfAtArbitraryAngle(Double angle){
+        if (Math.abs(angle - getCurrentAngle()) > angleLeniency) return false;
         return true;
     }
 

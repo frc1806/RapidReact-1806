@@ -235,6 +235,7 @@ public static Double kTopFlywheelKv = 0.0;
 public static Double kLaunchBoxAnglerKp = 0.0;
 public static Double kLaunchBoxAnglerKi = 0.0;
 public static Double kLaunchBoxAnglerKd = 0.0;
+public static Double kLaunchBoxInchesToFreedom = 2.5;
 
 
 //VISION
