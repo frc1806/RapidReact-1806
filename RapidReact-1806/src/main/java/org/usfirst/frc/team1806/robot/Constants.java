@@ -119,21 +119,22 @@ public class Constants {
     public final static int kDriveVisionTurnIZone = 4;
 
 
-    public final static double kElevatorHoldPercentOutput = .025;
+    public final static double kElevatorHoldPercentOutput = .045;
     // Encoder constants used by Elevator system
     public final static int kCreepModeLiftHeight = 13000;
 
     public final static double kElevatorInchesPerCountDefault = 1;
     public final static int kLiftPositionControlPIDSlot = 10;
     public final static int kLiftPositionPIDTimeout = 10;
-    public final static double kElevatorPositionkP = 0.33;
-    public final static double kElevatorPositionkI =0.0; ///0.02;
+    public final static double kElevatorPositionkP = 0.09;    
+    public final static double kElevatorPositionkI =0.075; ///0.02;
     public final static double kElevatorPositionkD =0.0; ///0.015;
     public final static double kElevatorPositionkF =0.0; //1 / 2000;
     public final static int kElevatorPositionIZone = 25;// 800;
     public final static double kLiftPositionRampRate = 0;
     public final static int kBottomLimitTolerance = 50;
-    public final static double kLiftBottomPivotHeight = 34.18;
+    public final static double kLiftBottomPivotHeight = 35.0;
+    public final static double kLiftSlowDownHeight = 37.0;
 
     public final static Double kElevatorPositionTolerance = 0.25;
     public final static int kElevatorVelocityTolerance = 500;
@@ -141,7 +142,7 @@ public class Constants {
     public final static double elevatorResetSpeed = .2;
 
 
-    public final static double kElevatorHoldkPGain = .00005;
+    public final static double kElevatorHoldkPGain = .04;
     public final static double kBumpEncoderPosition = .5;
 
     public final static double kLiftTopLimitSwitchPosition = 12.0;

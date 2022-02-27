@@ -9,6 +9,7 @@ import org.usfirst.frc.team1806.robot.loop.Loop;
 import org.usfirst.frc.team1806.robot.loop.Looper;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -46,12 +47,13 @@ public class ElevatorSubsystem implements Subsystem {
 
 	public ElevatorSubsystem() {
 		elevatorLead = new CANSparkMax(RobotMap.elevatorLeader, CANSparkMaxLowLevel.MotorType.kBrushless);
-		elevatorLead.setInverted(true);
+		elevatorLead.setSmartCurrentLimit(65);
 		mElevatorStates = ElevatorStates.IDLE;
 		elevatorWantedPosition = Constants.kLiftBottomPivotHeight;
 		reloadGains();
-
+		elevatorLead.setSecondaryCurrentLimit(200.0);
 		mStringPotentiometer = new AnalogInput(0);
+		setBrakeMode();
 	}
 
 	@Override
@@ -132,7 +134,13 @@ public class ElevatorSubsystem implements Subsystem {
 			private void elevatorStateLoop() {
 				switch (mElevatorStates) {
 					case POSITION_CONTROL:
-						elevatorLead.set(MathUtil.clamp(mPidController.calculate(getHeightInInches(), elevatorWantedPosition), -1, 1));
+						double reverseClamp = getHeightInInches() < Constants.kLiftSlowDownHeight? 0.05:0.2;
+						double output = MathUtil.clamp(mPidController.calculate(getHeightInInches(), elevatorWantedPosition) +Constants.kElevatorHoldPercentOutput, -reverseClamp, 1.0);
+						SmartDashboard.putNumber("Elevator PID Output", output);
+						elevatorLead.set(output);
+						if(isAtPosition()){
+							mElevatorStates = ElevatorStates.HOLD_POSITION;
+						}
 						return;
 					case HOLD_POSITION:
 						holdPosition();
@@ -166,9 +174,15 @@ public class ElevatorSubsystem implements Subsystem {
 
 	public synchronized void goToSetpointInches(double setpointInInches)
 	{
-		mElevatorStates = ElevatorStates.POSITION_CONTROL;
-		mPidController.reset();
+		if(Math.abs(elevatorWantedPosition - setpointInInches) > 0.0001 || mElevatorStates != ElevatorStates.POSITION_CONTROL)
+		{
+			mPidController.reset();
+		}
+
 		elevatorWantedPosition = setpointInInches;
+		if(!isAtPosition()){
+		mElevatorStates = ElevatorStates.POSITION_CONTROL;
+		}
 	}
 
 	public synchronized void goToTop() {
@@ -213,6 +227,9 @@ public class ElevatorSubsystem implements Subsystem {
 	public synchronized boolean isAtPosition() {
 		if (mElevatorStates == ElevatorStates.IDLE) {
 			return false;
+		}
+		if(elevatorWantedPosition <= Constants.kLiftBottomPivotHeight){
+			return getHeightInInches() < Constants.kLiftBottomPivotHeight;
 		}
 		return Math
 				.abs(elevatorWantedPosition - getHeightInInches()) < Constants.kElevatorPositionTolerance;
@@ -263,9 +280,15 @@ public class ElevatorSubsystem implements Subsystem {
 	 * Used to hold the cube when it is ready to be spat out
 	 */
 	public synchronized void holdPosition() {
-		elevatorLead.set(Constants.kElevatorHoldPercentOutput +
-				(elevatorWantedPosition - getHeightInInches()) * Constants.kElevatorHoldkPGain);
-		if (Math.abs(getHeightInInches() - elevatorWantedPosition) > Constants.kElevatorPositionTolerance) {
+		if(elevatorWantedPosition <= Constants.kLiftBottomPivotHeight){
+			elevatorLead.set(0);
+		}
+		else{
+			elevatorLead.set(Constants.kElevatorHoldPercentOutput +
+			(elevatorWantedPosition - getHeightInInches()) * Constants.kElevatorHoldkPGain);
+		}
+		
+		if (!isAtPosition()) {
 			mElevatorStates = ElevatorStates.POSITION_CONTROL;
 			goToSetpointInches(elevatorWantedPosition);
 		}

@@ -127,7 +127,7 @@ public class SuperStructure implements Subsystem {
                         case GoingHome:
                             mUpFlywheel.stop();
                             mDownFlywheel.stop();
-                            mElevator.goToSetpointInches(0.0);
+                            mElevator.goToSetpointInches(Constants.kLiftBottomPivotHeight);
                             mFrontIntake.stop();
                             mBackIntake.stop();
                             mDualRollerSubsystem.stop();
