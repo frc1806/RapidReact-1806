@@ -246,7 +246,7 @@ public class DriveTrainSubsystem implements Subsystem {
 		navx = new NavX(SPI.Port.kMXP);
 
 		reloadGains();
-		mDriveStates = DriveStates.NOTHING;
+		mDriveStates = DriveStates.DRIVING;
 		setLowGearPositionControlMaxDrivePower(12);    
 	}
 
