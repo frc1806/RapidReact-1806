@@ -7,7 +7,9 @@ import java.util.Map;
 
 import com.ctre.phoenix.CANifier;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
@@ -61,6 +63,11 @@ public class SuperStructure implements Subsystem {
 
         @Override
         public void onLoop(double timestamp) {
+
+            if(timestamp - lastCheckedAllianceTime > 2.5){
+                mCurrentAlliance = DriverStation.getAlliance();
+                lastCheckedAllianceTime = timestamp;
+            }
             switch (mSuperStructureStates) {
                 case IntakingFront:
                     mElevator.goToSetpointInches(0);
@@ -215,6 +222,8 @@ public class SuperStructure implements Subsystem {
     private Boolean mWantConfirmShot;
     private Shot mWantedShot; // make sure to null check this
     private IdleStates mIdleStates;
+    private Alliance mCurrentAlliance;
+    private double lastCheckedAllianceTime;
 
     private SuperStructure() {
         mElevator = ElevatorSubsystem.getInstance();
@@ -234,6 +243,8 @@ public class SuperStructure implements Subsystem {
         mLaunchingStates = LaunchingStates.kPreparingLaunch;
         mIdleStates = IdleStates.GoingHome;
         mWantConfirmShot = false;
+        mCurrentAlliance = Alliance.Invalid;
+        lastCheckedAllianceTime = 0.0
     }
 
     @Override
@@ -356,6 +367,20 @@ public class SuperStructure implements Subsystem {
 
         mPicoColorSensor.getRawColor0();
         
+        switch(mCurrentAlliance){
+            case Blue:
+                //Do code for if we're on the Blue Alliance Here
+                break;
+            default:
+            case Invalid:
+                return false;
+            case Red:
+                //Do code for if we're on the Red Alliance Here
+                break;
+            
+            
+        }
+        
         
 
 
@@ -364,10 +389,11 @@ public class SuperStructure implements Subsystem {
 
     public boolean doesBackColorSensorDetectWrongBall(){
 
+        
         mPicoColorSensor.getRawColor0();
 
-
-
+        if mCurrentAlliance
+        
 
     }
 
