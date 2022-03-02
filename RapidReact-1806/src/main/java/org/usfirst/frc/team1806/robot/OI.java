@@ -219,7 +219,7 @@ public class OI {
 				break;
 			case kForza: {
 				// Tunable things
-				double MIN_SPEED_TO_CONSIDER_MOVING = 1.0; // inches per second
+				//double MIN_SPEED_TO_CONSIDER_MOVING = 1.0; // inches per second
 
 				// buttons
 				boolean quickTurn = driverController.getButtonA();

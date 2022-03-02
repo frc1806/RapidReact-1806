@@ -60,7 +60,7 @@ public class Robot extends TimedRobot {
     public static boolean isBlue;
     public boolean arePathsInit = false;
     public static boolean needToPositionControlInTele = false;
-    private boolean automatedSequenceEnabled = true;
+    private boolean automatedSequenceEnabled = false;
     private boolean sequenceStarting = false;
     private boolean sequenceEnding = false;
     private boolean wasAutomatedSequenceEnabled = false;
@@ -219,6 +219,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+      autoInteleOpState = AutoInTeleOp.AUTO_DISABLED;
       mDisabledLooper.stop();
       mEnabledLooper.start();
         if(mAutoModeExecuter != null) {
@@ -233,8 +234,9 @@ public class Robot extends TimedRobot {
         }
       mDrive.setOpenLoop(DriveSignal.NEUTRAL);
       mDrive.setNeutralMode(false);
-      //SquidSubsystem.getInstance().extendSquid();
-      autoInteleOpState = AutoInTeleOp.AUTO_DISABLED;
+     automatedSequenceEnabled = false;
+     wasAutomatedSequenceEnabled = false;
+      
     }
 
 
