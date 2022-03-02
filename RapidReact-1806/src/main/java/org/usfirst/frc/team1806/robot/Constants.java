@@ -2,6 +2,7 @@ package org.usfirst.frc.team1806.robot;
 
 import org.usfirst.frc.team1806.robot.util.Translation2d;
 import org.usfirst.frc.team1806.robot.util.XboxControllerConfigValues;
+import org.usfirst.frc.team1806.robot.util.PicoColorSensor.RawColor;
 
 import edu.wpi.first.math.util.Units;
 
@@ -242,5 +243,11 @@ public static Double kLaunchBoxInchesToFreedom = 2.5;
 public static Double kCameraHeightMeters = Units.inchesToMeters(30);
 public static Double kTargetHeightMeters = Units.inchesToMeters(72);
 public static Double kCameraPitchRadians = Units.degreesToRadians(20);
+
+//COLOR SENSOR
+public static RawColor kBlueBallMaxValues = new RawColor(100, 100, 255, 255);
+public static RawColor kBlueBallMinimumValues = new RawColor(0, 0, 150, 0);
+public static RawColor kRedBallMaxValues = new RawColor(255, 100, 100, 255);
+public static RawColor kRedBallMinimumValues = new RawColor(150, 0, 0, 0);
 
 }
