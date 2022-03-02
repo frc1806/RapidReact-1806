@@ -2,14 +2,14 @@ package org.usfirst.frc.team1806.robot.subsystems;
 
 import java.util.function.DoubleSupplier;
 
-import javax.lang.model.util.ElementScanner6;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import com.ctre.phoenix.CANifier;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
@@ -20,6 +20,9 @@ import org.usfirst.frc.team1806.robot.RobotMap;
 import org.usfirst.frc.team1806.robot.loop.Loop;
 import org.usfirst.frc.team1806.robot.game.Shot;
 import org.usfirst.frc.team1806.robot.loop.Looper;
+import org.usfirst.frc.team1806.robot.util.PicoColorSensor;
+import org.usfirst.frc.team1806.robot.util.PicoColorSensor.RawColor;
+
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.MotorFeedbackSensor;
 import com.revrobotics.ColorMatchResult;
@@ -44,6 +47,7 @@ public class SuperStructure implements Subsystem {
         kLaunching
     }
 
+    
     public enum IdleStates {
         GoingHome,
         AtHome
@@ -59,9 +63,14 @@ public class SuperStructure implements Subsystem {
 
         @Override
         public void onLoop(double timestamp) {
+
+            if(timestamp - lastCheckedAllianceTime > 2.5){
+                mCurrentAlliance = DriverStation.getAlliance();
+                lastCheckedAllianceTime = timestamp;
+            }
             switch (mSuperStructureStates) {
                 case IntakingFront:
-                    mElevator.goToSetpointInches(Constants.kLiftBottomPivotHeight);
+                    mElevator.goToSetpointInches(0);
                     mFrontIntake.wantIntaking();
                     mBackIntake.stop();
                     mDualRollerSubsystem.startRoller();
@@ -71,7 +80,7 @@ public class SuperStructure implements Subsystem {
                     mLunchboxAngler.goToAngle(0.0);
                     return;
                 case IntakingBack:
-                    mElevator.goToSetpointInches(Constants.kLiftBottomPivotHeight);
+                    mElevator.goToSetpointInches(0);
                     mFrontIntake.stop();
                     mBackIntake.wantIntaking();
                     mDualRollerSubsystem.startRoller();
@@ -85,15 +94,7 @@ public class SuperStructure implements Subsystem {
                         default:
                         case kPreparingLaunch:
                             mElevator.goToSetpointInches(mWantedShot.getLiftHeight());
-                            
-                            if(mElevator.isAbovePosition(Constants.kLaunchBoxInchesToFreedom + Constants.kLiftBottomPivotHeight))
-                            {
-                                mLunchboxAngler.goToAngle(mWantedShot.getLauncherAngle());
-                            }
-                            else {
-                                mLunchboxAngler.goToAngle(0.0);
-                            }
-                            
+                            mLunchboxAngler.goToAngle(mWantedShot.getLauncherAngle());
                             mUpFlywheel.setWantedSpeed(mWantedShot.getTopSpeed());
                             mDownFlywheel.setWantedSpeed(mWantedShot.getBottomSpeed());
                             mFrontIntake.stop();
@@ -107,13 +108,7 @@ public class SuperStructure implements Subsystem {
                             break;
                         case kChangeShot:
                             if (!isShotAngleIncreasing){
-                                if(mElevator.isAbovePosition(Constants.kLaunchBoxInchesToFreedom + Constants.kLiftBottomPivotHeight))
-                                {
-                                    mLunchboxAngler.goToAngle(mWantedShot.getLauncherAngle());
-                                }
-                                else {
-                                    mLunchboxAngler.goToAngle(0.0);
-                                }
+                                mLunchboxAngler.goToAngle(mWantedShot.getLauncherAngle());
                                 if(mLunchboxAngler.isAtAngle()); mLaunchingStates = LaunchingStates.kLaunching;
                             } else {
                                 mElevator.goToSetpointInches(mWantedShot.getLiftHeight());
@@ -123,13 +118,7 @@ public class SuperStructure implements Subsystem {
                         case kLaunching:
                             mElevator.goToSetpointInches(mWantedShot.getLiftHeight());
                             mUpFlywheel.setWantedSpeed(mWantedShot.getTopSpeed());
-                            if(mElevator.isAbovePosition(Constants.kLaunchBoxInchesToFreedom + Constants.kLiftBottomPivotHeight))
-                            {
-                                mLunchboxAngler.goToAngle(mWantedShot.getLauncherAngle());
-                            }
-                            else {
-                                mLunchboxAngler.goToAngle(0.0);
-                            }
+                            mLunchboxAngler.goToAngle(mWantedShot.getLauncherAngle());
                             mDownFlywheel.setWantedSpeed(mWantedShot.getBottomSpeed());
                             mFrontIntake.stop();
                             mBackIntake.stop();
@@ -149,21 +138,14 @@ public class SuperStructure implements Subsystem {
                         case GoingHome:
                             mUpFlywheel.stop();
                             mDownFlywheel.stop();
-                            if(mLunchboxAngler.checkIfAtArbitraryAngle(0.0))
-                            {
-                                mElevator.goToSetpointInches(Constants.kLiftBottomPivotHeight);
-                            }
-                            else
-                            {
-                                mElevator.goToSetpointInches(Constants.kLiftBottomPivotHeight + Constants.kLaunchBoxInchesToFreedom);
-                            }
+                            mElevator.goToSetpointInches(0.0);
                             mFrontIntake.stop();
                             mBackIntake.stop();
                             mDualRollerSubsystem.stop();
                             mConveyor.stop();
                             mIdleStates = IdleStates.AtHome;
                             mLunchboxAngler.goToAngle(0.0);
-                            if(mElevator.isAtPosition() && mLunchboxAngler.checkIfAtArbitraryAngle(0.0))
+                            if(mElevator.isAtPosition() && mLunchboxAngler.isAtAngle())
                             {
                                 mIdleStates = IdleStates.AtHome;
                             }
@@ -176,7 +158,7 @@ public class SuperStructure implements Subsystem {
                             mBackIntake.stop();
                             mDualRollerSubsystem.stop();
                             mConveyor.stop();
-                            mLunchboxAngler.goToAngle(0.0);
+                            mLunchboxAngler.stop();
 
                             break;
                     }
@@ -235,17 +217,17 @@ public class SuperStructure implements Subsystem {
     private Boolean isShotAngleIncreasing = false;
     private LaunchBoxAngler mLunchboxAngler;
     private SuperStructureStates mSuperStructureStates;
-    private final I2C.Port i2cPort1 = I2C.Port.kOnboard;
-    private final I2C.Port i2cPort2 = I2C.Port.kMXP;
-    //ColorSensorV3 m_colorSensorFront;
-    //ColorSensorV3 m_colorSensorRear;
+    private PicoColorSensor mPicoColorSensor;
     private LaunchingStates mLaunchingStates;
     private Boolean mWantConfirmShot;
     private Shot mWantedShot; // make sure to null check this
     private IdleStates mIdleStates;
+    private Alliance mCurrentAlliance;
+    private double lastCheckedAllianceTime;
 
     private SuperStructure() {
         mElevator = ElevatorSubsystem.getInstance();
+        mPicoColorSensor = new PicoColorSensor();
         mFrontIntake = new IntakeSubsystem(RobotMap.frontIntake, RobotMap.frontIntakeExtend, RobotMap.frontIntakeRetract);
         mBackIntake = new IntakeSubsystem(RobotMap.rearIntake, RobotMap.backIntakeExtend, RobotMap.backIntakeRetract);
         mUpFlywheel = new FlywheelSubsystem(RobotMap.upFlywheel, Constants.kTopFlywheelKp, Constants.kTopFlywheelKi,
@@ -261,6 +243,8 @@ public class SuperStructure implements Subsystem {
         mLaunchingStates = LaunchingStates.kPreparingLaunch;
         mIdleStates = IdleStates.GoingHome;
         mWantConfirmShot = false;
+        mCurrentAlliance = Alliance.Invalid;
+        lastCheckedAllianceTime = 0.0
     }
 
     @Override
@@ -379,6 +363,53 @@ public class SuperStructure implements Subsystem {
     }
 
 
+    public boolean doesFrontColorSensorDetectWrongBall(){
+
+        mPicoColorSensor.getRawColor0();
+        
+        switch(mCurrentAlliance){
+            case Blue:
+                //Do code for if we're on the Blue Alliance Here
+                break;
+            default:
+            case Invalid:
+                return false;
+            case Red:
+                //Do code for if we're on the Red Alliance Here
+                break;
+            
+            
+        }
+        
+        
+
+
+
+    }
+
+    public boolean doesBackColorSensorDetectWrongBall(){
+
+        
+        mPicoColorSensor.getRawColor0();
+
+        if mCurrentAlliance
+        
+
+    }
+
+    public boolean isColorBlue(RawColor color){
+        if(color.red < Constants.kBlueBallMinimumValues.red || color.red > Constants.kBlueBallMaxValues.red) return false;
+        if(color.green < Constants.kBlueBallMinimumValues.green || color.green > Constants.kBlueBallMaxValues.green) return false;
+        if(color.blue < Constants.kBlueBallMinimumValues.blue || color.blue > Constants.kBlueBallMaxValues.blue) return false;
+        return true;
+    }
+
+    public boolean isColorRed(RawColor color){
+        if(color.red < Constants.kRedBallMinimumValues.red || color.red > Constants.kRedBallMaxValues.red) return false;
+        if(color.green < Constants.kRedBallMinimumValues.green || color.green > Constants.kRedBallMaxValues.green) return false;
+        if(color.blue < Constants.kRedBallMinimumValues.blue || color.blue > Constants.kBlueBallMaxValues.blue) return false;
+        return true;
+    }
 
     private static Map<String, Object> FLYWHEEL_SPEEDS = new HashMap<>();
     private static Map<String, Object> SHOOTER_ANGLE = new HashMap<>();
