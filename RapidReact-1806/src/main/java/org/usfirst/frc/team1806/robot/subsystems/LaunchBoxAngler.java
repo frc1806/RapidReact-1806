@@ -1,6 +1,7 @@
 package org.usfirst.frc.team1806.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import org.usfirst.frc.team1806.robot.Constants;
@@ -8,6 +9,7 @@ import org.usfirst.frc.team1806.robot.RobotMap;
 import org.usfirst.frc.team1806.robot.loop.Loop;
 import org.usfirst.frc.team1806.robot.loop.Looper;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -21,7 +23,7 @@ public class LaunchBoxAngler implements Subsystem {
     private static LaunchBoxAngler LUNCH_BOX_ANGLER = new LaunchBoxAngler();
     private Double mKp, mKi, mKd, mWantedSetPoint;
     private Double angleLeniency = 0.75;
-    private final double ROBOT_OFFSET = -7;
+    private final double ROBOT_OFFSET = -51;
     private double currentOffset;
     private boolean hasOffsetBeenSet;
     private boolean hasOffsetBeenLoopChecked;
@@ -53,7 +55,14 @@ public class LaunchBoxAngler implements Subsystem {
                     mLaunchMotor.set(ControlMode.PercentOutput, 0.0);
                     return;
                 case GoingToPosition:
-                    mLaunchMotor.set(ControlMode.PercentOutput, mPIDController.calculate(getCurrentAngle(), mWantedSetPoint));
+                    double power = mPIDController.calculate(getCurrentAngle(), mWantedSetPoint);
+                    if(mWantedSetPoint == 0.0)
+                    {   
+                        if(Math.abs(getCurrentAngle()) < 30){
+                            power =MathUtil.clamp(power, -0.7, 0.7);
+                        } 
+                    }
+                    mLaunchMotor.set(ControlMode.PercentOutput, power);
                     return;
                 case AtPosition:
                     return;
@@ -91,6 +100,7 @@ public class LaunchBoxAngler implements Subsystem {
         mKi = Constants.kLaunchBoxAnglerKi;
         mKd = Constants.kLaunchBoxAnglerKd;
         mLaunchMotor = new TalonSRX(RobotMap.launchBoxAngler);
+        mLaunchMotor.setNeutralMode(NeutralMode.Coast);
         mPIDController = new PIDController(mKp, mKi, mKd);
         mLunchboxStates = LunchboxStates.Idle;
         mWantedSetPoint = 0.0;
