@@ -25,10 +25,7 @@ import org.usfirst.frc.team1806.robot.util.BisectedCircularBuffer;
 import org.usfirst.frc.team1806.robot.util.PicoColorSensor;
 import org.usfirst.frc.team1806.robot.util.PicoColorSensor.RawColor;
 
-import com.revrobotics.ColorSensorV3;
 import com.revrobotics.MotorFeedbackSensor;
-import com.revrobotics.ColorMatchResult;
-import com.revrobotics.ColorMatch;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 
 public class SuperStructure implements Subsystem {
@@ -322,6 +319,7 @@ public class SuperStructure implements Subsystem {
         lastCheckedAllianceTime = 0.0;
         flywheelAverageSpeedsBuffer = new BisectedCircularBuffer(10, 5);
         isFlywheelSpeedDecreasing = false;
+
     }
 
     @Override
@@ -441,21 +439,17 @@ public class SuperStructure implements Subsystem {
 
 /*
     public boolean doesFrontColorSensorDetectWrongBall(){
-
-        mPicoColorSensor.getRawColor0();
         
         switch(mCurrentAlliance){
             case Blue:
                 //Do code for if we're on the Blue Alliance Here
-                break;
+                return isColorRed(mPicoColorSensor.getRawColor0());
             default:
             case Invalid:
                 return false;
             case Red:
                 //Do code for if we're on the Red Alliance Here
-                break;
-            
-            
+                return isColorBlue(mPicoColorSensor.getRawColor0());   
         }
     }
  */       
@@ -465,9 +459,18 @@ public class SuperStructure implements Subsystem {
 
         
         mPicoColorSensor.getRawColor0();
-
-        if mCurrentAlliance
-        
+       
+        switch(mCurrentAlliance){
+            case Blue:
+            return isColorRed(mPicoColorSensor.getRawColor1());
+            default:
+            case Invalid:
+                return false;
+            case Red:
+            return isColorBlue(mPicoColorSensor.getRawColor1());  
+            
+            
+        }
 
     }
 */
@@ -485,8 +488,10 @@ public class SuperStructure implements Subsystem {
         return true;
     }
 
+
     private static Map<String, Object> FLYWHEEL_SPEEDS = new HashMap<>();
     private static Map<String, Object> SHOOTER_ANGLE = new HashMap<>();
+    private static Map<String, Object> RGB_VALUE = new HashMap<>();
 
     static {
         FLYWHEEL_SPEEDS.put("Min", 0.0d);
@@ -499,6 +504,12 @@ public class SuperStructure implements Subsystem {
         SHOOTER_ANGLE.put("Min", -180.0d);
         SHOOTER_ANGLE.put("Max", 180d);
         SHOOTER_ANGLE.put("Block increment", 0.1d);
+    }
+
+    static {
+        RGB_VALUE.put("Min", 0.0d);
+        RGB_VALUE.put("Max", 255.0d);
+        RGB_VALUE.put("Block increment", 1.0d);
     }
 
     @Override
@@ -558,6 +569,44 @@ public class SuperStructure implements Subsystem {
         
 
         }).withWidget(BuiltInWidgets.kDial).withPosition(-1,-1).withSize(1,1).withProperties(SHOOTER_ANGLE); //add .withProperties if neccesary
+
+
+
+        Robot.getMainDriverTab().addNumber("Red 0", new DoubleSupplier() {
+
+            @Override
+            public double getAsDouble() {
+                return mPicoColorSensor.getRawColor0().red;
+            }
+        
+
+        }).withWidget(BuiltInWidgets.kDial).withPosition(0,7).withSize(1,1).withProperties(RGB_VALUE); //add .withProperties if neccesary
+
+
+        Robot.getMainDriverTab().addNumber("Green 0", new DoubleSupplier() {
+
+            @Override
+            public double getAsDouble() {
+                return mPicoColorSensor.getRawColor0().green;
+            }
+        
+
+        }).withWidget(BuiltInWidgets.kDial).withPosition(1,7).withSize(1,1).withProperties(RGB_VALUE); //add .withProperties if neccesary
+
+
+
+
+        Robot.getMainDriverTab().addNumber("Blue 0", new DoubleSupplier() {
+
+            @Override
+            public double getAsDouble() {
+                return mPicoColorSensor.getRawColor0().blue;
+            }
+        
+
+        }).withWidget(BuiltInWidgets.kDial).withPosition(2,7).withSize(1,1).withProperties(RGB_VALUE); //add .withProperties if neccesary
+
+
 
 
         }
