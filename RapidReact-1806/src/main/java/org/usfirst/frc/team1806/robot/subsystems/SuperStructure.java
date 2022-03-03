@@ -5,15 +5,9 @@ import java.util.function.DoubleSupplier;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.ctre.phoenix.CANifier;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.simulation.FlywheelSim;
-import edu.wpi.first.util.CircularBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color;
 
 import org.usfirst.frc.team1806.robot.Constants;
 import org.usfirst.frc.team1806.robot.Robot;
@@ -24,8 +18,6 @@ import org.usfirst.frc.team1806.robot.loop.Looper;
 import org.usfirst.frc.team1806.robot.util.BisectedCircularBuffer;
 import org.usfirst.frc.team1806.robot.util.PicoColorSensor;
 import org.usfirst.frc.team1806.robot.util.PicoColorSensor.RawColor;
-
-import com.revrobotics.MotorFeedbackSensor;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 
 public class SuperStructure implements Subsystem {
@@ -50,6 +42,11 @@ public class SuperStructure implements Subsystem {
     public enum IdleStates {
         GoingHome,
         AtHome
+    }
+
+    public enum IntakeStates{
+        Intaking,
+        FeedThrough
     }
 
     private Loop mLoop = new Loop() {
@@ -492,6 +489,7 @@ public class SuperStructure implements Subsystem {
     private static Map<String, Object> FLYWHEEL_SPEEDS = new HashMap<>();
     private static Map<String, Object> SHOOTER_ANGLE = new HashMap<>();
     private static Map<String, Object> RGB_VALUE = new HashMap<>();
+    private static Map<String, Object> BALL_COUNT = new HashMap<>();
 
     static {
         FLYWHEEL_SPEEDS.put("Min", 0.0d);
@@ -510,6 +508,12 @@ public class SuperStructure implements Subsystem {
         RGB_VALUE.put("Min", 0.0d);
         RGB_VALUE.put("Max", 255.0d);
         RGB_VALUE.put("Block increment", 1.0d);
+    }
+
+    static {
+        BALL_COUNT.put("Min", 0);
+        BALL_COUNT.put("Max", 2);
+        BALL_COUNT.put("Block increment", 1d);
     }
 
     @Override
@@ -568,9 +572,18 @@ public class SuperStructure implements Subsystem {
             }
         
 
+        }).withWidget(BuiltInWidgets.kDial).withPosition(-1,-1).withSize(1,1).withProperties(BALL_COUNT); //add .withProperties if neccesary
+
+        //TODO: Move position
+        Robot.getMainDriverTab().addNumber("Ball Count", new DoubleSupplier() {
+
+            @Override
+            public double getAsDouble() {
+                return ballCount;
+            }
+        
+
         }).withWidget(BuiltInWidgets.kDial).withPosition(-1,-1).withSize(1,1).withProperties(SHOOTER_ANGLE); //add .withProperties if neccesary
-
-
 
         Robot.getMainDriverTab().addNumber("Red 0", new DoubleSupplier() {
 
