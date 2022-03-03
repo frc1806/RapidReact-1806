@@ -81,7 +81,7 @@ public class PicoColorSensor implements AutoCloseable {
   private boolean hasColor1;
   private int prox0;
   private int prox1;
-  private final RawColor color0 = new RawColor();
+  public final static RawColor color0 = new RawColor();
   private final RawColor color1 = new RawColor();
   private double lastReadTime;
   private final ReentrantLock threadLock = new ReentrantLock();
