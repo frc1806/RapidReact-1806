@@ -488,7 +488,7 @@ public class SuperStructure implements Subsystem {
             }
         
 
-        }).withWidget(BuiltInWidgets.kDial).withPosition(-1,-1).withSize(1,1).withProperties(RGB_VALUE); //add .withProperties if neccesary
+        }).withWidget(BuiltInWidgets.kDial).withPosition(-1,-1).withSize(1,1).withProperties(SHOOTER_ANGLE); //add .withProperties if neccesary
 
 
 
@@ -524,7 +524,7 @@ public class SuperStructure implements Subsystem {
             }
         
 
-        }).withWidget(BuiltInWidgets.kDial).withPosition(2,7).withSize(1,1).withProperties(SHOOTER_ANGLE); //add .withProperties if neccesary
+        }).withWidget(BuiltInWidgets.kDial).withPosition(2,7).withSize(1,1).withProperties(RGB_VALUE); //add .withProperties if neccesary
 
 
 
