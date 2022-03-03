@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.Encoder;
 public class FlywheelSubsystem implements Subsystem {
 
     private CANSparkMax mFlywheelMotor;
-    private Double mKp, mKi, mKd, mKf, mIzone, mWantedSpeed, mks, mkv;
+    private Double mKp, mKi, mKd, mKf, mIzone, mWantedSpeed, mks, mkv, mKa;
     private PIDController mFlywheelPIDController;
     private SimpleMotorFeedforward mFeedforwardController;
     private Integer withinLeniency = 50;
@@ -56,7 +56,7 @@ public class FlywheelSubsystem implements Subsystem {
 
     private FlywheelStates mFlywheelStates;
 
-    public FlywheelSubsystem(Integer canID, Double kp, Double ki, Double kd, Double kf, Double izone, Boolean isInverted, Double ks, Double kv,  Integer quadA, Integer quadB){
+    public FlywheelSubsystem(Integer canID, Double kp, Double ki, Double kd, Double kf, Double izone, Boolean isInverted, Double ks, Double kv, Double ka,  Integer quadA, Integer quadB){
         mFlywheelMotor = new CANSparkMax(canID, MotorType.kBrushless);
         mFlywheelMotor.setInverted(isInverted);
         mKp = kp;
@@ -65,6 +65,7 @@ public class FlywheelSubsystem implements Subsystem {
         mKf = kf;
         mks = ks;
         mkv = kv;
+        mKa = ka;
         mIzone = izone;
         mWantedSpeed = 0.0;
         mFlywheelStates = FlywheelStates.kIdle;
@@ -120,7 +121,7 @@ public class FlywheelSubsystem implements Subsystem {
     public void reloadGames() {
 
         mFlywheelPIDController = new PIDController(mKp, mKi, mKd);
-        mFeedforwardController = new SimpleMotorFeedforward(mks, mkv);
+        mFeedforwardController = new SimpleMotorFeedforward(mks, mkv, mKa);
     
     }
 
@@ -149,7 +150,7 @@ public class FlywheelSubsystem implements Subsystem {
     }
 
     public Double getCurrentRPM(){
-        return mFlywheelMotor.getEncoder().getVelocity();
+        return mEncoder.getRate();
     }
 
     private Double rpmToCounts(Double rpm){
