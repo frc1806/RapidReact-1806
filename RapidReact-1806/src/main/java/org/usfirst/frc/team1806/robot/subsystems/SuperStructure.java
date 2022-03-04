@@ -5,14 +5,9 @@ import java.util.function.DoubleSupplier;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.ctre.phoenix.CANifier;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color;
 
 import org.usfirst.frc.team1806.robot.Constants;
 import org.usfirst.frc.team1806.robot.Robot;
@@ -20,10 +15,9 @@ import org.usfirst.frc.team1806.robot.RobotMap;
 import org.usfirst.frc.team1806.robot.loop.Loop;
 import org.usfirst.frc.team1806.robot.game.Shot;
 import org.usfirst.frc.team1806.robot.loop.Looper;
+import org.usfirst.frc.team1806.robot.util.BisectedCircularBuffer;
 import org.usfirst.frc.team1806.robot.util.PicoColorSensor;
 import org.usfirst.frc.team1806.robot.util.PicoColorSensor.RawColor;
-
-import com.revrobotics.MotorFeedbackSensor;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 
 public class SuperStructure implements Subsystem {
@@ -50,6 +44,11 @@ public class SuperStructure implements Subsystem {
         AtHome
     }
 
+    public enum IntakeStates{
+        Intaking,
+        FeedThrough
+    }
+
     private Loop mLoop = new Loop() {
 
         @Override
@@ -65,48 +64,92 @@ public class SuperStructure implements Subsystem {
                 mCurrentAlliance = DriverStation.getAlliance();
                 lastCheckedAllianceTime = timestamp;
             }
+
+            //Cargo counting
+            flywheelAverageSpeedsBuffer.addLast((mUpFlywheel.getCurrentRPM() + mDownFlywheel.getCurrentRPM()) / 2.0);
+            double olderAverage = flywheelAverageSpeedsBuffer.getOlderAverage();
+            double recentAverage = flywheelAverageSpeedsBuffer.getMoreRecentAverage();
+            boolean isDecreasing = false;
+
+            //main loop
             switch (mSuperStructureStates) {
                 case IntakingFront:
-                    mElevator.goToSetpointInches(0);
+                    mElevator.goToSetpointInches(Constants.kLiftBottomPivotHeight);
                     mFrontIntake.wantIntaking();
                     mBackIntake.stop();
                     mDualRollerSubsystem.startRoller();
                     mConveyor.loadConveyor();
                     mUpFlywheel.setReverseSpeed(1500.0);
                     mDownFlywheel.setReverseSpeed(1500.0);
-                    mLunchboxAngler.goToAngle(0.0);
-                    return;
+                    mLaunchboxAngler.goToAngle(0.0);
+                    //cargo counting
+                    if(olderAverage < 0 && recentAverage < 0)
+                    {
+                        if(recentAverage - olderAverage > (olderAverage* .05))
+                        {
+                            isDecreasing = true;
+                            if(isDecreasing && !isFlywheelSpeedDecreasing)
+                            {
+                                ballCount ++;
+                            }
+                        }
+                    }
+                    break;
                 case IntakingBack:
-                    mElevator.goToSetpointInches(0);
+                    mElevator.goToSetpointInches(Constants.kLiftBottomPivotHeight);
                     mFrontIntake.stop();
                     mBackIntake.wantIntaking();
                     mDualRollerSubsystem.startRoller();
                     mConveyor.loadConveyor();
                     mUpFlywheel.setReverseSpeed(1500.0);
                     mDownFlywheel.setReverseSpeed(1500.0);
-                    mLunchboxAngler.goToAngle(0.0);
-                    return;
+                    mLaunchboxAngler.goToAngle(0.0);
+                    if(olderAverage < 0 && recentAverage < 0)
+                    {
+                        if(recentAverage - olderAverage > (olderAverage* .05))
+                        {
+                            isDecreasing = true;
+                            if(isDecreasing && !isFlywheelSpeedDecreasing)
+                            {
+                                ballCount ++;
+                            }
+                        }
+                    }
+                    break;
                 case Launching:
                     switch (mLaunchingStates) {
                         default:
                         case kPreparingLaunch:
                             mElevator.goToSetpointInches(mWantedShot.getLiftHeight());
-                            mLunchboxAngler.goToAngle(mWantedShot.getLauncherAngle());
+
+                            if(mElevator.isAbovePosition(Constants.kLaunchBoxInchesToFreedom + Constants.kLiftBottomPivotHeight))
+                            {
+                                mLaunchboxAngler.goToAngle(mWantedShot.getLauncherAngle());
+                            }
+                            else {
+                                mLaunchboxAngler.goToAngle(0.0);
+                            }
                             mUpFlywheel.setWantedSpeed(mWantedShot.getTopSpeed());
                             mDownFlywheel.setWantedSpeed(mWantedShot.getBottomSpeed());
                             mFrontIntake.stop();
                             mBackIntake.stop();
                             mDualRollerSubsystem.stop();
                             mConveyor.prepareForLaunch();
-                            if (mWantConfirmShot && mLunchboxAngler.isAtAngle() && mElevator.isAtPosition() && mUpFlywheel.isSpeedInRange() && mDownFlywheel.isSpeedInRange()) 
+                            if (mWantConfirmShot && mLaunchboxAngler.isAtAngle() && mElevator.isAtPosition() && mUpFlywheel.isSpeedInRange() && mDownFlywheel.isSpeedInRange()) 
                             {
                                 mLaunchingStates = LaunchingStates.kLaunching;
                             }
                             break;
                         case kChangeShot:
                             if (!isShotAngleIncreasing){
-                                mLunchboxAngler.goToAngle(mWantedShot.getLauncherAngle());
-                                if(mLunchboxAngler.isAtAngle()); mLaunchingStates = LaunchingStates.kLaunching;
+                                if(mElevator.isAbovePosition(Constants.kLaunchBoxInchesToFreedom + Constants.kLiftBottomPivotHeight))
+                                {
+                                    mLaunchboxAngler.goToAngle(mWantedShot.getLauncherAngle());
+                                }
+                                else {
+                                    mLaunchboxAngler.goToAngle(0.0);
+                                }
+                                if(mLaunchboxAngler.isAtAngle()); mLaunchingStates = LaunchingStates.kLaunching;
                             } else {
                                 mElevator.goToSetpointInches(mWantedShot.getLiftHeight());
                                 if (mElevator.isAtPosition()); mLaunchingStates = LaunchingStates.kLaunching;
@@ -115,19 +158,36 @@ public class SuperStructure implements Subsystem {
                         case kLaunching:
                             mElevator.goToSetpointInches(mWantedShot.getLiftHeight());
                             mUpFlywheel.setWantedSpeed(mWantedShot.getTopSpeed());
-                            mLunchboxAngler.goToAngle(mWantedShot.getLauncherAngle());
+                            if(mElevator.isAbovePosition(Constants.kLaunchBoxInchesToFreedom + Constants.kLiftBottomPivotHeight))
+                            {
+                                mLaunchboxAngler.goToAngle(mWantedShot.getLauncherAngle());
+                            }
+                            else {
+                                mLaunchboxAngler.goToAngle(0.0);
+                            }
                             mDownFlywheel.setWantedSpeed(mWantedShot.getBottomSpeed());
                             mFrontIntake.stop();
                             mBackIntake.stop();
                             mConveyor.launch();
                             mDualRollerSubsystem.stop();
-                            if (!mWantConfirmShot || !mLunchboxAngler.isAtAngle() || !mElevator.isAtPosition() || !mUpFlywheel.isSpeedInRange() || !mDownFlywheel.isSpeedInRange()) // TODO: And a bunch of other logic
+                            if(olderAverage > 0 && recentAverage > 0)
+                            {
+                                if(recentAverage - olderAverage < -(olderAverage* .05))
+                                {
+                                    isDecreasing = true;
+                                    if(isDecreasing && !isFlywheelSpeedDecreasing)
+                                    {
+                                        ballCount --;
+                                    }
+                                }
+                            }
+                            if (!mWantConfirmShot || !mLaunchboxAngler.isAtAngle() || !mElevator.isAtPosition() || !mUpFlywheel.isSpeedInRange() || !mDownFlywheel.isSpeedInRange()) // TODO: And a bunch of other logic
                             {
                                 mLaunchingStates = LaunchingStates.kPreparingLaunch;
                             }
                             break;
                     }
-                    return;
+                    break;
                 default:
                 case Idle:
                     switch(mIdleStates){
@@ -135,14 +195,21 @@ public class SuperStructure implements Subsystem {
                         case GoingHome:
                             mUpFlywheel.stop();
                             mDownFlywheel.stop();
-                            mElevator.goToSetpointInches(0.0);
+                            if(mLaunchboxAngler.checkIfAtArbitraryAngle(0.0))
+                            {
+                                mElevator.goToSetpointInches(Constants.kLiftBottomPivotHeight);
+                            }
+                            else
+                            {
+                                mElevator.goToSetpointInches(Constants.kLiftBottomPivotHeight + Constants.kLaunchBoxInchesToFreedom);
+                            }
                             mFrontIntake.stop();
                             mBackIntake.stop();
                             mDualRollerSubsystem.stop();
                             mConveyor.stop();
                             mIdleStates = IdleStates.AtHome;
-                            mLunchboxAngler.goToAngle(0.0);
-                            if(mElevator.isAtPosition() && mLunchboxAngler.isAtAngle())
+                            mLaunchboxAngler.goToAngle(0.0);
+                            if(mElevator.isAtPosition() && mLaunchboxAngler.checkIfAtArbitraryAngle(0.0));
                             {
                                 mIdleStates = IdleStates.AtHome;
                             }
@@ -155,11 +222,11 @@ public class SuperStructure implements Subsystem {
                             mBackIntake.stop();
                             mDualRollerSubsystem.stop();
                             mConveyor.stop();
-                            mLunchboxAngler.stop();
+                            mLaunchboxAngler.goToAngle(0.0);
 
                             break;
                     }
-                    return;
+                    break;
                 case Climbing:
                     mUpFlywheel.stop();
                     mDownFlywheel.stop();
@@ -168,8 +235,8 @@ public class SuperStructure implements Subsystem {
                     mBackIntake.stop();
                     mDualRollerSubsystem.stop();
                     mConveyor.stop();
-                    mLunchboxAngler.stop();
-                    return;
+                    mLaunchboxAngler.goToAngle(0.0);
+                    break;
                 case FrontIntakeFeedThrough:
                     mUpFlywheel.stop();
                     mDownFlywheel.stop();
@@ -178,8 +245,8 @@ public class SuperStructure implements Subsystem {
                     mBackIntake.stop();
                     mDualRollerSubsystem.feedBackwards();
                     mConveyor.stop();
-                    mLunchboxAngler.goToAngle(0.0);
-                    return;
+                    mLaunchboxAngler.goToAngle(0.0);
+                    break;
                 case BackIntakeFeedThrough:
                     mUpFlywheel.stop();
                     mDownFlywheel.stop();
@@ -188,10 +255,10 @@ public class SuperStructure implements Subsystem {
                     mBackIntake.wantIntaking();
                     mDualRollerSubsystem.feedForward();
                     mConveyor.stop();
-                    mLunchboxAngler.goToAngle(0.0);
-                    return;
+                    mLaunchboxAngler.goToAngle(0.0);
+                    break;
             }
-
+            isFlywheelSpeedDecreasing = isDecreasing;
         }
 
         @Override
@@ -212,7 +279,7 @@ public class SuperStructure implements Subsystem {
     private DualRollerSubsystem mDualRollerSubsystem = DualRollerSubsystem.getInstance();
     private Conveyor mConveyor;
     private Boolean isShotAngleIncreasing = false;
-    private LaunchBoxAngler mLunchboxAngler;
+    private LaunchBoxAngler mLaunchboxAngler;
     private SuperStructureStates mSuperStructureStates;
     private PicoColorSensor mPicoColorSensor;
     private LaunchingStates mLaunchingStates;
@@ -222,6 +289,11 @@ public class SuperStructure implements Subsystem {
     private Alliance mCurrentAlliance;
     private double lastCheckedAllianceTime;
 
+    //Cargo counting
+    private BisectedCircularBuffer flywheelAverageSpeedsBuffer;
+    private boolean isFlywheelSpeedDecreasing;
+    private int ballCount;
+
     private SuperStructure() {
         mElevator = ElevatorSubsystem.getInstance();
         mPicoColorSensor = new PicoColorSensor();
@@ -229,19 +301,22 @@ public class SuperStructure implements Subsystem {
         mBackIntake = new IntakeSubsystem(RobotMap.rearIntake, RobotMap.backIntakeExtend, RobotMap.backIntakeRetract);
         mUpFlywheel = new FlywheelSubsystem(RobotMap.upFlywheel, Constants.kTopFlywheelKp, Constants.kTopFlywheelKi,
                 Constants.kTopFlywheelKd, Constants.kTopFlywheelKf, Constants.kTopFlywheelIzone, false,  Constants.kTopFlywheelKs,
-                Constants.kTopFlywheelKv, RobotMap.upFlyWheelEncoderA, RobotMap.upFlywheelEncoderB);
+                Constants.kTopFlywheelKv, Constants.kTopFlywheelKa, RobotMap.upFlyWheelEncoderA, RobotMap.upFlywheelEncoderB);
         mDownFlywheel = new FlywheelSubsystem(RobotMap.downFlywheel, Constants.kTopFlywheelKp, Constants.kTopFlywheelKi,
                 Constants.kTopFlywheelKd, Constants.kTopFlywheelKf, Constants.kTopFlywheelIzone, true,
                  Constants.kTopFlywheelKs,
-                Constants.kTopFlywheelKv, RobotMap.downFlywheelEncoderA, RobotMap.downFlywheelEncoderB);
+                Constants.kTopFlywheelKv, Constants.kTopFlywheelKa, RobotMap.downFlywheelEncoderA, RobotMap.downFlywheelEncoderB);
         mConveyor = new Conveyor();
-        mLunchboxAngler = LaunchBoxAngler.getInstance();
+        mLaunchboxAngler = LaunchBoxAngler.getInstance();
         mSuperStructureStates = SuperStructureStates.Idle;
         mLaunchingStates = LaunchingStates.kPreparingLaunch;
         mIdleStates = IdleStates.GoingHome;
         mWantConfirmShot = false;
         mCurrentAlliance = Alliance.Invalid;
         lastCheckedAllianceTime = 0.0;
+        flywheelAverageSpeedsBuffer = new BisectedCircularBuffer(10, 5);
+        isFlywheelSpeedDecreasing = false;
+
     }
 
     @Override
@@ -359,7 +434,7 @@ public class SuperStructure implements Subsystem {
         return SUPER_STRUCTURE;
     }
 
-
+/*
     public boolean doesFrontColorSensorDetectWrongBall(){
         
         switch(mCurrentAlliance){
@@ -374,7 +449,9 @@ public class SuperStructure implements Subsystem {
                 return isColorBlue(mPicoColorSensor.getRawColor0());   
         }
     }
-
+ */       
+        
+/*
     public boolean doesBackColorSensorDetectWrongBall(){
 
         
@@ -393,7 +470,7 @@ public class SuperStructure implements Subsystem {
         }
 
     }
-
+*/
     public boolean isColorBlue(RawColor color){
         if(color.red < Constants.kBlueBallMinimumValues.red || color.red > Constants.kBlueBallMaxValues.red) return false;
         if(color.green < Constants.kBlueBallMinimumValues.green || color.green > Constants.kBlueBallMaxValues.green) return false;
@@ -412,6 +489,7 @@ public class SuperStructure implements Subsystem {
     private static Map<String, Object> FLYWHEEL_SPEEDS = new HashMap<>();
     private static Map<String, Object> SHOOTER_ANGLE = new HashMap<>();
     private static Map<String, Object> RGB_VALUE = new HashMap<>();
+    private static Map<String, Object> BALL_COUNT = new HashMap<>();
 
     static {
         FLYWHEEL_SPEEDS.put("Min", 0.0d);
@@ -430,6 +508,12 @@ public class SuperStructure implements Subsystem {
         RGB_VALUE.put("Min", 0.0d);
         RGB_VALUE.put("Max", 255.0d);
         RGB_VALUE.put("Block increment", 1.0d);
+    }
+
+    static {
+        BALL_COUNT.put("Min", 0);
+        BALL_COUNT.put("Max", 2);
+        BALL_COUNT.put("Block increment", 1d);
     }
 
     @Override
@@ -484,13 +568,22 @@ public class SuperStructure implements Subsystem {
 
             @Override
             public double getAsDouble() {
-                return mLunchboxAngler.getCurrentAngle();
+                return mLaunchboxAngler.getCurrentAngle();
+            }
+        
+
+        }).withWidget(BuiltInWidgets.kDial).withPosition(-1,-1).withSize(1,1).withProperties(BALL_COUNT); //add .withProperties if neccesary
+
+        //TODO: Move position
+        Robot.getMainDriverTab().addNumber("Ball Count", new DoubleSupplier() {
+
+            @Override
+            public double getAsDouble() {
+                return ballCount;
             }
         
 
         }).withWidget(BuiltInWidgets.kDial).withPosition(-1,-1).withSize(1,1).withProperties(SHOOTER_ANGLE); //add .withProperties if neccesary
-
-
 
         Robot.getMainDriverTab().addNumber("Red 0", new DoubleSupplier() {
 

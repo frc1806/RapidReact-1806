@@ -215,7 +215,7 @@ public class Constants {
     
     public static Double kRPMToCounts = 1.0;
 
-public static Double kTopFlywheelKp =0.0;
+public static Double kTopFlywheelKp =0.037579;
 
 public static Double kTopFlywheelKi =0.0;
 
@@ -227,10 +227,10 @@ public static Double kTopFlywheelIzone =0.0;
 
 public static Double kTopFlywheelConversionFactor =0.0;
 
-public static Double kTopFlywheelKs =0.0;
+public static Double kTopFlywheelKs =-0.16303;
 
-public static Double kTopFlywheelKv = 0.0;
-
+public static Double kTopFlywheelKv = 1.563;
+public static Double kTopFlywheelKa = 0.86814;
 
 //Launchbox Angler PID
 public static Double kLaunchBoxAnglerKp = 1.0/2.0;
