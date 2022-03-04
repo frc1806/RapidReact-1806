@@ -8,6 +8,8 @@ import org.usfirst.frc.team1806.robot.Robot;
 import org.usfirst.frc.team1806.robot.game.Shot;
 import org.usfirst.frc.team1806.robot.loop.Loop;
 import org.usfirst.frc.team1806.robot.loop.Looper;
+import org.usfirst.frc.team1806.robot.util.TargetInfo;
+
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.net.PortForwarder;
 
@@ -185,6 +187,18 @@ public class VisionSubsystem implements Subsystem {
         }
     }
 
+    public TargetInfo applyCameraOffset(Double cameraToTargetAngle, Double cameraToTargetDistance, Double cameraOffsetX, Double cameraOffsetY){
+        Double X;
+        Double Y;
+        Double angle;
 
+        X = cameraOffsetX + (Math.cos(cameraToTargetAngle) * cameraToTargetDistance);
+        Y = cameraOffsetY + (Math.sin(cameraToTargetAngle) * cameraToTargetDistance);
 
+        TargetInfo target = new TargetInfo(X, Y);
+
+        angle = Math.atan(Y/X);
+
+        return target;
+    }
 }
