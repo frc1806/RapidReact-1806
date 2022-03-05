@@ -434,6 +434,10 @@ public class SuperStructure implements Subsystem {
         return SUPER_STRUCTURE;
     }
 
+    public void overwiteBallCount(int wantedCount){
+        ballCount = wantedCount;
+    }
+
 /*
     public boolean doesFrontColorSensorDetectWrongBall(){
         

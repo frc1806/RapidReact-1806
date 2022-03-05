@@ -35,71 +35,78 @@ public class OI {
 			Constants.kDriverControllerDefaultConfig);
 	protected static XboxController operatorController = new XboxController(1, "Operator",
 			Constants.kOperatorControllerDefaultConfig);
-	protected static XboxController debugController = new XboxController(2, "Debug", Constants.kOperatorControllerDefaultConfig);
+	protected static XboxController debugController = new XboxController(2, "Debug",
+			Constants.kOperatorControllerDefaultConfig);
 
-	private enum DriverConrollerConfigs{
-		 kRetroGranTurismo(
-			 new DoubleSupplier(){
+	private enum DriverConrollerConfigs {
+		kRetroGranTurismo(
+				new DoubleSupplier() {
 
-			@Override
-			public double getAsDouble() {
-				//throttle
-				return driverController.getConfigValues().getRightYMinimumOutput();
-			} }, new DoubleSupplier(){
+					@Override
+					public double getAsDouble() {
+						// throttle
+						return driverController.getConfigValues().getRightYMinimumOutput();
+					}
+				}, new DoubleSupplier() {
 
-			@Override
-			public double getAsDouble() {
-				//wheel
-				return driverController.getConfigValues().getLeftXMinimumOutput();
-			} }),
-		 kCallOfDuty(
-			new DoubleSupplier(){
+					@Override
+					public double getAsDouble() {
+						// wheel
+						return driverController.getConfigValues().getLeftXMinimumOutput();
+					}
+				}),
+		kCallOfDuty(
+				new DoubleSupplier() {
 
-		   @Override
-		   public double getAsDouble() {
-			   //throttle
-			   return driverController.getConfigValues().getLeftYMinimumOutput();
-		   } }, new DoubleSupplier(){
+					@Override
+					public double getAsDouble() {
+						// throttle
+						return driverController.getConfigValues().getLeftYMinimumOutput();
+					}
+				}, new DoubleSupplier() {
 
-		   @Override
-		   public double getAsDouble() {
-			   //wheel
-			   return driverController.getConfigValues().getRightXMinimumOutput();
-		   } }),
-		 kForza(
-			new DoubleSupplier(){
+					@Override
+					public double getAsDouble() {
+						// wheel
+						return driverController.getConfigValues().getRightXMinimumOutput();
+					}
+				}),
+		kForza(
+				new DoubleSupplier() {
 
-		   @Override
-		   public double getAsDouble() {
-			   //throttle
-			   return driverController.getConfigValues().getTriggerMinimumOutput();
-		   } }, new DoubleSupplier(){
+					@Override
+					public double getAsDouble() {
+						// throttle
+						return driverController.getConfigValues().getTriggerMinimumOutput();
+					}
+				}, new DoubleSupplier() {
 
-		   @Override
-		   public double getAsDouble() {
-			   //wheel
-			   return driverController.getConfigValues().getLeftXMinimumOutput();
-		   } });
+					@Override
+					public double getAsDouble() {
+						// wheel
+						return driverController.getConfigValues().getLeftXMinimumOutput();
+					}
+				});
 
-		 DoubleSupplier throttleDeadBandGetter, wheelDeadBandGetter;
-		 private DriverConrollerConfigs(DoubleSupplier throttleDeadbandGetter, DoubleSupplier wheelDeadbandGetter)
-		 {
+		DoubleSupplier throttleDeadBandGetter, wheelDeadBandGetter;
+
+		private DriverConrollerConfigs(DoubleSupplier throttleDeadbandGetter, DoubleSupplier wheelDeadbandGetter) {
 			this.throttleDeadBandGetter = throttleDeadbandGetter;
 			this.wheelDeadBandGetter = wheelDeadbandGetter;
-		 }
+		}
 
-		 public double getThrottleDeadBand(){
-			 return throttleDeadBandGetter.getAsDouble();
-		 }
+		public double getThrottleDeadBand() {
+			return throttleDeadBandGetter.getAsDouble();
+		}
 
-		 public double getWheelDeadBand(){
-			 return wheelDeadBandGetter.getAsDouble();
-		 }
+		public double getWheelDeadBand() {
+			return wheelDeadBandGetter.getAsDouble();
+		}
 
-		 public CheesyDriveHelper getCheesyDriveHelper(){
-			 return new CheesyDriveHelper(getWheelDeadBand(), getThrottleDeadBand());
-		 }
-	 }
+		public CheesyDriveHelper getCheesyDriveHelper() {
+			return new CheesyDriveHelper(getWheelDeadBand(), getThrottleDeadBand());
+		}
+	}
 
 	// snag some subsystem instances
 	private DriveTrainSubsystem mDriveTrainSubsystem = DriveTrainSubsystem.getInstance();
@@ -131,20 +138,18 @@ public class OI {
 	private Boolean wasShift = false;
 	private Boolean wasParkingBrake = false;
 
-	
-
 	public void runCommands() {
 		double timestamp = Timer.getFPGATimestamp();
 
 		boolean dashboardShot = debugController.getButtonA();
-		//LED Controlls
-		if(operatorController.getPOVUp()){
+		//LED Controls
+		/*if(operatorController.getPOVUp()){
 			mLedStringSubsystem.setRobotLEDModeGlitchy();
 		}
 		else if (operatorController.getPOVDown()){
 			mLedStringSubsystem.setRobotLEDModeOff();
-		}
-		else if (operatorController.getPOVRight()){
+		}*/
+		if (operatorController.getPOVLeft()){
 			mLedStringSubsystem.setRobotLEDModeClimbComplete();
 		}
 		else{
@@ -166,55 +171,63 @@ public class OI {
 			currentControllerConfig = DriverConrollerConfigs.kRetroGranTurismo;
 		}
 
+		
 
+		//Operator Controls
+		boolean closeShot = operatorController.getButtonB();
+		boolean closeFlipShot = operatorController.getButtonY();
+		boolean lowGoalShot = operatorController.getButtonA();
+		boolean lowGoalFlipShot = operatorController.getButtonX();
+		boolean visionShot = operatorController.getRightTriggerAsDigital(); //driver may also be able to activate this
+
+		boolean overwriteBallCountTo0 = operatorController.getPOVDown();
+		boolean overwriteBallCountTo1 = operatorController.getPOVRight();
+		boolean overwriteBallCountTo2 = operatorController.getPOVUp();
+
+
+
+		//define all driver controls
+		boolean quickTurn;
+		boolean visionLineup;
+		boolean shiftHighGear;
+		boolean shiftLowGear;
+
+		boolean intakeFront;
+		boolean intakeBack;
+		boolean feedThroughFromFront;
+		boolean feedThroughFromBack;
+		boolean confirmShot;
+
+		double throttle;
+		double turn;
 
 		// driver controls based on current config
 		switch (currentControllerConfig) {
 			case kCallOfDuty:{
 				// buttons
-				boolean quickTurn = driverController.getPOVLeft(); // Will Map to paddle
-				boolean visionLineup = driverController.getPOVRight(); // Will map to paddle
-				boolean shiftHighGear = driverController.getButtonRB();
-				boolean shiftLowGear = driverController.getButtonLB();
+				quickTurn = driverController.getPOVLeft(); // Will Map to paddle
+				visionLineup = driverController.getPOVRight(); // Will map to paddle
+				shiftHighGear = driverController.getButtonRB();
+				shiftLowGear = driverController.getButtonLB();
 
-				boolean intakeFront = driverController.getRightTriggerAsDigital();
-				boolean intakeBack = driverController.getLeftTriggerAsDigital();
-				boolean feedThroughFromFront = driverController.getPOVUp();
-				boolean feedThroughFromBack = driverController.getPOVDown();
+				intakeFront = driverController.getRightTriggerAsDigital();
+				intakeBack = driverController.getLeftTriggerAsDigital();
+				feedThroughFromFront = driverController.getPOVUp();
+				feedThroughFromBack = driverController.getPOVDown();
 				// face buttons are all unused.
 
-				// Superstructure stuff
-				if (intakeFront) {
-					mSuperStructure.wantIntakeFront();
-				} else if (intakeBack) {
-					mSuperStructure.wantIntakeBack();
-				}
+				confirmShot = driverController.getButtonA();
+				
+				visionShot = visionShot || driverController.getButtonB();
+				visionLineup = visionLineup || driverController.getButtonB();
 
-				else if (feedThroughFromFront){
-					mSuperStructure.wantFeedFrontIntake();
-				} else if (feedThroughFromBack) {
-					mSuperStructure.wantFeedBackIntake();
-				} else if (dashboardShot){
-					mSuperStructure.wantPrepareShot(Shot.TheShotDashboard.getDashboardShot());
-				}
-				 else {
-					mSuperStructure.stop();
-				}
-
-				// Handle shfting
-				if (shiftHighGear) {
-					mDriveTrainSubsystem.setHighGear(true);
-				} else if (shiftLowGear) {
-					mDriveTrainSubsystem.setHighGear(false);
-				} 
 				// decide throttle with triggers
 
-				double throttle = driverController.getLeftJoyY();
+				throttle = driverController.getLeftJoyY();
 
-				double turn = visionLineup ? 0.0:driverController.getRightJoyX(); // TODO: Add Vision Lineup code
+				turn = driverController.getRightJoyX();
 
-				mDriveTrainSubsystem.setOpenLoop(
-						mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, mDriveTrainSubsystem.isHighGear()));
+
 			}
 				break;
 			case kForza: {
@@ -222,42 +235,24 @@ public class OI {
 				//double MIN_SPEED_TO_CONSIDER_MOVING = 1.0; // inches per second
 
 				// buttons
-				boolean quickTurn = driverController.getButtonA();
-				boolean visionLineup = driverController.getButtonX();
-				boolean shiftHighGear = driverController.getButtonY();
-				boolean shiftLowGear = driverController.getButtonB();
+				quickTurn = driverController.getButtonA();
+				visionLineup = driverController.getButtonX();
+				shiftHighGear = driverController.getButtonY();
+				shiftLowGear = driverController.getButtonB();
 
-				boolean intakeFront = driverController.getButtonRB();
-				boolean intakeBack = driverController.getButtonLB();
-				boolean feedThroughFromFront = driverController.getPOVUp();
-				boolean feedThroughFromBack = driverController.getPOVDown();
+				intakeFront = driverController.getButtonRB();
+				intakeBack = driverController.getButtonLB();
+				feedThroughFromFront = driverController.getPOVUp();
+				feedThroughFromBack = driverController.getPOVDown();
 				// POV Left and right are still unused, as is the right stick, and forward/back
 				// buttons.
 
-				// Superstructure stuff
-				if (intakeFront) {
-					mSuperStructure.wantIntakeFront();
-				} else if (intakeBack) {
-					mSuperStructure.wantIntakeBack();
-				}
-
-				else if (feedThroughFromFront){
-					mSuperStructure.wantFeedFrontIntake();
-				} else if (feedThroughFromBack) {
-					mSuperStructure.wantFeedBackIntake();
-				} else if (dashboardShot){
-					mSuperStructure.wantPrepareShot(Shot.TheShotDashboard.getDashboardShot());
-				} else {
-					mSuperStructure.stop();
-				}
+				confirmShot =driverController.getPOVLeft();
 
 
-				// Handle shfting
-				if (shiftHighGear) {
-					mDriveTrainSubsystem.setHighGear(true);
-				} else if (shiftLowGear) {
-					mDriveTrainSubsystem.setHighGear(false);
-				}
+				visionShot = visionShot || driverController.getPOVRight();
+				visionLineup = visionLineup || driverController.getPOVRight();
+
 				// decide throttle with triggers
 
 				// know which trigger was pressed first if both
@@ -279,70 +274,96 @@ public class OI {
 				
 				
 
-				double throttle = 0.0;
+				throttle = 0.0;
 				if (leftTriggerTimestamp < rightTriggerTimestamp) {
 					throttle = (-driverController.getLeftTrigger()) * (1.0 - driverController.getRightTrigger());
 				} else if (rightTriggerTimestamp <= leftTriggerTimestamp) {
 					throttle = driverController.getRightTrigger() * (1.0 - driverController.getLeftTrigger());
 				}
 
-				double turn = visionLineup ? 0.0:driverController.getLeftJoyX(); // TODO: Add Vision Lineup code
-
-				mDriveTrainSubsystem.setOpenLoop(
-						mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, mDriveTrainSubsystem.isHighGear()));
+				turn = driverController.getLeftJoyX();
 			}
 				break;
 			default:
 			case kRetroGranTurismo: {
 				// buttons
-				boolean quickTurn = driverController.getPOVLeft(); // Will Map to paddle
-				boolean visionLineup = driverController.getPOVRight(); // Will map to paddle
-				boolean shiftHighGear = driverController.getButtonRB();
-				boolean shiftLowGear = driverController.getButtonLB();
+				quickTurn = driverController.getPOVLeft(); // Will Map to paddle
+				visionLineup = driverController.getPOVRight(); // Will map to paddle
+				shiftHighGear = driverController.getButtonRB();
+				shiftLowGear = driverController.getButtonLB();
 
-				boolean intakeFront = driverController.getRightTriggerAsDigital();
-				boolean intakeBack = driverController.getLeftTriggerAsDigital();
-				boolean feedThroughFromFront = driverController.getPOVUp();
-				boolean feedThroughFromBack = driverController.getPOVDown();
-				// face buttons are all unused.
+				intakeFront = driverController.getRightTriggerAsDigital();
+				intakeBack = driverController.getLeftTriggerAsDigital();
+				feedThroughFromFront = driverController.getPOVUp();
+				feedThroughFromBack = driverController.getPOVDown();
 
-				// Superstructure stuff
-				if (intakeFront) {
-					mSuperStructure.wantIntakeFront();
-				} else if (intakeBack) {
-					mSuperStructure.wantIntakeBack();
-				}
+				confirmShot = driverController.getButtonA();
 
-				else if (feedThroughFromFront){
-					mSuperStructure.wantFeedFrontIntake();
-				} else if (feedThroughFromBack) {
-					mSuperStructure.wantFeedBackIntake();
-				} else if (dashboardShot){
-					mSuperStructure.wantPrepareShot(Shot.TheShotDashboard.getDashboardShot());
-				} else {
-					mSuperStructure.stop();
-				}
+				visionShot = visionShot || driverController.getButtonB();
+				visionLineup = visionLineup || driverController.getButtonB();
 
+				throttle = driverController.getRightJoyY();
 
-				// Handle shfting
-				if (shiftHighGear) {
-					mDriveTrainSubsystem.setHighGear(true);
-				} else if (shiftLowGear) {
-					mDriveTrainSubsystem.setHighGear(false);
-				}
-				// decide throttle with triggers
-
-				double throttle = driverController.getRightJoyY();
-
-				double turn = visionLineup ? 0.0:driverController.getLeftJoyX(); // TODO: Add Vision Lineup code
-
-				mDriveTrainSubsystem.setOpenLoop(
-						mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, mDriveTrainSubsystem.isHighGear()));
+				turn = driverController.getLeftJoyX(); // TODO: Add Vision Lineup code
 			}
 				break;
 
 		}
 
+
+
+		//perform actions based on control values
+
+		// Superstructure stuff
+		mSuperStructure.wantConfirmLaunch(confirmShot);
+
+		if(overwriteBallCountTo0){
+			mSuperStructure.overwiteBallCount(0);
+		}
+
+		if(overwriteBallCountTo1){
+			mSuperStructure.overwiteBallCount(1);
+		}
+
+		if(overwriteBallCountTo2){
+			mSuperStructure.overwiteBallCount(2);
+		}
+
+		//TODO: Add vision shot
+		if (intakeFront) {
+			mSuperStructure.wantIntakeFront();
+		} else if (intakeBack) {
+			mSuperStructure.wantIntakeBack();
+		}else if (feedThroughFromFront){
+			mSuperStructure.wantFeedFrontIntake();
+		} else if (feedThroughFromBack) {
+			mSuperStructure.wantFeedBackIntake();
+		} else if (dashboardShot){
+			mSuperStructure.wantPrepareShot(Shot.TheShotDashboard.getDashboardShot());
+		} else if (closeShot){
+			mSuperStructure.wantPrepareShot(Shot.CLOSE_SHOT);
+		} else if (lowGoalShot){
+			mSuperStructure.wantPrepareShot(Shot.LOW_GOAL);
+		} else if (closeFlipShot){
+			mSuperStructure.wantPrepareShot(Shot.FLIPPED_CLOSE_SHOT);
+		} else if (lowGoalFlipShot){
+			mSuperStructure.wantPrepareShot(Shot.LOW_GOAL_FLIPPED);
+		}else {
+			mSuperStructure.stop();
+		}
+		
+		
+		// Handle shfting
+		if (shiftHighGear) {
+			mDriveTrainSubsystem.setHighGear(true);
+		} else if (shiftLowGear) {
+			mDriveTrainSubsystem.setHighGear(false);
+		}
+
+		//Vision lineup
+		turn = visionLineup ? 0.0:turn; //TODO: Make vision lineup do something
+
+		mDriveTrainSubsystem.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, mDriveTrainSubsystem.isHighGear()));
 		return;
 	}
 
@@ -350,12 +371,9 @@ public class OI {
 		driverController.updateConfig();
 		operatorController.updateConfig();
 		debugController.updateConfig();
-		if(controllerConfigChooser.getSelected() != null)
-		{
+		if (controllerConfigChooser.getSelected() != null) {
 			mCheesyDriveHelper = controllerConfigChooser.getSelected().getCheesyDriveHelper();
-		}
-		else
-		{
+		} else {
 			mCheesyDriveHelper = DriverConrollerConfigs.kRetroGranTurismo.getCheesyDriveHelper();
 		}
 	}
