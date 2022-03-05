@@ -250,4 +250,8 @@ public static RawColor kBlueBallMinimumValues = new RawColor(0, 0, 150, 0);
 public static RawColor kRedBallMaxValues = new RawColor(255, 100, 100, 255);
 public static RawColor kRedBallMinimumValues = new RawColor(150, 0, 0, 0);
 
+
+//Vision lineup
+public static Double visionLineUpProportional = 1.0/20.0;
+
 }

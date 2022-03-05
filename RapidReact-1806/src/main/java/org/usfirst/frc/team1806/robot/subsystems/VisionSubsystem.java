@@ -19,6 +19,11 @@ public class VisionSubsystem implements Subsystem {
 
     private static VisionSubsystem VISION_SUBSYSTEM = new VisionSubsystem();
 
+    private double FRONT_X_OFFSET = 4.0;
+    private double FRONT_Y_OFFSET = 10.0;
+    private double REAR_X_OFFSET = 4.0;
+    private double REAR_Y_OFFSET = 10.0;
+
     public static VisionSubsystem getInstance(){
         return VISION_SUBSYSTEM;
     }
@@ -180,9 +185,9 @@ public class VisionSubsystem implements Subsystem {
     public double getAngleOffsetToTarget(){
         switch(getBestTargetLocation()){
             case kBack:
-                return getRearAngleTotarget();
+                return applyCameraOffset(getRearAngleTotarget(), getRearDistanceToTarget(), REAR_X_OFFSET, REAR_Y_OFFSET).getAngleToTarget();
             case kFront:
-                return getFrontAngleToTarget();
+                return applyCameraOffset(getFrontAngleToTarget(), getFrontDistanceToTarget(), FRONT_X_OFFSET, FRONT_Y_OFFSET).getAngleToTarget();
             default:
             case kUnknown:
                 return Double.MAX_VALUE;

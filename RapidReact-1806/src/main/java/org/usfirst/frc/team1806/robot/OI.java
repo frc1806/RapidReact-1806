@@ -360,10 +360,14 @@ public class OI {
 			mDriveTrainSubsystem.setHighGear(false);
 		}
 
-		//Vision lineup
-		turn = visionLineup ? 0.0:turn; //TODO: Make vision lineup do something
 
-		mDriveTrainSubsystem.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, mDriveTrainSubsystem.isHighGear()));
+		if(visionLineup){
+			mDriveTrainSubsystem.setWantVisionTracking(throttle);
+		}
+		else{
+			mDriveTrainSubsystem.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, mDriveTrainSubsystem.isHighGear()));
+		}
+		
 		return;
 	}
 

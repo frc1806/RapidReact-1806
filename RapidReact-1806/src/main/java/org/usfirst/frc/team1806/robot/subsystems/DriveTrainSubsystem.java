@@ -100,9 +100,11 @@ public class DriveTrainSubsystem implements Subsystem {
 	private double leftEncoderDistance, rightEncoderDistance;
 	private double leftVelocity, rightVelocity;
 	private Encoder leftEncoder, rightEncoder;
+	private double visionThrottle;
 	private double lowGearPositionMaxPower = 1;
 	private PIDController leftHighGearVelocityPID, rightHighGearVelocityPID, leftLoweGearPositionPID, rightLowGearPositionPID;
 	private SimpleMotorFeedforward leftHighGearVelocityFeedForward, rightHighGearVelocityFeedForward;
+	private CheesyDriveHelper visionCheesyDriveHelper = new CheesyDriveHelper(0.0, 0.2);
 
 	public DriveStates getmDriveStates() {
 		return mDriveStates;
@@ -111,6 +113,7 @@ public class DriveTrainSubsystem implements Subsystem {
 	// State Control
 	private DriveStates mDriveStates;
 	private RobotState mRobotState = RobotState.getInstance();
+	private VisionSubsystem mVisionSubsystem = VisionSubsystem.getInstance();
 	private Path mCurrentPath = null;
 	private boolean mIsHighGear = false;
 	public static boolean isWantedLowPID = false;
@@ -192,6 +195,7 @@ public class DriveTrainSubsystem implements Subsystem {
 	 * sets currentLimit
 	 */
 	public DriveTrainSubsystem() {
+		visionThrottle = 0.0;
 		//init encoders
 		leftEncoder = new Encoder(Constants.kDIODriveLeftEncoderA, Constants.kDIODriveLeftEncoderB);
 		rightEncoder = new Encoder(Constants.kDIODriveRightEncoderA, Constants.kDIODriveRightEncoderB);
@@ -913,21 +917,21 @@ public class DriveTrainSubsystem implements Subsystem {
 		lowGearPositionMaxPower = power;
 	}
 
-	public void setWantVisionTracking(boolean wantVision) {
-		if (wantVision && mDriveStates != DriveStates.VISION) {
-			isWantedLowPID = true;
+	public void setWantVisionTracking(double throttle) {
+		if (mDriveStates != DriveStates.VISION) {
 			mDriveStates = DriveStates.VISION;
 			mostRecentTargetTimestamp = 0;
-		} else if (!wantVision && mDriveStates == DriveStates.VISION) {
-			mDriveStates = DriveStates.DRIVING;
-			setCoastMode();
+			setBrakeMode();
 		}
-
 	}
 
 	public void updateVision() {
-		// TODO: Update vision
+		DriveSignal signal = visionCheesyDriveHelper.cheesyDrive(visionThrottle, mVisionSubsystem.getAngleOffsetToTarget() * Constants.visionLineUpProportional, true, false);
 
+		leaderLeft.setVoltage(signal.getLeft() * 12.0);
+		leaderRight.setVoltage(signal.getRight() * 12.0);
+		
+	
 	}
 
 	public float getWorldLinearAccelX() {
