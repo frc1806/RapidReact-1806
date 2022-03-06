@@ -100,9 +100,11 @@ public class DriveTrainSubsystem implements Subsystem {
 	private double leftEncoderDistance, rightEncoderDistance;
 	private double leftVelocity, rightVelocity;
 	private Encoder leftEncoder, rightEncoder;
+	private double visionThrottle;
 	private double lowGearPositionMaxPower = 1;
 	private PIDController leftHighGearVelocityPID, rightHighGearVelocityPID, leftLoweGearPositionPID, rightLowGearPositionPID;
 	private SimpleMotorFeedforward leftHighGearVelocityFeedForward, rightHighGearVelocityFeedForward;
+	private CheesyDriveHelper visionCheesyDriveHelper = new CheesyDriveHelper(0.0, 0.2);
 
 	public DriveStates getmDriveStates() {
 		return mDriveStates;
@@ -111,6 +113,7 @@ public class DriveTrainSubsystem implements Subsystem {
 	// State Control
 	private DriveStates mDriveStates;
 	private RobotState mRobotState = RobotState.getInstance();
+	private VisionSubsystem mVisionSubsystem = VisionSubsystem.getInstance();
 	private Path mCurrentPath = null;
 	private boolean mIsHighGear = false;
 	public static boolean isWantedLowPID = false;
@@ -192,6 +195,8 @@ public class DriveTrainSubsystem implements Subsystem {
 	 * sets currentLimit
 	 */
 	public DriveTrainSubsystem() {
+		visionThrottle = 0.0;
+		isWantedLowPID = false;
 		//init encoders
 		leftEncoder = new Encoder(Constants.kDIODriveLeftEncoderA, Constants.kDIODriveLeftEncoderB);
 		rightEncoder = new Encoder(Constants.kDIODriveRightEncoderA, Constants.kDIODriveRightEncoderB);
@@ -247,7 +252,8 @@ public class DriveTrainSubsystem implements Subsystem {
 
 		reloadGains();
 		mDriveStates = DriveStates.DRIVING;
-		setLowGearPositionControlMaxDrivePower(12);    
+		setLowGearPositionControlMaxDrivePower(12);
+		leftEncoder.setReverseDirection(true);
 	}
 
 	private synchronized void configureForPositionControl() {
@@ -438,7 +444,7 @@ public class DriveTrainSubsystem implements Subsystem {
 	 *
 	 */
 	public synchronized void reloadHighGearVelocityGains() {
-		if (isWantedLowPID) {
+		if (false) {
 			System.out.println("low PID");
 			reloadHighGearPositionGainsForControllerLowPID(leaderLeft);
 			reloadHighGearPositionGainsForControllerLowPID(leaderRight);
@@ -853,9 +859,10 @@ public class DriveTrainSubsystem implements Subsystem {
 			final double scale = max_desired > Constants.kDriveHighGearMaxSetpoint
 					? Constants.kDriveHighGearMaxSetpoint / max_desired
 					: 1.0;
-			leaderLeft.setVoltage(leftHighGearVelocityFeedForward.calculate(inchesToCounts(left_inches_per_sec * scale)) + leftHighGearVelocityPID.calculate(leftEncoder.getDistance(), inchesToCounts(left_inches_per_sec * scale)));
-			leaderRight.setVoltage(rightHighGearVelocityFeedForward.calculate(inchesToCounts(right_inches_per_sec * scale)) + rightHighGearVelocityPID.calculate(rightEncoder.getDistance(), inchesToCounts(right_inches_per_sec * scale)));
-
+			//leaderLeft.setVoltage(leftHighGearVelocityFeedForward.calculate(left_inches_per_sec * scale) + leftHighGearVelocityPID.calculate(leftEncoder.getDistance() *Constants.kDriveInchesPerCount, left_inches_per_sec * scale));
+			//leaderRight.setVoltage(rightHighGearVelocityFeedForward.calculate(right_inches_per_sec * scale) + rightHighGearVelocityPID.calculate(rightEncoder.getDistance()*Constants.kDriveInchesPerCount, right_inches_per_sec * scale));
+			leaderLeft.setVoltage(leftHighGearVelocityFeedForward.calculate(left_inches_per_sec * scale) + leftHighGearVelocityPID.calculate(getLeftVelocityInchesPerSec(), left_inches_per_sec * scale));
+			leaderRight.setVoltage(rightHighGearVelocityFeedForward.calculate(right_inches_per_sec * scale) + rightHighGearVelocityPID.calculate(getLeftVelocityInchesPerSec(), right_inches_per_sec * scale));
 			SmartDashboard.putNumber("A Left Side Velocity", getLeftVelocityInchesPerSec());
 			SmartDashboard.putNumber("A Right Side Velocity", getRightVelocityInchesPerSec());
 		} else {
@@ -913,21 +920,21 @@ public class DriveTrainSubsystem implements Subsystem {
 		lowGearPositionMaxPower = power;
 	}
 
-	public void setWantVisionTracking(boolean wantVision) {
-		if (wantVision && mDriveStates != DriveStates.VISION) {
-			isWantedLowPID = true;
+	public void setWantVisionTracking(double throttle) {
+		if (mDriveStates != DriveStates.VISION) {
 			mDriveStates = DriveStates.VISION;
 			mostRecentTargetTimestamp = 0;
-		} else if (!wantVision && mDriveStates == DriveStates.VISION) {
-			mDriveStates = DriveStates.DRIVING;
-			setCoastMode();
+			setBrakeMode();
 		}
-
 	}
 
 	public void updateVision() {
-		// TODO: Update vision
+		DriveSignal signal = visionCheesyDriveHelper.cheesyDrive(visionThrottle, mVisionSubsystem.getAngleOffsetToTarget() * Constants.visionLineUpProportional, true, false);
 
+		leaderLeft.setVoltage(signal.getLeft() * 12.0);
+		leaderRight.setVoltage(signal.getRight() * 12.0);
+		
+	
 	}
 
 	public float getWorldLinearAccelX() {

@@ -103,8 +103,11 @@ public class Shot {
         return new Shot(LAUNCHER_ANGLE_FROM_DISTANCE_MAP.getInterpolated(interpolableVisionDistance).value, TOP_SPEED_FROM_DISTANCE_MAP.getInterpolated(interpolableVisionDistance).value, BOTTOM_SPEED_FROM_DISTANCE_MAP.getInterpolated(interpolableVisionDistance).value, false, isFlipped);
     }
     
+    public static Shot LOW_GOAL = new Shot (110.0, 500.0, 500.0, false, false);
+    public static Shot LOW_GOAL_FLIPPED = new Shot (110.0, 500.0, 500.0, false, true);
     public static Shot CLOSE_SHOT = new Shot(175.0, 2500.0, 2300.0, false, false);
-
+    public static Shot FLIPPED_CLOSE_SHOT = new Shot(175.0, 2500.0, 2300.0, false, true);
+    public static Shot TARMAC_EDGE_SHOT = new Shot(170.0, 2600.0, 2300.0, false, false);
 
     /**
      * Declare a preset/ dead reckoning shot

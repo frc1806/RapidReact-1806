@@ -28,8 +28,8 @@ public class Constants {
     public final static boolean enableDebugMode = true;
     public final static double kLooperDt = 0.005;
     public final static double kDriveWheelDiameterInches = 4;
-    public final static double kTrackWidthInches = 14;
-    public final static double kTrackScrubFactor = .920;
+    public final static double kTrackWidthInches = 27.5;
+    public final static double kTrackScrubFactor = .978;
 
     public final static double kVisionExpectedCameraLag = 0.085;
 
@@ -40,7 +40,7 @@ public class Constants {
 
 
     public final static int kDriveTrainPIDSetTimeout = 30;
-    public final static double kCountsPerInch = 651.899;
+    public final static double kCountsPerInch = 168.359374;
     public final static double kDriveInchesPerCount = 1/kCountsPerInch;
     public final static int kDIODriveLeftEncoderA = 0;
     public final static int kDIODriveLeftEncoderB = 1;
@@ -48,8 +48,8 @@ public class Constants {
     public final static int kDIODriveRightEncoderB = 3;
 
     ///Motion
-    public final static double kMinLookAhead = 4; // inches
-    public final static double kMinLookAheadSpeed = 3.0; // inches per second
+    public final static double kMinLookAhead = 9; // inches
+    public final static double kMinLookAheadSpeed = 9.0; // inches per second
     public final static double kMaxLookAhead = 42; // inches
     public final static double kMaxLookAheadSpeed = 144.0; // inches per second
     public final static double kDeltaLookAhead = kMaxLookAhead - kMinLookAhead;
@@ -59,27 +59,27 @@ public class Constants {
     // our speed
     // in inches per sec
     public final static double kSegmentCompletionTolerance = 0.5; // inches
-    public final static double kPathFollowingMaxAccel = 55; // inches per second^2
-    public final static double kPathFollowingMaxVel = 132; // inches per second
-    public final static double kPathFollowingProfileKp = 1.1; //.99
-    public final static double kPathFollowingProfileKi = 0.049; //.049
-    public final static double kPathFollowingProfileKv = 0.000013; //0.000013
+    public final static double kPathFollowingMaxAccel = 144; // inches per second^2
+    public final static double kPathFollowingMaxVel = 144; // inches per second
+    public final static double kPathFollowingProfileKp = 1.15; //.99
+    public final static double kPathFollowingProfileKi = 0.05; //.049
+    public final static double kPathFollowingProfileKv = 0.0002; //0.000013
     public final static double kPathFollowingProfileKffv = 1.2; //1.2
     public final static double kPathFollowingProfileKffa = 0.05; //.05
-    public final static double kPathFollowingGoalPosTolerance = 0.3;
+    public final static double kPathFollowingGoalPosTolerance = 0.75;
     public final static double kPathFollowingGoalVelTolerance = 18.0;
-    public final static double kPathStopSteeringDistance = 6; //2.25
+    public final static double kPathStopSteeringDistance = 9.0; //2.25
 
     //
     // PID gains for drive velocity loop (HIGH GEAR)
-    // Units: setpoint, error, and output are in counts per tenth of a second
-    public final static double kDriveHighGearVelocityKp = .001; //.0004;//.08;//.16; //1.01;
+    // Units: setpoint, error, and output are in inches per second
+    public final static double kDriveHighGearVelocityKp = .23109; //.0004;//.08;//.16; //1.01; //.0319767;
     public final static double kDriveHighGearVelocityKi = 0.0;
-    public final static double kDriveHighGearVelocityKd =  0.002; //.6125; //1.25; //7.8; //0.0001; //6.0/1500;
-    //public final static double kDriveHighGearVelocityKf = 0.00004;//.0175; //.035; //0.21; //.025;
-    public static final double kDriveHighGearVelocityKs = 0.0;
-    public static final double kDriveHighGearVelcoityKv = 0.0;
-    public static final double kDriveHighGearVelocityKa = 0.0;
+    public final static double kDriveHighGearVelocityKd =  0.022; //.6125; //1.25; //7.8; //0.0001; //6.0/1500;
+    public final static double kDriveHighGearVelocityKf = 0.00664;//.0175; //.035; //0.21; //.025;
+    public static final double kDriveHighGearVelocityKs = 0.48391;
+    public static final double kDriveHighGearVelcoityKv = 0.14387;
+    public static final double kDriveHighGearVelocityKa = 0.26916;
     public final static int kDriveHighGearVelocityIZone = 0;
     public final static double kDriveHighGearVelocityRampRate = .1;
     public final static double kDriveHighGearNominalOutput = 0.25;
@@ -188,8 +188,7 @@ public class Constants {
     public final static String kCompressorKey = "Compressor ";
     public final static String kDriveTrainKey = "DriveTrain ";
     public final static String kIntakeKey = "Intake ";
-    public final static String kLiftKey = "Lift ";
-    public final static String kSquidKey = "Squid ";
+    public final static String kLiftKey = "Elevator ";
     public final static String kRobotStateKey = "robot";
     
 
@@ -249,5 +248,9 @@ public static RawColor kBlueBallMaxValues = new RawColor(100, 100, 255, 255);
 public static RawColor kBlueBallMinimumValues = new RawColor(0, 0, 150, 0);
 public static RawColor kRedBallMaxValues = new RawColor(255, 100, 100, 255);
 public static RawColor kRedBallMinimumValues = new RawColor(150, 0, 0, 0);
+
+
+//Vision lineup
+public static Double visionLineUpProportional = 1.0/20.0;
 
 }

@@ -434,6 +434,10 @@ public class SuperStructure implements Subsystem {
         return SUPER_STRUCTURE;
     }
 
+    public void overwiteBallCount(int wantedCount){
+        ballCount = wantedCount;
+    }
+
 /*
     public boolean doesFrontColorSensorDetectWrongBall(){
         
@@ -617,7 +621,42 @@ public class SuperStructure implements Subsystem {
             }
         
 
+        }).withWidget(BuiltInWidgets.kDial).withPosition(4,1).withSize(1,1).withProperties(RGB_VALUE); //add .withProperties if neccesary
+
+        Robot.getMainDriverTab().addNumber("Red 1", new DoubleSupplier() {
+
+            @Override
+            public double getAsDouble() {
+                return mPicoColorSensor.getRawColor1().red;
+            }
+        
+
+        }).withWidget(BuiltInWidgets.kDial).withPosition(5,1).withSize(1,1).withProperties(RGB_VALUE); //add .withProperties if neccesary
+
+
+        Robot.getMainDriverTab().addNumber("Green 1", new DoubleSupplier() {
+
+            @Override
+            public double getAsDouble() {
+                return mPicoColorSensor.getRawColor1().green;
+            }
+        
+
+        }).withWidget(BuiltInWidgets.kDial).withPosition(6,1).withSize(1,1).withProperties(RGB_VALUE); //add .withProperties if neccesary
+
+
+
+
+        Robot.getMainDriverTab().addNumber("Blue 1", new DoubleSupplier() {
+
+            @Override
+            public double getAsDouble() {
+                return mPicoColorSensor.getRawColor1().blue;
+            }
+        
+
         }).withWidget(BuiltInWidgets.kDial).withPosition(2,3).withSize(1,1).withProperties(RGB_VALUE); //add .withProperties if neccesary
+
 
 
 

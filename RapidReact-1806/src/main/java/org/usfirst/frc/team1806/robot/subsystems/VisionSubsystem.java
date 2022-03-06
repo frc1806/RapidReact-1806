@@ -10,12 +10,19 @@ import org.usfirst.frc.team1806.robot.Robot;
 import org.usfirst.frc.team1806.robot.game.Shot;
 import org.usfirst.frc.team1806.robot.loop.Loop;
 import org.usfirst.frc.team1806.robot.loop.Looper;
+import org.usfirst.frc.team1806.robot.util.TargetInfo;
+
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.net.PortForwarder;
 
 public class VisionSubsystem implements Subsystem {
 
     private static VisionSubsystem VISION_SUBSYSTEM = new VisionSubsystem();
+
+    private double FRONT_X_OFFSET = 4.0;
+    private double FRONT_Y_OFFSET = 10.0;
+    private double REAR_X_OFFSET = 4.0;
+    private double REAR_Y_OFFSET = 10.0;
 
     public static VisionSubsystem getInstance(){
         return VISION_SUBSYSTEM;
@@ -178,15 +185,27 @@ public class VisionSubsystem implements Subsystem {
     public double getAngleOffsetToTarget(){
         switch(getBestTargetLocation()){
             case kBack:
-                return getRearAngleTotarget();
+                return applyCameraOffset(getRearAngleTotarget(), getRearDistanceToTarget(), REAR_X_OFFSET, REAR_Y_OFFSET).getAngleToTarget();
             case kFront:
-                return getFrontAngleToTarget();
+                return applyCameraOffset(getFrontAngleToTarget(), getFrontDistanceToTarget(), FRONT_X_OFFSET, FRONT_Y_OFFSET).getAngleToTarget();
             default:
             case kUnknown:
                 return Double.MAX_VALUE;
         }
     }
 
+    public TargetInfo applyCameraOffset(Double cameraToTargetAngle, Double cameraToTargetDistance, Double cameraOffsetX, Double cameraOffsetY){
+        Double X;
+        Double Y;
+        Double angle;
 
+        X = cameraOffsetX + (Math.cos(cameraToTargetAngle) * cameraToTargetDistance);
+        Y = cameraOffsetY + (Math.sin(cameraToTargetAngle) * cameraToTargetDistance);
 
+        TargetInfo target = new TargetInfo(X, Y);
+
+        angle = Math.atan(Y/X);
+
+        return target;
+    }
 }
