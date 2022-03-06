@@ -16,8 +16,8 @@ public class SixBallPath5 implements PathContainer {
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
         sWaypoints.add(new Waypoint(60,65,0,0));
-        sWaypoints.add(new Waypoint(100,105,30,60));
-        sWaypoints.add(new Waypoint(35,105,0,60));
+        sWaypoints.add(new Waypoint(100,105,25,12));
+        sWaypoints.add(new Waypoint(35,105,0,12));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }

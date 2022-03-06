@@ -140,6 +140,7 @@ public class Robot extends TimedRobot {
     }
     @Override
     public void disabledInit() {
+      RobotState.getInstance().resetDistanceDriven();
       mDrive.setCoastMode();
       mEnabledLooper.stop();
         if(mAutoModeExecuter != null) {

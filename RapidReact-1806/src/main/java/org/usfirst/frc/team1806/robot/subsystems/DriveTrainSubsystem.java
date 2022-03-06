@@ -196,6 +196,7 @@ public class DriveTrainSubsystem implements Subsystem {
 	 */
 	public DriveTrainSubsystem() {
 		visionThrottle = 0.0;
+		isWantedLowPID = false;
 		//init encoders
 		leftEncoder = new Encoder(Constants.kDIODriveLeftEncoderA, Constants.kDIODriveLeftEncoderB);
 		rightEncoder = new Encoder(Constants.kDIODriveRightEncoderA, Constants.kDIODriveRightEncoderB);
@@ -443,7 +444,7 @@ public class DriveTrainSubsystem implements Subsystem {
 	 *
 	 */
 	public synchronized void reloadHighGearVelocityGains() {
-		if (isWantedLowPID) {
+		if (false) {
 			System.out.println("low PID");
 			reloadHighGearPositionGainsForControllerLowPID(leaderLeft);
 			reloadHighGearPositionGainsForControllerLowPID(leaderRight);
@@ -858,9 +859,10 @@ public class DriveTrainSubsystem implements Subsystem {
 			final double scale = max_desired > Constants.kDriveHighGearMaxSetpoint
 					? Constants.kDriveHighGearMaxSetpoint / max_desired
 					: 1.0;
-			leaderLeft.setVoltage(leftHighGearVelocityFeedForward.calculate(inchesToCounts(left_inches_per_sec * scale)) + leftHighGearVelocityPID.calculate(leftEncoder.getDistance(), inchesToCounts(left_inches_per_sec * scale)));
-			leaderRight.setVoltage(rightHighGearVelocityFeedForward.calculate(inchesToCounts(right_inches_per_sec * scale)) + rightHighGearVelocityPID.calculate(rightEncoder.getDistance(), inchesToCounts(right_inches_per_sec * scale)));
-
+			//leaderLeft.setVoltage(leftHighGearVelocityFeedForward.calculate(left_inches_per_sec * scale) + leftHighGearVelocityPID.calculate(leftEncoder.getDistance() *Constants.kDriveInchesPerCount, left_inches_per_sec * scale));
+			//leaderRight.setVoltage(rightHighGearVelocityFeedForward.calculate(right_inches_per_sec * scale) + rightHighGearVelocityPID.calculate(rightEncoder.getDistance()*Constants.kDriveInchesPerCount, right_inches_per_sec * scale));
+			leaderLeft.setVoltage(leftHighGearVelocityFeedForward.calculate(left_inches_per_sec * scale) + leftHighGearVelocityPID.calculate(getLeftVelocityInchesPerSec(), left_inches_per_sec * scale));
+			leaderRight.setVoltage(rightHighGearVelocityFeedForward.calculate(right_inches_per_sec * scale) + rightHighGearVelocityPID.calculate(getLeftVelocityInchesPerSec(), right_inches_per_sec * scale));
 			SmartDashboard.putNumber("A Left Side Velocity", getLeftVelocityInchesPerSec());
 			SmartDashboard.putNumber("A Right Side Velocity", getRightVelocityInchesPerSec());
 		} else {
