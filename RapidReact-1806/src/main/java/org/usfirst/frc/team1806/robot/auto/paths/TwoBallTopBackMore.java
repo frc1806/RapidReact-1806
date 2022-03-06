@@ -23,7 +23,7 @@ public class TwoBallTopBackMore implements PathContainer {
     
     @Override
     public RigidTransform2d getStartPose() {
-        return new RigidTransform2d(new Translation2d(215, 233), Rotation2d.fromDegrees(180.0)); 
+        return new RigidTransform2d(new Translation2d(215, 233), Rotation2d.fromDegrees(140.0)); 
     }
 
     @Override
