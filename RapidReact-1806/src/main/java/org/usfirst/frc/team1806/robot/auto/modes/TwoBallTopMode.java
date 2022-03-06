@@ -14,8 +14,6 @@ public class TwoBallTopMode extends AutoModeBase {
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        int pathNumber;
-        int goingToPoint;
 
         runAction(new IntakeFront());
         runAction(new ResetPoseFromPathAction(new SixBallPath1()));

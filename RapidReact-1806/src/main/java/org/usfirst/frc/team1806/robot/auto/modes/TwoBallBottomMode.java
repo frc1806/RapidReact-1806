@@ -4,11 +4,9 @@ import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.IntakeF
 import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.Shoot;
 import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.StopIntake;
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.ResetPoseFromPathAction;
-import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.WaitAction;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeBase;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeEndedException;
 import org.usfirst.frc.team1806.robot.auto.paths.BottomMoveForward;
-import org.usfirst.frc.team1806.robot.auto.paths.TwoBallTopBackMore;
 import org.usfirst.frc.team1806.robot.auto.paths.TwoBallPath1;
 import org.usfirst.frc.team1806.robot.game.Shot;
 

@@ -251,7 +251,8 @@ public class DriveTrainSubsystem implements Subsystem {
 
 		reloadGains();
 		mDriveStates = DriveStates.DRIVING;
-		setLowGearPositionControlMaxDrivePower(12);    
+		setLowGearPositionControlMaxDrivePower(12);
+		leftEncoder.setReverseDirection(true);
 	}
 
 	private synchronized void configureForPositionControl() {
