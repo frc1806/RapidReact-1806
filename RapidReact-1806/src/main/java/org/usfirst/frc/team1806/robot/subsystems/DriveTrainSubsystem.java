@@ -178,7 +178,7 @@ public class DriveTrainSubsystem implements Subsystem {
 			synchronized (DriveTrainSubsystem.this) {
 				setOpenLoop(DriveSignal.NEUTRAL);
 				setNeutralMode(false);
-				navx.reset();
+				//navx.zeroYaw();
 				setLowGearPositionControlMaxDrivePower(12);
 			}
 		}
@@ -474,10 +474,6 @@ public class DriveTrainSubsystem implements Subsystem {
 		rightLowGearPositionPID = new PIDController(Constants.kDriveLowGearPositionKp, Constants.kDriveLowGearPositionKi, Constants.kDriveLowGearPositionKd);
 	}
 
-	public synchronized void resetNavx() {
-		navx.reset();
-	}
-
 	public synchronized void resetYaw() {
 		navx.zeroYaw();
 	}
@@ -547,7 +543,7 @@ public class DriveTrainSubsystem implements Subsystem {
 	 * @param angle Wanted angle
 	 */
 	public synchronized void setGyroAngle(Rotation2d angle) {
-		navx.reset();
+		navx.zeroYaw();
 		navx.setAngleAdjustment(angle);
 	}
 

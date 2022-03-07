@@ -23,7 +23,7 @@ public class LaunchBoxAngler implements Subsystem {
     private static LaunchBoxAngler LUNCH_BOX_ANGLER = new LaunchBoxAngler();
     private Double mKp, mKi, mKd, mWantedSetPoint;
     private Double angleLeniency = 0.75;
-    private final double ROBOT_OFFSET = -51;
+    private final double ROBOT_OFFSET = Constants.kIsCompBot?-200:-51;
     private double currentOffset;
     private boolean hasOffsetBeenSet;
     private boolean hasOffsetBeenLoopChecked;
@@ -39,7 +39,7 @@ public class LaunchBoxAngler implements Subsystem {
         @Override
         public void onStart(double timestamp) {
             // TODO Auto-generated method stub
-            if(!hasOffsetBeenSet && !hasOffsetBeenLoopChecked && mEncoder.getDistance() >= 180.0)
+            if(!Constants.kIsCompBot &&!hasOffsetBeenSet && !hasOffsetBeenLoopChecked && mEncoder.getDistance() >= 180.0)
             {
                 currentOffset = currentOffset - 360.0;
                 hasOffsetBeenSet = true;
@@ -56,12 +56,17 @@ public class LaunchBoxAngler implements Subsystem {
                     return;
                 case GoingToPosition:
                     double power = mPIDController.calculate(getCurrentAngle(), mWantedSetPoint);
+                    if(Math.abs(getCurrentAngle()) < 160 && Math.abs(getCurrentAngle()) >80){
+                        power  += getCurrentAngle()>0? 0.10 : -0.10;
+                    }  
+                    power = MathUtil.clamp(power, -0.45, 0.45);
                     if(mWantedSetPoint == 0.0)
                     {   
                         if(Math.abs(getCurrentAngle()) < 30){
-                            power =MathUtil.clamp(power, -0.7, 0.7);
+                            power =MathUtil.clamp(power, -0.25, 0.25);
                         } 
                     }
+
                     mLaunchMotor.set(ControlMode.PercentOutput, power);
                     return;
                 case AtPosition:
@@ -86,7 +91,7 @@ public class LaunchBoxAngler implements Subsystem {
         currentOffset = 0.0;
         currentOffset += ROBOT_OFFSET;
         hasOffsetBeenLoopChecked=false;
-        if(mEncoder.getDistance() >= 180.0)
+        if(!Constants.kIsCompBot && mEncoder.getDistance() >= 180.0)
         {
             currentOffset = currentOffset- 360.0;
             hasOffsetBeenSet = true;
@@ -100,7 +105,7 @@ public class LaunchBoxAngler implements Subsystem {
         mKi = Constants.kLaunchBoxAnglerKi;
         mKd = Constants.kLaunchBoxAnglerKd;
         mLaunchMotor = new TalonSRX(RobotMap.launchBoxAngler);
-        mLaunchMotor.setNeutralMode(NeutralMode.Coast);
+        mLaunchMotor.setNeutralMode(NeutralMode.Brake);
         mPIDController = new PIDController(mKp, mKi, mKd);
         mLunchboxStates = LunchboxStates.Idle;
         mWantedSetPoint = 0.0;
@@ -118,6 +123,7 @@ public class LaunchBoxAngler implements Subsystem {
         SmartDashboard.putString("Launchbox State", mLunchboxStates.name());
         SmartDashboard.putNumber("Launchbox Encoder Angle", mEncoder.getDistance());
         SmartDashboard.putNumber("Launchbox Wanted Angle", mWantedSetPoint);
+        SmartDashboard.putNumber("Launchbox Angle Motor Output", mLaunchMotor.getMotorOutputPercent());
         SmartDashboard.putNumber("Launchbox Angle", getCurrentAngle());
         SmartDashboard.putBoolean("hasOffsetBeenSet", hasOffsetBeenSet);
         SmartDashboard.putBoolean("hasOffsetBeenLoopChecked", hasOffsetBeenLoopChecked);
@@ -169,8 +175,9 @@ public class LaunchBoxAngler implements Subsystem {
     }
 
     public Boolean checkIfAtArbitraryAngle(Double angle){
-        if (Math.abs(angle - getCurrentAngle()) > angleLeniency) return false;
         return true;
+        //if (Math.abs(angle - getCurrentAngle()) > angleLeniency) return false;
+        //return true;
     }
 
     public static LaunchBoxAngler getInstance(){

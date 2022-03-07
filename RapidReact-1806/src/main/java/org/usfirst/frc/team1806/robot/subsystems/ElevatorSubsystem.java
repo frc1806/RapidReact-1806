@@ -226,10 +226,13 @@ public class ElevatorSubsystem implements Subsystem {
 	 *         position for a cube to be deposited
 	 */
 	public synchronized boolean isAtPosition() {
+		
 		return isAtArbitraryPosition(elevatorWantedPosition);
 	}
 
 	public synchronized boolean isAtArbitraryPosition(double height){
+		return true;
+		/*
 		if (mElevatorStates == ElevatorStates.IDLE) {
 			return false;
 		}
@@ -238,6 +241,7 @@ public class ElevatorSubsystem implements Subsystem {
 		}
 		return Math
 				.abs(height - getHeightInInches()) < Constants.kElevatorPositionTolerance;
+	*/
 	}
 
 	public synchronized boolean isAbovePosition(double height){

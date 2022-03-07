@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import org.usfirst.frc.team1806.robot.auto.*;
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.WaitAction;
+import org.usfirst.frc.team1806.robot.auto.modes.DummyMode;
 import org.usfirst.frc.team1806.robot.auto.modes.VisionMode;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeBase;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeExecuter;
@@ -140,7 +141,6 @@ public class Robot extends TimedRobot {
     }
     @Override
     public void disabledInit() {
-      RobotState.getInstance().resetDistanceDriven();
       mDrive.setCoastMode();
       mEnabledLooper.stop();
         if(mAutoModeExecuter != null) {
@@ -167,10 +167,9 @@ public class Robot extends TimedRobot {
       m_oi.updateConfigs();
 
       allPeriodic();
-      selectedModeName = SmartDashboard.getString(
-                AutoModeSelector.SELECTED_AUTO_MODE_DASHBOARD_KEY,
-                "org.usfirst.frc.team1806.robot.auto.modes.NothingAuto");
-      if(!selectedModeName.equals(lastSelectedModeName) || bAutoModeStale){
+      selectedModeName = AutoModeSelector.returnNameOfSelectedAuto();
+      if(selectedModeName != null){
+        if(!selectedModeName.equals(lastSelectedModeName) || bAutoModeStale){
           bAutoModeStale = false;
           selectedAuto = AutoModeSelector.getSelectedAutoMode();
       }
@@ -180,6 +179,10 @@ public class Robot extends TimedRobot {
       S_SubsystemManager.outputToSmartDashboard();
 
       lastSelectedModeName = selectedModeName;
+      }
+      else{
+        selectedAuto = new DummyMode();
+      }
 
     }
 

@@ -39,9 +39,7 @@ public class SixBallMode extends AutoModeBase {
         runAction(new IntakeBack());
         runAction(new DrivePathAction(new SixBallPath5()));
         runAction(new StopIntake());
-        runAction(new Shoot(new Shot(175.0, 2500.0, 2300.0, false, false), 0.5));
-        
-        
+        runAction(new Shoot(new Shot(175.0, 2500.0, 2300.0, false, false), 0.5));    
     }
     
 }

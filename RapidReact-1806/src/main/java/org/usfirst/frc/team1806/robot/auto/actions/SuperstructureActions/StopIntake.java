@@ -5,7 +5,7 @@ import org.usfirst.frc.team1806.robot.subsystems.SuperStructure;
 
 public class StopIntake implements Action {
 
-    private SuperStructure mSuperStructure;
+    private SuperStructure mSuperStructure = SuperStructure.getInstance();
 
     @Override
     public boolean isFinished() {
@@ -14,7 +14,6 @@ public class StopIntake implements Action {
 
     @Override
     public void update() {
-        mSuperStructure.stop();
         
     }
 

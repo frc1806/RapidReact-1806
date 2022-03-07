@@ -16,14 +16,14 @@ public class SixBallPath1 implements PathContainer {
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
         sWaypoints.add(new Waypoint(250,205,0,0));
-        sWaypoints.add(new Waypoint(215,233,0,0));
+        sWaypoints.add(new Waypoint(215,233,0,60));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
     
     @Override
     public RigidTransform2d getStartPose() {
-        return new RigidTransform2d(new Translation2d(250, 205), Rotation2d.fromDegrees(180.0)); 
+        return new RigidTransform2d(new Translation2d(250, 205), Rotation2d.fromDegrees(140.0)); 
     }
 
     @Override

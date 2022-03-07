@@ -3,6 +3,7 @@ package org.usfirst.frc.team1806.robot.subsystems;
 import com.ctre.phoenix.CANifier;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import org.usfirst.frc.team1806.robot.Constants;
@@ -36,7 +37,8 @@ public class FlywheelSubsystem implements Subsystem {
                 case kIdle:
                     stop();
                     return;
-                case kPositionControl:
+                case kVelocityControl:
+                mFlywheelMotor.setVoltage((Constants.kTopFlywheelKf * mWantedSpeed) + mFlywheelPIDController.calculate(getCurrentRPM(), mWantedSpeed));
                     return;
             }
             
@@ -51,14 +53,15 @@ public class FlywheelSubsystem implements Subsystem {
     };
     private enum FlywheelStates{
         kIdle,
-        kPositionControl
+        kVelocityControl
     };
 
     private FlywheelStates mFlywheelStates;
 
-    public FlywheelSubsystem(Integer canID, Double kp, Double ki, Double kd, Double kf, Double izone, Boolean isInverted, Double ks, Double kv, Double ka,  Integer quadA, Integer quadB){
+    public FlywheelSubsystem(Integer canID, Double kp, Double ki, Double kd, Double kf, Double izone, Boolean isInverted, Double ks, Double kv, Double ka,  Integer quadA, Integer quadB, boolean isEncoderInverted){
         mFlywheelMotor = new CANSparkMax(canID, MotorType.kBrushless);
         mFlywheelMotor.setInverted(isInverted);
+        mFlywheelMotor.setIdleMode(IdleMode.kCoast);
         mKp = kp;
         mKi = ki;
         mKd = kd;
@@ -70,8 +73,8 @@ public class FlywheelSubsystem implements Subsystem {
         mWantedSpeed = 0.0;
         mFlywheelStates = FlywheelStates.kIdle;
         mEncoder = new Encoder(quadA, quadB);
-        mEncoder.setDistancePerPulse((1.0/8192.0) * 60); //8192 CPR encoder, change RPS to RPM
-        mEncoder.setReverseDirection(isInverted);
+        mEncoder.setDistancePerPulse((4.0/8192.0) * 60); //8192 CPR encoder, change RPS to RPM
+        mEncoder.setReverseDirection(isEncoderInverted);
         reloadGames();
     }
 
@@ -131,8 +134,8 @@ public class FlywheelSubsystem implements Subsystem {
             return;
         }
         mWantedSpeed = speed;
-        mFlywheelStates = FlywheelStates.kPositionControl;
-        mFlywheelMotor.setVoltage(mFeedforwardController.calculate(rpmToCounts(mWantedSpeed)) + mFlywheelPIDController.calculate(mEncoder.getRate(), rpmToCounts(mWantedSpeed)));
+        mFlywheelStates = FlywheelStates.kVelocityControl;
+        
     }
 
     public void setReverseSpeed(Double speed){
@@ -141,8 +144,7 @@ public class FlywheelSubsystem implements Subsystem {
             return;
         }
         mWantedSpeed = -speed;
-        mFlywheelStates = FlywheelStates.kPositionControl;
-        mFlywheelMotor.setVoltage(mFeedforwardController.calculate(rpmToCounts(mWantedSpeed)) + mFlywheelPIDController.calculate(mEncoder.getRate(), rpmToCounts(mWantedSpeed)));
+        mFlywheelStates = FlywheelStates.kVelocityControl;
     }
 
     public Double getWantedRPM(){
@@ -153,16 +155,13 @@ public class FlywheelSubsystem implements Subsystem {
         return mEncoder.getRate();
     }
 
-    private Double rpmToCounts(Double rpm){
-        return rpm * Constants.kRPMToCounts;
-    }
-
-    private Double countsToRPM(Double counts){
-        return counts / Constants.kRPMToCounts;
-    }
-
     public Boolean isSpeedInRange(){
-        return !(getCurrentRPM() >= mWantedSpeed + withinLeniency && getCurrentRPM() >= mWantedSpeed - withinLeniency);
+        return true;
+        //return !(getCurrentRPM() >= mWantedSpeed + withinLeniency && getCurrentRPM() >= mWantedSpeed - withinLeniency);
+    }
+
+    public double getOutputPower(){
+        return mFlywheelMotor.getAppliedOutput();
     }
 
     @Override

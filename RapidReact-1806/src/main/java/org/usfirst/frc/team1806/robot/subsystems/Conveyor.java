@@ -1,7 +1,10 @@
 package org.usfirst.frc.team1806.robot.subsystems;
 
+import org.usfirst.frc.team1806.robot.RobotMap;
 import org.usfirst.frc.team1806.robot.loop.Loop;
 import org.usfirst.frc.team1806.robot.loop.Looper;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -37,12 +40,19 @@ public class Conveyor implements Subsystem {
                     mTalonMotor.set(ControlMode.PercentOutput, 0.0);
                     return;
                 case kConveying:
+                    mTalonMotor.set(ControlMode.PercentOutput,-1.0);
                     return;
                 case kReverse:
+                    mTalonMotor.set(ControlMode.PercentOutput, 1.0);
                     return;
                 case kLoading:
+                    mTalonMotor.set(ControlMode.PercentOutput,-1.0);
                     return;
                 case kPrepareForLaunch:
+                    mTalonMotor.set(ControlMode.PercentOutput, 0.0);
+                    return;
+                case kLaunch:
+                    mTalonMotor.set(ControlMode.PercentOutput, 1.0);
                     return;
             }            
         }
@@ -58,6 +68,7 @@ public class Conveyor implements Subsystem {
 
     public Conveyor(){
         mConveyorStates = ConveyorStates.kIdle;
+        mTalonMotor = new TalonSRX(RobotMap.lowerConveyor);
     }
 
     @Override
@@ -69,7 +80,7 @@ public class Conveyor implements Subsystem {
     @Override
     public void outputToSmartDashboard() {
         // TODO Auto-generated method stub
-        
+        SmartDashboard.putString("Conveyor State", mConveyorStates.name());
     }
 
     @Override
@@ -87,6 +98,7 @@ public class Conveyor implements Subsystem {
     @Override
     public void registerEnabledLoops(Looper enabledLooper) {
         // TODO Auto-generated method stub
+        enabledLooper.register(mLoop);
         
     }
 
