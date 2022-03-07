@@ -60,7 +60,7 @@ public class RobotMap {
 
 	////////// These are all of the solenoids for the robotri
 	public static int module1Number = 0;
-	public static int module2Number = 0;
+	public static int module2Number = 1;
 
 	//Intake
 	public static int frontIntakeExtend = 0;//module 1
@@ -77,7 +77,6 @@ public class RobotMap {
 	public static int liftBottomLimit = 0;
 	public static int liftHighLimit = 1;
 
-	//HABClimber
 
 
 	///////////// PDP PORTS

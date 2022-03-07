@@ -37,7 +37,7 @@ import java.util.function.DoubleSupplier;
  * project.
  */
 public class Robot extends TimedRobot {
-
+    public static NetworkTableEntry autoDelay;
     private DriveTrainSubsystem mDrive = DriveTrainSubsystem.getInstance();
     private RobotState mRobotState = RobotState.getInstance();
     private AutoModeExecuter mAutoModeExecuter = null;
@@ -92,7 +92,7 @@ public class Robot extends TimedRobot {
         selectedModeName = "";
         lastSelectedModeName = "";
         competitionTab = Shuffleboard.getTab("Main Competition Tab");
-        //setupMainCompetitionTab();
+        setupMainCompetitionTab();
       m_oi = new OI();
       zeroAllSensors();
       //mDrive.setDebug(true);
@@ -194,7 +194,7 @@ public class Robot extends TimedRobot {
       try {
 			zeroAllSensors();
 			CrashTracker.logAutoInit();
-            System.out.println("Auto star t timestamp: " + Timer.getFPGATimestamp());
+            System.out.println("Auto start timestamp: " + Timer.getFPGATimestamp());
             if (mAutoModeExecuter != null) {
                 mAutoModeExecuter.stop();
             }
@@ -349,12 +349,10 @@ public class Robot extends TimedRobot {
     }
 
 
-/*
-    private void setupMainCompetitionTab(){
-      NetworkTableEntry autoDelay;
 
+    private void setupMainCompetitionTab(){
       autoDelay = competitionTab.addPersistent("Auto Delay", 0)
-                .withWidget(BuiltInWidgets.kNumberSlider).withSize(2, 1).withPosition(0, 0).getEntry();
+                .withWidget(BuiltInWidgets.kNumberSlider).withSize(2, 1).withPosition(4, 0).getEntry();
     }
-  */
+  
 }
