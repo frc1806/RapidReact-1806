@@ -22,7 +22,7 @@ public class TwoBallPath1 implements PathContainer {
     
     @Override
     public RigidTransform2d getStartPose() {
-        return new RigidTransform2d(new Translation2d(300, 100), Rotation2d.fromDegrees(180.0)); 
+        return new RigidTransform2d(new Translation2d(300, 100), Rotation2d.fromDegrees(85.0)); 
     }
 
     @Override

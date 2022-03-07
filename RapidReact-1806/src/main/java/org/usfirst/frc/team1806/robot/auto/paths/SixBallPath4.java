@@ -25,7 +25,7 @@ public class SixBallPath4 implements PathContainer {
     
     @Override
     public RigidTransform2d getStartPose() {
-        return new RigidTransform2d(new Translation2d(280, 20), Rotation2d.fromDegrees(180.0)); 
+        return new RigidTransform2d(new Translation2d(280, 20), Rotation2d.fromDegrees(92.0)); 
     }
 
     @Override

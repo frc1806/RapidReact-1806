@@ -24,7 +24,7 @@ public class MiddleThreeBall2 implements PathContainer {
     
     @Override
     public RigidTransform2d getStartPose() {
-        return new RigidTransform2d(new Translation2d(225, 72), Rotation2d.fromDegrees(180.0)); 
+        return new RigidTransform2d(new Translation2d(225, 72), Rotation2d.fromDegrees(160.0)); 
     }
 
     @Override
