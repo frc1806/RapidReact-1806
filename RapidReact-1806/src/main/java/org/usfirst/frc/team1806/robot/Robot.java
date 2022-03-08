@@ -349,23 +349,6 @@ public class Robot extends TimedRobot {
     }
 
 
-<<<<<<< HEAD
-/*
-    private void setupMainCompetitionTab(){
-
-      Robot.getMainDriverTab().addNumber("Blue 0", new DoubleSupplier() {
-
-        @Override
-        public double getAsDouble() {
-            return 
-        }
-    
-
-    }).withWidget(BuiltInWidgets.kNumberSlider).withPosition(2,3).withSize(1,1).withProperties(DELAY); //add .withProperties if neccesary
-    }
-    */
-}
-=======
 
     private void setupMainCompetitionTab(){
       autoDelay = competitionTab.addPersistent("Auto Delay", 0)
@@ -373,4 +356,3 @@ public class Robot extends TimedRobot {
     }
   
 }
->>>>>>> 2e66e9928bed8318d95e432bb28442436d9bd436

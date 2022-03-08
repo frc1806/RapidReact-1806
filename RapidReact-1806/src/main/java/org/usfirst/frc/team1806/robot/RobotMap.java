@@ -59,10 +59,12 @@ public class RobotMap {
 
 
 	//Climber
-	public static int bottomMotor1 = 50;
-	public static int bottomMotor2 = 51;
-	public static int topMotor1 = 52;
-	public static int topMotor2 = 53;
+	public static int climbMotor1 = 50;
+	public static int climbMotor2 = 51;
+	public static int climbMotor3 = 52;
+	public static int climbMotor4 = 53;
+	public static int leftClawLimitSwitch = 10;
+	public static int rightClawLimitSwitch = 11;
 
 
 	////////// These are all of the solenoids for the robotri
