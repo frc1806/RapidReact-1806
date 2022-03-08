@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class Shoot implements Action {
 
-    private SuperStructure mSuperStructure;
+    private SuperStructure mSuperStructure = SuperStructure.getInstance();
     private Shot mShot;
     private Double start;
     private Double end;

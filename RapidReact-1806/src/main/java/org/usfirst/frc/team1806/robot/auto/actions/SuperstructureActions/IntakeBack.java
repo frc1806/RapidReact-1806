@@ -5,7 +5,7 @@ import org.usfirst.frc.team1806.robot.subsystems.SuperStructure;
 
 public class IntakeBack implements Action{
 
-    private SuperStructure mSuperStructure;
+    private SuperStructure mSuperStructure = SuperStructure.getInstance();
 
     @Override
     public boolean isFinished() {

@@ -31,6 +31,7 @@ public class NavX {
     protected AHRS mAHRS;
 
     protected Rotation2d mAngleAdjustment = Rotation2d.identity();
+    protected Rotation2d mResetAngle = Rotation2d.identity();
     protected double mYawDegrees;
     protected double mYawRateDegreesPerSecond;
     protected final long kInvalidTimestamp = -1;
@@ -49,7 +50,7 @@ public class NavX {
     }
 
     public synchronized void zeroYaw() {
-        mAHRS.zeroYaw();
+        mResetAngle = Rotation2d.fromDegrees(-getRawYawDegrees());
         resetState();
     }
 
@@ -68,7 +69,7 @@ public class NavX {
     }
 
     public Rotation2d getYaw() {
-        return mAngleAdjustment.rotateBy(Rotation2d.fromDegrees(getRawYawDegrees()));
+        return mAngleAdjustment.rotateBy(Rotation2d.fromDegrees(getRawYawDegrees()).rotateBy(mResetAngle));
     }
 
     public double getRoll() {

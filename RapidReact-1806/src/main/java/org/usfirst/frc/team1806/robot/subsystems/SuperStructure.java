@@ -79,8 +79,8 @@ public class SuperStructure implements Subsystem {
                     mBackIntake.stop();
                     mDualRollerSubsystem.startRoller();
                     mConveyor.loadConveyor();
-                    mUpFlywheel.setReverseSpeed(1500.0);
-                    mDownFlywheel.setReverseSpeed(1500.0);
+                    mUpFlywheel.setReverseSpeed(500.0);
+                    mDownFlywheel.setReverseSpeed(500.0);
                     mLaunchboxAngler.goToAngle(0.0);
                     //cargo counting
                     if(olderAverage < 0 && recentAverage < 0)
@@ -101,8 +101,8 @@ public class SuperStructure implements Subsystem {
                     mBackIntake.wantIntaking();
                     mDualRollerSubsystem.startRoller();
                     mConveyor.loadConveyor();
-                    mUpFlywheel.setReverseSpeed(1500.0);
-                    mDownFlywheel.setReverseSpeed(1500.0);
+                    mUpFlywheel.setReverseSpeed(500.0);
+                    mDownFlywheel.setReverseSpeed(500.0);
                     mLaunchboxAngler.goToAngle(0.0);
                     if(olderAverage < 0 && recentAverage < 0)
                     {
@@ -300,12 +300,12 @@ public class SuperStructure implements Subsystem {
         mFrontIntake = new IntakeSubsystem(RobotMap.frontIntake, RobotMap.frontIntakeExtend, RobotMap.frontIntakeRetract);
         mBackIntake = new IntakeSubsystem(RobotMap.rearIntake, RobotMap.backIntakeExtend, RobotMap.backIntakeRetract);
         mUpFlywheel = new FlywheelSubsystem(RobotMap.upFlywheel, Constants.kTopFlywheelKp, Constants.kTopFlywheelKi,
-                Constants.kTopFlywheelKd, Constants.kTopFlywheelKf, Constants.kTopFlywheelIzone, false,  Constants.kTopFlywheelKs,
-                Constants.kTopFlywheelKv, Constants.kTopFlywheelKa, RobotMap.upFlyWheelEncoderA, RobotMap.upFlywheelEncoderB);
+                Constants.kTopFlywheelKd, Constants.kTopFlywheelKf, Constants.kTopFlywheelIzone, true,  Constants.kTopFlywheelKs,
+                Constants.kTopFlywheelKv, Constants.kTopFlywheelKa, RobotMap.upFlyWheelEncoderA, RobotMap.upFlywheelEncoderB, false);
         mDownFlywheel = new FlywheelSubsystem(RobotMap.downFlywheel, Constants.kTopFlywheelKp, Constants.kTopFlywheelKi,
-                Constants.kTopFlywheelKd, Constants.kTopFlywheelKf, Constants.kTopFlywheelIzone, true,
+                Constants.kTopFlywheelKd, Constants.kTopFlywheelKf, Constants.kTopFlywheelIzone, false,
                  Constants.kTopFlywheelKs,
-                Constants.kTopFlywheelKv, Constants.kTopFlywheelKa, RobotMap.downFlywheelEncoderA, RobotMap.downFlywheelEncoderB);
+                Constants.kTopFlywheelKv, Constants.kTopFlywheelKa, RobotMap.downFlywheelEncoderA, RobotMap.downFlywheelEncoderB, false);
         mConveyor = new Conveyor();
         mLaunchboxAngler = LaunchBoxAngler.getInstance();
         mSuperStructureStates = SuperStructureStates.Idle;
@@ -340,6 +340,8 @@ public class SuperStructure implements Subsystem {
         SmartDashboard.putString("Superstructure State", mSuperStructureStates.name());
         SmartDashboard.putString("Superstructure Launching State", mLaunchingStates.name());
         SmartDashboard.putString("Superstructure Idle State", mIdleStates.name());
+        SmartDashboard.putNumber("Top Flywheel Output", mUpFlywheel.getOutputPower());
+        SmartDashboard.putNumber("Bottom Flywheel Output", mDownFlywheel.getOutputPower());
     }
 
     @Override
@@ -572,7 +574,7 @@ public class SuperStructure implements Subsystem {
             }
         
 
-        }).withWidget(BuiltInWidgets.kDial).withPosition(-1,-1).withSize(1,1).withProperties(BALL_COUNT); //add .withProperties if neccesary
+        }).withWidget(BuiltInWidgets.kDial).withPosition(-1,-1).withSize(1,1).withProperties(SHOOTER_ANGLE); //add .withProperties if neccesary
 
         //TODO: Move position
         Robot.getMainDriverTab().addNumber("Ball Count", new DoubleSupplier() {
@@ -583,7 +585,7 @@ public class SuperStructure implements Subsystem {
             }
         
 
-        }).withWidget(BuiltInWidgets.kDial).withPosition(-1,-1).withSize(1,1).withProperties(SHOOTER_ANGLE); //add .withProperties if neccesary
+        }).withWidget(BuiltInWidgets.kDial).withPosition(-1,-1).withSize(1,1).withProperties(BALL_COUNT); //add .withProperties if neccesary
 
         Robot.getMainDriverTab().addNumber("Red 0", new DoubleSupplier() {
 

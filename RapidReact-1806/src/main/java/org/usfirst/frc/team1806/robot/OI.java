@@ -18,6 +18,7 @@ import org.usfirst.frc.team1806.robot.subsystems.*;
 import org.usfirst.frc.team1806.robot.subsystems.SuperStructure.SuperStructureStates;
 import org.usfirst.frc.team1806.robot.util.CheesyDriveHelper;
 import org.usfirst.frc.team1806.robot.util.Latch;
+import org.usfirst.frc.team1806.robot.util.Rotation2d;
 import org.usfirst.frc.team1806.robot.util.XboxController;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -315,7 +316,7 @@ public class OI {
 		//perform actions based on control values
 
 		// Superstructure stuff
-		mSuperStructure.wantConfirmLaunch(confirmShot);
+		mSuperStructure.wantConfirmLaunch(true);
 
 		if(overwriteBallCountTo0){
 			mSuperStructure.overwiteBallCount(0);
@@ -366,6 +367,10 @@ public class OI {
 		}
 		else{
 			mDriveTrainSubsystem.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, mDriveTrainSubsystem.isHighGear()));
+		}
+
+		if(driverController.getButtonStart()){
+			mDriveTrainSubsystem.setGyroAngle(Rotation2d.fromDegrees(0.0));
 		}
 		
 		return;

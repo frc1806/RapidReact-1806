@@ -8,6 +8,8 @@ import edu.wpi.first.math.util.Units;
 
 public class Constants {
 
+        public final static boolean kIsCompBot = true;
+
     public static final XboxControllerConfigValues kDriverControllerDefaultConfig = XboxControllerConfigValues.Builder
             .create().withLeftXDeadzone(.12).withLeftXMinimumOutput(.04).withLeftXLinearity(.32).withLeftYDeadzone(.12)
             .withLeftYMinimumOutput(.04).withLeftYLinearity(.32).withRightXDeadzone(.12).withRightXMinimumOutput(.04)
@@ -73,7 +75,7 @@ public class Constants {
     //
     // PID gains for drive velocity loop (HIGH GEAR)
     // Units: setpoint, error, and output are in inches per second
-    public final static double kDriveHighGearVelocityKp = .23109; //.0004;//.08;//.16; //1.01; //.0319767;
+    public final static double kDriveHighGearVelocityKp =.0319767; //.23109; //.0004;//.08;//.16; //1.01; ;
     public final static double kDriveHighGearVelocityKi = 0.0;
     public final static double kDriveHighGearVelocityKd =  0.022; //.6125; //1.25; //7.8; //0.0001; //6.0/1500;
     public final static double kDriveHighGearVelocityKf = 0.00664;//.0175; //.035; //0.21; //.025;
@@ -214,26 +216,25 @@ public class Constants {
     
     public static Double kRPMToCounts = 1.0;
 
-public static Double kTopFlywheelKp =0.037579;
+public static Double kTopFlywheelKp =0.0001;
 
 public static Double kTopFlywheelKi =0.0;
 
 public static Double kTopFlywheelKd =0.0;
 
-public static Double kTopFlywheelKf =0.0;
+public static Double kTopFlywheelKf =12.0/1800;
 
 public static Double kTopFlywheelIzone =0.0;
 
-public static Double kTopFlywheelConversionFactor =0.0;
 
-public static Double kTopFlywheelKs =-0.16303;
+public static Double kTopFlywheelKs =0.0;//0.16303;
 
-public static Double kTopFlywheelKv = 1.563;
-public static Double kTopFlywheelKa = 0.86814;
+public static Double kTopFlywheelKv =0.0; //1.563;
+public static Double kTopFlywheelKa =0.0; //0.86814;
 
 //Launchbox Angler PID
-public static Double kLaunchBoxAnglerKp = 1.0/2.0;
-public static Double kLaunchBoxAnglerKi = 0.000;
+public static Double kLaunchBoxAnglerKp = 0.45/10;
+public static Double kLaunchBoxAnglerKi = 0.0001;
 public static Double kLaunchBoxAnglerKd = 0.0;
 public static Double kLaunchBoxInchesToFreedom = 2.5;
 

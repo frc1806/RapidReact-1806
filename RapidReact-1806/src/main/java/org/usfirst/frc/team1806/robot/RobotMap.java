@@ -84,7 +84,6 @@ public class RobotMap {
 	public static int liftBottomLimit = 0;
 	public static int liftHighLimit = 1;
 
-	//HABClimber
 
 
 	///////////// PDP PORTS

@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import org.usfirst.frc.team1806.robot.auto.*;
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.WaitAction;
+import org.usfirst.frc.team1806.robot.auto.modes.DummyMode;
 import org.usfirst.frc.team1806.robot.auto.modes.VisionMode;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeBase;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeExecuter;
@@ -36,7 +37,7 @@ import java.util.function.DoubleSupplier;
  * project.
  */
 public class Robot extends TimedRobot {
-
+    public static NetworkTableEntry autoDelay;
     private DriveTrainSubsystem mDrive = DriveTrainSubsystem.getInstance();
     private RobotState mRobotState = RobotState.getInstance();
     private AutoModeExecuter mAutoModeExecuter = null;
@@ -91,7 +92,7 @@ public class Robot extends TimedRobot {
         selectedModeName = "";
         lastSelectedModeName = "";
         competitionTab = Shuffleboard.getTab("Main Competition Tab");
-        //setupMainCompetitionTab();
+        setupMainCompetitionTab();
       m_oi = new OI();
       zeroAllSensors();
       //mDrive.setDebug(true);
@@ -140,7 +141,6 @@ public class Robot extends TimedRobot {
     }
     @Override
     public void disabledInit() {
-      RobotState.getInstance().resetDistanceDriven();
       mDrive.setCoastMode();
       mEnabledLooper.stop();
         if(mAutoModeExecuter != null) {
@@ -167,10 +167,9 @@ public class Robot extends TimedRobot {
       m_oi.updateConfigs();
 
       allPeriodic();
-      selectedModeName = SmartDashboard.getString(
-                AutoModeSelector.SELECTED_AUTO_MODE_DASHBOARD_KEY,
-                "org.usfirst.frc.team1806.robot.auto.modes.NothingAuto");
-      if(!selectedModeName.equals(lastSelectedModeName) || bAutoModeStale){
+      selectedModeName = AutoModeSelector.returnNameOfSelectedAuto();
+      if(selectedModeName != null){
+        if(!selectedModeName.equals(lastSelectedModeName) || bAutoModeStale){
           bAutoModeStale = false;
           selectedAuto = AutoModeSelector.getSelectedAutoMode();
       }
@@ -180,6 +179,10 @@ public class Robot extends TimedRobot {
       S_SubsystemManager.outputToSmartDashboard();
 
       lastSelectedModeName = selectedModeName;
+      }
+      else{
+        selectedAuto = new DummyMode();
+      }
 
     }
 
@@ -191,7 +194,7 @@ public class Robot extends TimedRobot {
       try {
 			zeroAllSensors();
 			CrashTracker.logAutoInit();
-            System.out.println("Auto star t timestamp: " + Timer.getFPGATimestamp());
+            System.out.println("Auto start timestamp: " + Timer.getFPGATimestamp());
             if (mAutoModeExecuter != null) {
                 mAutoModeExecuter.stop();
             }
@@ -346,6 +349,7 @@ public class Robot extends TimedRobot {
     }
 
 
+<<<<<<< HEAD
 /*
     private void setupMainCompetitionTab(){
 
@@ -361,3 +365,12 @@ public class Robot extends TimedRobot {
     }
     */
 }
+=======
+
+    private void setupMainCompetitionTab(){
+      autoDelay = competitionTab.addPersistent("Auto Delay", 0)
+                .withWidget(BuiltInWidgets.kNumberSlider).withSize(2, 1).withPosition(4, 0).getEntry();
+    }
+  
+}
+>>>>>>> 2e66e9928bed8318d95e432bb28442436d9bd436
