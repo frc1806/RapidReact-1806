@@ -58,9 +58,16 @@ public class RobotMap {
 	public static int downFlywheelEncoderB = 8;
 
 
+	//Climber
+	public static int bottomMotor1 = 50;
+	public static int bottomMotor2 = 51;
+	public static int topMotor1 = 52;
+	public static int topMotor2 = 53;
+
+
 	////////// These are all of the solenoids for the robotri
 	public static int module1Number = 0;
-	public static int module2Number = 0;
+	public static int module2Number = 1;
 
 	//Intake
 	public static int frontIntakeExtend = 0;//module 1
@@ -68,7 +75,7 @@ public class RobotMap {
 	public static int backIntakeExtend = 2;//module 1
 	public static int backIntakeRetract = 3;//module 1
 
-	//shifter
+	//shifter6
 	public static int shiftHigh = 4;
 	public static int shiftLow = 5;
 
@@ -88,6 +95,11 @@ public class RobotMap {
 	public static int UpFlywheelCANifier = 1;
 	public static int DownFlywheelCANifier = 2;
 
+	//Claw Pneumatic Ports
+	public static int gripLeftClaw = 0;
+	public static int releaseLeftClaw = 1;
+	public static int gripRightClaw = 2;
+	public static int releaseRightClaw = 3;
 
 
 

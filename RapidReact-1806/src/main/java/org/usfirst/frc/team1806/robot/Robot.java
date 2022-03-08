@@ -348,10 +348,16 @@ public class Robot extends TimedRobot {
 
 /*
     private void setupMainCompetitionTab(){
-      NetworkTableEntry autoDelay;
 
-      autoDelay = competitionTab.addPersistent("Auto Delay", 0)
-                .withWidget(BuiltInWidgets.kNumberSlider).withSize(2, 1).withPosition(0, 0).getEntry();
+      Robot.getMainDriverTab().addNumber("Blue 0", new DoubleSupplier() {
+
+        @Override
+        public double getAsDouble() {
+            return 
+        }
+    
+
+    }).withWidget(BuiltInWidgets.kNumberSlider).withPosition(2,3).withSize(1,1).withProperties(DELAY); //add .withProperties if neccesary
     }
-  */
+    */
 }
