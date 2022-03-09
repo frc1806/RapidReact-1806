@@ -1,5 +1,5 @@
 # Rapid React 1806
-![Stars](https://img.shields.io/github/stars/frc1806/RapidReact-1806?style=social) ![Followers](https://img.shields.io/github/followers/frc1806?style=social) [Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=java&logoColor=white)
+![Stars](https://img.shields.io/github/stars/frc1806/RapidReact-1806?style=social) ![Followers](https://img.shields.io/github/followers/frc1806?style=social) ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=java&logoColor=white)
 
 Source code for Team 1806 (S.W.A.T.) 2022 Rapid React Season
 
