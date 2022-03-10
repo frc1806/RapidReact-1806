@@ -51,7 +51,7 @@ public class Robot extends TimedRobot {
 
 
     private static final SubsystemManager S_SubsystemManager = new SubsystemManager(
-            Arrays.asList(DriveTrainSubsystem.getInstance(), SuperStructure.getInstance(), VisionSubsystem.getInstance(),  LaunchBoxAngler.getInstance()));  // LEDStringSubsystem.getInstance()///TODO RE ADD IN SUBSYSTEMS
+            Arrays.asList(DriveTrainSubsystem.getInstance(), SuperStructure.getInstance(), VisionSubsystem.getInstance(),  LaunchBoxAngler.getInstance(), ClimberSubsystem.GetInstance()));  // LEDStringSubsystem.getInstance()///TODO RE ADD IN SUBSYSTEMS
 
     private Looper mEnabledLooper = new Looper();
     private Looper mDisabledLooper = new Looper();

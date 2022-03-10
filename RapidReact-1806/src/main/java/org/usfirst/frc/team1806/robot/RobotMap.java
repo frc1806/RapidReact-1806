@@ -69,7 +69,6 @@ public class RobotMap {
 
 	////////// These are all of the solenoids for the robotri
 	public static int module1Number = 0;
-	public static int module2Number = 1;
 
 	//Intake
 	public static int frontIntakeExtend = 0;//module 1
@@ -97,10 +96,9 @@ public class RobotMap {
 	public static int DownFlywheelCANifier = 2;
 
 	//Claw Pneumatic Ports
-	public static int gripLeftClaw = 0;
-	public static int releaseLeftClaw = 1;
-	public static int gripRightClaw = 2;
-	public static int releaseRightClaw = 3;
+	public static int gripLeftClaw = 6;
+	public static int releaseLeftClaw = 7;
+
 
 
 

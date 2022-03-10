@@ -38,6 +38,7 @@ public class OI {
 			Constants.kOperatorControllerDefaultConfig);
 	protected static XboxController debugController = new XboxController(2, "Debug",
 			Constants.kOperatorControllerDefaultConfig);
+			
 
 	private enum DriverConrollerConfigs {
 		kRetroGranTurismo(
@@ -113,6 +114,7 @@ public class OI {
 	private DriveTrainSubsystem mDriveTrainSubsystem = DriveTrainSubsystem.getInstance();
 	private SuperStructure mSuperStructure = SuperStructure.getInstance();
 	private LEDStringSubsystem mLedStringSubsystem = LEDStringSubsystem.getInstance();
+	private ClimberSubsystem mClimberSubsystem = ClimberSubsystem.GetInstance();
 
 	// initialise controllers & ish
 	private CheesyDriveHelper mCheesyDriveHelper;
@@ -184,6 +186,7 @@ public class OI {
 		boolean overwriteBallCountTo0 = operatorController.getPOVDown();
 		boolean overwriteBallCountTo1 = operatorController.getPOVRight();
 		boolean overwriteBallCountTo2 = operatorController.getPOVUp();
+		double climbPower = operatorController.getLeftJoyY();
 
 
 
@@ -372,6 +375,9 @@ public class OI {
 		if(driverController.getButtonStart()){
 			mDriveTrainSubsystem.setGyroAngle(Rotation2d.fromDegrees(0.0));
 		}
+
+		//climb
+		mClimberSubsystem.moveClimber(climbPower);
 		
 		return;
 	}

@@ -23,7 +23,6 @@ public class ClimberSubsystem implements Subsystem {
     private TalonSRX climbMotor3;
     private TalonSRX climbMotor4;
     private DoubleSolenoid leftClaw;
-    private DoubleSolenoid rightClaw;
     private DigitalInput leftClawLimitSwitch;
     private DigitalInput rightClawLimitSwitch;
     private boolean wasLeftLimitSwitchPressed;
@@ -35,6 +34,10 @@ public class ClimberSubsystem implements Subsystem {
     private double rightClawReleaseTime;
     private double climbPower;
 
+    public static ClimberSubsystem CLIMBER = new ClimberSubsystem();
+    public static ClimberSubsystem GetInstance(){
+        return CLIMBER;
+    }
 
     private ClimberSubsystem(){
         
@@ -45,8 +48,7 @@ public class ClimberSubsystem implements Subsystem {
         climbMotor2.follow(climbMotor1);
         climbMotor3.follow(climbMotor1);
         climbMotor4.follow(climbMotor1);
-        leftClaw = new DoubleSolenoid(RobotMap.module2Number, PneumaticsModuleType.CTREPCM, RobotMap.gripLeftClaw, RobotMap.releaseLeftClaw);
-        rightClaw = new DoubleSolenoid(RobotMap.module2Number, PneumaticsModuleType.CTREPCM, RobotMap.gripRightClaw, RobotMap.releaseRightClaw);
+        leftClaw = new DoubleSolenoid(RobotMap.module1Number, PneumaticsModuleType.CTREPCM, RobotMap.gripLeftClaw, RobotMap.releaseLeftClaw);
         leftClawLimitSwitch = new DigitalInput(RobotMap.leftClawLimitSwitch);
         rightClawLimitSwitch = new DigitalInput(RobotMap.rightClawLimitSwitch);
         isLeftLimitSwitchOn = true;
@@ -57,6 +59,7 @@ public class ClimberSubsystem implements Subsystem {
         leftClawReleaseTime = -235;
         rightClawReleaseTime = -235;
         climbPower = 0;
+        leftClaw.set(Value.kForward);
     }
 
 
@@ -94,11 +97,12 @@ public class ClimberSubsystem implements Subsystem {
 
             
             if(timestamp - rightClawReleaseTime < 0.25 && releaseCounter > 1){
-                rightClaw.set(Value.kReverse);
+                //rightClaw.set(Value.kReverse);
+                //Todo shift drive
             }
 
             else {
-                rightClaw.set(Value.kForward);
+                //Todo shift drive
             }
         
             wasLeftLimitSwitchPressed = isLeftLimitSwitchOn;
