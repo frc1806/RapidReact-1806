@@ -44,6 +44,7 @@ public class IntakeSubsystem implements Subsystem {
                     mExtendSolenoid.set(Value.kForward);
                     intakeMotor.set(-Constants.kSweep);
                     return;
+            
             }
             
         }

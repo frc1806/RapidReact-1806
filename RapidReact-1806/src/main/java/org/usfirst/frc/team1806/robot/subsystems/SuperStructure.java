@@ -79,8 +79,8 @@ public class SuperStructure implements Subsystem {
                     mBackIntake.stop();
                     mDualRollerSubsystem.startRoller();
                     mConveyor.loadConveyor();
-                    mUpFlywheel.setReverseSpeed(500.0);
-                    mDownFlywheel.setReverseSpeed(500.0);
+                    mUpFlywheel.setReverseSpeed(1500.0);
+                    mDownFlywheel.setReverseSpeed(1500.0);
                     mLaunchboxAngler.goToAngle(0.0);
                     //cargo counting
                     if(olderAverage < 0 && recentAverage < 0)
@@ -101,8 +101,8 @@ public class SuperStructure implements Subsystem {
                     mBackIntake.wantIntaking();
                     mDualRollerSubsystem.startRoller();
                     mConveyor.loadConveyor();
-                    mUpFlywheel.setReverseSpeed(500.0);
-                    mDownFlywheel.setReverseSpeed(500.0);
+                    mUpFlywheel.setReverseSpeed(1500.0);
+                    mDownFlywheel.setReverseSpeed(1500.0);
                     mLaunchboxAngler.goToAngle(0.0);
                     if(olderAverage < 0 && recentAverage < 0)
                     {
@@ -300,12 +300,12 @@ public class SuperStructure implements Subsystem {
         mFrontIntake = new IntakeSubsystem(RobotMap.frontIntake, RobotMap.frontIntakeExtend, RobotMap.frontIntakeRetract);
         mBackIntake = new IntakeSubsystem(RobotMap.rearIntake, RobotMap.backIntakeExtend, RobotMap.backIntakeRetract);
         mUpFlywheel = new FlywheelSubsystem(RobotMap.upFlywheel, Constants.kTopFlywheelKp, Constants.kTopFlywheelKi,
-                Constants.kTopFlywheelKd, Constants.kTopFlywheelKf, Constants.kTopFlywheelIzone, true,  Constants.kTopFlywheelKs,
-                Constants.kTopFlywheelKv, Constants.kTopFlywheelKa, RobotMap.upFlyWheelEncoderA, RobotMap.upFlywheelEncoderB, false);
+                Constants.kTopFlywheelKd, Constants.kTopFlywheelKf, Constants.kTopFlywheelIzone, false,  Constants.kTopFlywheelKs,
+                Constants.kTopFlywheelKv, Constants.kTopFlywheelKa, RobotMap.upFlyWheelEncoderA, RobotMap.upFlywheelEncoderB, true);
         mDownFlywheel = new FlywheelSubsystem(RobotMap.downFlywheel, Constants.kTopFlywheelKp, Constants.kTopFlywheelKi,
-                Constants.kTopFlywheelKd, Constants.kTopFlywheelKf, Constants.kTopFlywheelIzone, false,
+                Constants.kTopFlywheelKd, Constants.kTopFlywheelKf, Constants.kTopFlywheelIzone, true,
                  Constants.kTopFlywheelKs,
-                Constants.kTopFlywheelKv, Constants.kTopFlywheelKa, RobotMap.downFlywheelEncoderA, RobotMap.downFlywheelEncoderB, false);
+                Constants.kTopFlywheelKv, Constants.kTopFlywheelKa, RobotMap.downFlywheelEncoderA, RobotMap.downFlywheelEncoderB, true);
         mConveyor = new Conveyor();
         mLaunchboxAngler = LaunchBoxAngler.getInstance();
         mSuperStructureStates = SuperStructureStates.Idle;

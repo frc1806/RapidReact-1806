@@ -16,14 +16,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class LaunchBoxAngler implements Subsystem {
-
+    
+    private final double MINIMUM_POWER= 0.05;
     private TalonSRX mLaunchMotor;
     private DutyCycleEncoder mEncoder;
     private PIDController mPIDController;
     private static LaunchBoxAngler LUNCH_BOX_ANGLER = new LaunchBoxAngler();
     private Double mKp, mKi, mKd, mWantedSetPoint;
-    private Double angleLeniency = 0.75;
-    private final double ROBOT_OFFSET = Constants.kIsCompBot?-200:-51;
+    private Double angleLeniency = 15.0;
+    private final double ROBOT_OFFSET = Constants.kIsCompBot?-142.6:-51;
     private double currentOffset;
     private boolean hasOffsetBeenSet;
     private boolean hasOffsetBeenLoopChecked;
@@ -50,28 +51,55 @@ public class LaunchBoxAngler implements Subsystem {
 
         @Override
         public void onLoop(double timestamp) {
+            
             switch(mLunchboxStates){
                 case Idle:
                     mLaunchMotor.set(ControlMode.PercentOutput, 0.0);
                     return;
                 case GoingToPosition:
+                    
                     double power = mPIDController.calculate(getCurrentAngle(), mWantedSetPoint);
-                    if(Math.abs(getCurrentAngle()) < 160 && Math.abs(getCurrentAngle()) >80){
-                        power  += getCurrentAngle()>0? 0.10 : -0.10;
+                    if(Math.abs(getCurrentAngle()) < 160 && Math.abs(getCurrentAngle()) >30){
+                        power  += getCurrentAngle()>0? 0.3 : -0.3;
                     }  
-                    power = MathUtil.clamp(power, -0.45, 0.45);
+                    power = MathUtil.clamp(power, -0.50, 0.80);
                     if(mWantedSetPoint == 0.0)
                     {   
                         if(Math.abs(getCurrentAngle()) < 30){
-                            power =MathUtil.clamp(power, -0.25, 0.25);
+                            power =MathUtil.clamp(power, -0.55, 0.55);
                         } 
                     }
 
+                    if(isAtAngle())
+                    {
+                        power = 0;
+                    }
+                    else{
+                        if(power > 0)
+                        {
+                            power =MathUtil.clamp(power, MINIMUM_POWER, 1.0); 
+                        }
+                        if(power < 0)
+                        {
+                            power =MathUtil.clamp(power, -1.0 , -MINIMUM_POWER);
+                        }
+                    }
+
+                    /*
+                    double power =  mWantedSetPoint - getCurrentAngle() > 0? .35 :-.35;
+
+                    if(isAtAngle()){
+                        power = 0.0;
+                    }
+                    */
                     mLaunchMotor.set(ControlMode.PercentOutput, power);
+
+                    
                     return;
                 case AtPosition:
                     return;
             }
+            mLaunchMotor.set(ControlMode.PercentOutput, 0.0);
             
         }
 
@@ -88,6 +116,8 @@ public class LaunchBoxAngler implements Subsystem {
         mEncoder.setConnectedFrequencyThreshold(975);
         mEncoder.setDutyCycleRange(1.0/1025.0, 1024.0/1025.0);
         mEncoder.setDistancePerRotation(360);
+        mLaunchMotor.configVoltageCompSaturation(9);
+        mLaunchMotor.enableVoltageCompensation(true);
         currentOffset = 0.0;
         currentOffset += ROBOT_OFFSET;
         hasOffsetBeenLoopChecked=false;
@@ -106,6 +136,8 @@ public class LaunchBoxAngler implements Subsystem {
         mKd = Constants.kLaunchBoxAnglerKd;
         mLaunchMotor = new TalonSRX(RobotMap.launchBoxAngler);
         mLaunchMotor.setNeutralMode(NeutralMode.Brake);
+        mLaunchMotor.configPeakCurrentLimit(0);
+        mLaunchMotor.configContinuousCurrentLimit(100);
         mPIDController = new PIDController(mKp, mKi, mKd);
         mLunchboxStates = LunchboxStates.Idle;
         mWantedSetPoint = 0.0;
@@ -175,9 +207,8 @@ public class LaunchBoxAngler implements Subsystem {
     }
 
     public Boolean checkIfAtArbitraryAngle(Double angle){
+        if (Math.abs(angle - getCurrentAngle()) > angleLeniency) return false;
         return true;
-        //if (Math.abs(angle - getCurrentAngle()) > angleLeniency) return false;
-        //return true;
     }
 
     public static LaunchBoxAngler getInstance(){

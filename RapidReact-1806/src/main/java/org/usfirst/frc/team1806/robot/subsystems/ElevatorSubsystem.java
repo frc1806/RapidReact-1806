@@ -48,6 +48,7 @@ public class ElevatorSubsystem implements Subsystem {
 	public ElevatorSubsystem() {
 		elevatorLead = new CANSparkMax(RobotMap.elevatorLeader, CANSparkMaxLowLevel.MotorType.kBrushless);
 		elevatorLead.setSmartCurrentLimit(65);
+		elevatorLead.setInverted(true);
 		mElevatorStates = ElevatorStates.IDLE;
 		elevatorWantedPosition = Constants.kLiftBottomPivotHeight;
 		reloadGains();
@@ -132,6 +133,7 @@ public class ElevatorSubsystem implements Subsystem {
 			}
 
 			private void elevatorStateLoop() {
+				
 				switch (mElevatorStates) {
 					case POSITION_CONTROL:
 						double reverseClamp = getHeightInInches() < Constants.kLiftSlowDownHeight? 0.05:0.2;
@@ -154,6 +156,7 @@ public class ElevatorSubsystem implements Subsystem {
 						return;
 
 				}
+
 			}
 		});
 	}
@@ -192,7 +195,7 @@ public class ElevatorSubsystem implements Subsystem {
 	}
 
 	public double getHeightInInches() {
-		return -getExtensionLength(mStringPotentiometer.getVoltage()) + 65.5;
+		return -getExtensionLength(mStringPotentiometer.getVoltage()) + 48.0;
 	}
 
 	public boolean isOnTarget() {
@@ -231,17 +234,14 @@ public class ElevatorSubsystem implements Subsystem {
 	}
 
 	public synchronized boolean isAtArbitraryPosition(double height){
-		return true;
-		/*
 		if (mElevatorStates == ElevatorStates.IDLE) {
 			return false;
 		}
 		if(height <= Constants.kLiftBottomPivotHeight){
-			return getHeightInInches() < Constants.kLiftBottomPivotHeight;
+			return  true;
 		}
 		return Math
 				.abs(height - getHeightInInches()) < Constants.kElevatorPositionTolerance;
-	*/
 	}
 
 	public synchronized boolean isAbovePosition(double height){

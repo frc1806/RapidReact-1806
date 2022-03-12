@@ -22,7 +22,9 @@ public class Shot {
 
     static{
         //TODO: Actually mesaure these.
-        POINTS_OF_INTEREST_ON_LAUNCHBOX.add(new PolarCoordinate(21.14609418, 14.206)); //CORNER OF BOX
+        POINTS_OF_INTEREST_ON_LAUNCHBOX.add(new PolarCoordinate(0.0, 12.75)); //FRONT OF BOX
+        POINTS_OF_INTEREST_ON_LAUNCHBOX.add(new PolarCoordinate(38.10, 16.203)); //FCorner
+        POINTS_OF_INTEREST_ON_LAUNCHBOX.add(new PolarCoordinate(67.75, 11.885)); //FCorner
         //POINTS_OF_INTEREST_ON_LAUNCHBOX.add(new PolarCoordinate(4.0, 18.0)); //EXAMPLE FLYWHEEL POINT
     }
 
@@ -103,8 +105,8 @@ public class Shot {
         return new Shot(LAUNCHER_ANGLE_FROM_DISTANCE_MAP.getInterpolated(interpolableVisionDistance).value, TOP_SPEED_FROM_DISTANCE_MAP.getInterpolated(interpolableVisionDistance).value, BOTTOM_SPEED_FROM_DISTANCE_MAP.getInterpolated(interpolableVisionDistance).value, false, isFlipped);
     }
     
-    public static Shot LOW_GOAL = new Shot (110.0, 850.0, 850.0, false, false);
-    public static Shot LOW_GOAL_FLIPPED = new Shot (110.0, 500.0, 500.0, false, true);
+    public static Shot LOW_GOAL = new Shot (140.0, 1200.0, 850.0, false, false);
+    public static Shot LOW_GOAL_FLIPPED = new Shot (140.0, 1200.0, 850.0, false, true);
     public static Shot CLOSE_SHOT = new Shot(175.0, 1800.0, 1800.0, false, false);
     public static Shot FLIPPED_CLOSE_SHOT = new Shot(175.0, 1800.0, 1800.0, false, true);
     public static Shot TARMAC_EDGE_SHOT = new Shot(170.0, 1800.0, 1600.0, false, false);
@@ -128,6 +130,8 @@ public class Shot {
 
 
     public Double getLiftHeight() {
+        return Constants.kLaunchBoxSpeenPosition;
+        /*
         double maxLiftHeight = Double.MAX_VALUE;
         for(PolarCoordinate coord : POINTS_OF_INTEREST_ON_LAUNCHBOX)
         {
@@ -141,6 +145,7 @@ public class Shot {
             maxLiftHeight = MAX_LEGAL_HEIGHT - 2;
         }
         return maxLiftHeight;
+        */
     }
 
     public Double getLauncherAngle() {

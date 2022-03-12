@@ -129,17 +129,19 @@ public class Constants {
     public final static double kElevatorInchesPerCountDefault = 1;
     public final static int kLiftPositionControlPIDSlot = 10;
     public final static int kLiftPositionPIDTimeout = 10;
-    public final static double kElevatorPositionkP = 0.09;    
-    public final static double kElevatorPositionkI =0.075; ///0.02;
+    public final static double kElevatorPositionkP = 0.19;    
+    public final static double kElevatorPositionkI =0.02; ///0.02;
     public final static double kElevatorPositionkD =0.0; ///0.015;
     public final static double kElevatorPositionkF =0.0; //1 / 2000;
     public final static int kElevatorPositionIZone = 25;// 800;
     public final static double kLiftPositionRampRate = 0;
     public final static int kBottomLimitTolerance = 50;
-    public final static double kLiftBottomPivotHeight = 35.0;
+    public final static double kLiftBottomPivotHeight = 35.2;//Change for comp bot
+    public final static double kLiftMaxPivotHeight = 42.0; //Change for comp bot
     public final static double kLiftSlowDownHeight = 37.0;
+    public final static Double kLaunchBoxSpeenPosition =37.0;
 
-    public final static Double kElevatorPositionTolerance = 0.25;
+    public final static Double kElevatorPositionTolerance = 0.325;
     public final static int kElevatorVelocityTolerance = 500;
 
     public final static double elevatorResetSpeed = .2;
@@ -222,7 +224,7 @@ public static Double kTopFlywheelKi =0.0;
 
 public static Double kTopFlywheelKd =0.0;
 
-public static Double kTopFlywheelKf =12.0/1800;
+public static Double kTopFlywheelKf =12.0/5400;
 
 public static Double kTopFlywheelIzone =0.0;
 
@@ -233,10 +235,11 @@ public static Double kTopFlywheelKv =0.0; //1.563;
 public static Double kTopFlywheelKa =0.0; //0.86814;
 
 //Launchbox Angler PID
-public static Double kLaunchBoxAnglerKp = 0.45/10;
-public static Double kLaunchBoxAnglerKi = 0.0001;
-public static Double kLaunchBoxAnglerKd = 0.0;
-public static Double kLaunchBoxInchesToFreedom = 2.5;
+public static Double kLaunchBoxAnglerKp = 0.1/20;
+public static Double kLaunchBoxAnglerKi = 0.0002;
+public static Double kLaunchBoxAnglerKd = 0.00000;
+public static Double kLaunchBoxInchesToFreedom = 1.5;
+
 
 
 //VISION
@@ -249,6 +252,7 @@ public static RawColor kBlueBallMaxValues = new RawColor(100, 100, 255, 255);
 public static RawColor kBlueBallMinimumValues = new RawColor(0, 0, 150, 0);
 public static RawColor kRedBallMaxValues = new RawColor(255, 100, 100, 255);
 public static RawColor kRedBallMinimumValues = new RawColor(150, 0, 0, 0);
+
 
 
 //Vision lineup
