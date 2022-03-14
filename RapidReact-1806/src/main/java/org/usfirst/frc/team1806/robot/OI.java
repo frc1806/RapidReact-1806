@@ -115,6 +115,7 @@ public class OI {
 	private SuperStructure mSuperStructure = SuperStructure.getInstance();
 	private LEDStringSubsystem mLedStringSubsystem = LEDStringSubsystem.getInstance();
 	private ClimberSubsystem mClimberSubsystem = ClimberSubsystem.GetInstance();
+	private LaunchBoxAngler mLaunchBoxAngler = LaunchBoxAngler.getInstance();
 
 	// initialise controllers & ish
 	private CheesyDriveHelper mCheesyDriveHelper;
@@ -186,7 +187,11 @@ public class OI {
 		boolean overwriteBallCountTo0 = operatorController.getPOVDown();
 		boolean overwriteBallCountTo1 = operatorController.getPOVRight();
 		boolean overwriteBallCountTo2 = operatorController.getPOVUp();
-		double climbPower = operatorController.getLeftJoyY();
+		double climbPower = operatorController.getRightJoyY();
+		double  anglerPower = operatorController.getLeftJoyY();
+
+		boolean enableAngler = operatorController.getButtonStart();
+		boolean zeroAngler = operatorController.getButtonBack();
 
 
 
@@ -378,6 +383,15 @@ public class OI {
 
 		//climb
 		mClimberSubsystem.moveClimber(climbPower);
+
+		mLaunchBoxAngler.runManualMode(anglerPower);
+
+		if(enableAngler){
+			mLaunchBoxAngler.reEnable();
+		}
+		if(zeroAngler){
+			mLaunchBoxAngler.resetEncoder();
+		}
 		
 		return;
 	}

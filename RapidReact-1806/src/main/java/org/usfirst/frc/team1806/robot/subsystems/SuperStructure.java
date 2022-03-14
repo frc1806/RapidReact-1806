@@ -181,10 +181,12 @@ public class SuperStructure implements Subsystem {
                                     }
                                 }
                             }
+                            /*
                             if (!mWantConfirmShot || !mLaunchboxAngler.isAtAngle() || !mElevator.isAtPosition() || !mUpFlywheel.isSpeedInRange() || !mDownFlywheel.isSpeedInRange()) // TODO: And a bunch of other logic
                             {
                                 mLaunchingStates = LaunchingStates.kPreparingLaunch;
                             }
+                            */
                             break;
                     }
                     break;
@@ -209,7 +211,7 @@ public class SuperStructure implements Subsystem {
                             mConveyor.stop();
                             mIdleStates = IdleStates.AtHome;
                             mLaunchboxAngler.goToAngle(0.0);
-                            if(mElevator.isAtPosition() && mLaunchboxAngler.checkIfAtArbitraryAngle(0.0));
+                            if(mElevator.isAtArbitraryPosition(Constants.kLiftBottomPivotHeight) && mLaunchboxAngler.checkIfAtArbitraryAngle(0.0));
                             {
                                 mIdleStates = IdleStates.AtHome;
                             }

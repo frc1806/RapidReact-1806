@@ -16,7 +16,7 @@ public class TwoBallClose2 implements PathContainer {
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
         sWaypoints.add(new Waypoint(215,230,0,0));
-        sWaypoints.add(new Waypoint(245,190,30,60));
+        sWaypoints.add(new Waypoint(245,190,15,60));
         sWaypoints.add(new Waypoint(270,180,0,60));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
