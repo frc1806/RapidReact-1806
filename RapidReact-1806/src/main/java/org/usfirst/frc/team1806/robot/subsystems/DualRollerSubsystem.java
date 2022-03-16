@@ -16,7 +16,11 @@ public class DualRollerSubsystem implements Subsystem{
 
     private DualRollerSubsystem(){
         frontRoller = new TalonSRX(RobotMap.frontRoller);
+        frontRoller.configVoltageCompSaturation(9);
+        frontRoller.enableVoltageCompensation(true);
         backRoller = new TalonSRX(RobotMap.rearRoller);
+        backRoller.configVoltageCompSaturation(9);
+        backRoller.enableVoltageCompensation(true);
         backRoller.setInverted(true);
     }
 

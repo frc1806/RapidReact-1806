@@ -141,7 +141,7 @@ public class Constants {
     public final static double kLiftSlowDownHeight = 37.0;
     public final static Double kLaunchBoxSpeenPosition =38.0;
 
-    public final static Double kElevatorPositionTolerance = 0.325;
+    public final static Double kElevatorPositionTolerance = 0.500;
     public final static int kElevatorVelocityTolerance = 500;
 
     public final static double elevatorResetSpeed = .2;
@@ -218,13 +218,13 @@ public class Constants {
     
     public static Double kRPMToCounts = 1.0;
 
-public static Double kTopFlywheelKp =0.0001;
+public static Double kTopFlywheelKp =12.0/5000.0;
 
 public static Double kTopFlywheelKi =0.0;
 
 public static Double kTopFlywheelKd =0.0;
 
-public static Double kTopFlywheelKf =12.0/5400;
+public static Double kTopFlywheelKf =12.0/5300.0;
 
 public static Double kTopFlywheelIzone =0.0;
 
@@ -235,10 +235,14 @@ public static Double kTopFlywheelKv =0.0; //1.563;
 public static Double kTopFlywheelKa =0.0; //0.86814;
 
 //Launchbox Angler PID
-public static Double kLaunchBoxAnglerKp = 0.4/20;
-public static Double kLaunchBoxAnglerKi = 0.0002;
+public static Double kLaunchBoxAnglerKpHoriz = 0.4/20;
+public static Double kLaunchBoxAnglerKpVert = 0.1/20;
+public static Double kLaunchBoxAnglerKp = 0.3/20;
+public static Double kLaunchBoxAnglerKi = 0.0000;
 public static Double kLaunchBoxAnglerKd = 0.00000;
 public static Double kLaunchBoxInchesToFreedom = 1.5;
+public static Double kLaunchBoxMinimumMovePowerVert = .23;
+public static Double kLaunchBoxMinimumMovePowerHoriz = .33;
 
 
 

@@ -49,11 +49,14 @@ public class ElevatorSubsystem implements Subsystem {
 		elevatorLead = new CANSparkMax(RobotMap.elevatorLeader, CANSparkMaxLowLevel.MotorType.kBrushless);
 		elevatorLead.setSmartCurrentLimit(65);
 		elevatorLead.setInverted(true);
+		elevatorLead.setIdleMode(IdleMode.kBrake);
 		mElevatorStates = ElevatorStates.IDLE;
 		elevatorWantedPosition = Constants.kLiftBottomPivotHeight;
 		reloadGains();
 		elevatorLead.setSecondaryCurrentLimit(200.0);
 		mStringPotentiometer = new AnalogInput(0);
+		mStringPotentiometer.setAverageBits(3);
+		//AnalogInput.setGlobalSampleRate(250000);
 		setBrakeMode();
 	}
 
@@ -195,7 +198,7 @@ public class ElevatorSubsystem implements Subsystem {
 	}
 
 	public double getHeightInInches() {
-		return -getExtensionLength(mStringPotentiometer.getVoltage()) + 48.0;
+		return -getExtensionLength(mStringPotentiometer.getAverageVoltage()) + 48.0;
 	}
 
 	public boolean isOnTarget() {

@@ -219,13 +219,13 @@ public class DriveTrainSubsystem implements Subsystem {
 		leftA.follow(leaderLeft);
 		leftB.follow(leaderLeft);
 
-		leaderLeft.setSmartCurrentLimit(85);
-		leftA.setSmartCurrentLimit(85);
-		leftB.setSmartCurrentLimit(85);
+		leaderLeft.setSmartCurrentLimit(50);
+		leftA.setSmartCurrentLimit(50);
+		leftB.setSmartCurrentLimit(50);
 
-		leaderRight.setSmartCurrentLimit(85);
-		rightA.setSmartCurrentLimit(85);
-		rightB.setSmartCurrentLimit(85);
+		leaderRight.setSmartCurrentLimit(50);
+		rightA.setSmartCurrentLimit(50);
+		rightB.setSmartCurrentLimit(50);
 
 		leaderLeft.setInverted(true);
 		leftA.setInverted(true);

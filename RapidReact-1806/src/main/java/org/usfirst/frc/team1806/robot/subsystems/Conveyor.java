@@ -49,10 +49,10 @@ public class Conveyor implements Subsystem {
                     mTalonMotor.set(ControlMode.PercentOutput,-1.0);
                     return;
                 case kPrepareForLaunch:
-                    mTalonMotor.set(ControlMode.PercentOutput, 0.0);
+                    mTalonMotor.set(ControlMode.PercentOutput, -0.10);
                     return;
                 case kLaunch:
-                    mTalonMotor.set(ControlMode.PercentOutput, 1.0);
+                    mTalonMotor.set(ControlMode.PercentOutput, .75);
                     return;
             }            
         }
@@ -69,6 +69,8 @@ public class Conveyor implements Subsystem {
     public Conveyor(){
         mConveyorStates = ConveyorStates.kIdle;
         mTalonMotor = new TalonSRX(RobotMap.lowerConveyor);
+        mTalonMotor.configVoltageCompSaturation(9);
+        mTalonMotor.enableVoltageCompensation(true);
     }
 
     @Override

@@ -37,6 +37,8 @@ public class RobotMap {
 	public static int elevatorFollower = 11;
 
 	public static int launchBoxAngler = 15;
+	public static int launchBoxAngleQuadA = 22;
+	public static int launchBoxAngleQuadB = 23;
 	public static final int launchBoxAngleEncoder = 4;
 	//Intake CAN Ports
 	public static int frontIntake = 20;
@@ -49,8 +51,8 @@ public class RobotMap {
 	public static int lowerConveyor = 32;
 
 	//Flywheel
-	public static int upFlywheel = 40;
-	public static int downFlywheel = 42;
+	public static int upFlywheel = 42;
+	public static int downFlywheel = 40;
 
 	public static int upFlyWheelEncoderA = 5;
 	public static int upFlywheelEncoderB = 6;
@@ -58,13 +60,7 @@ public class RobotMap {
 	public static int downFlywheelEncoderB = 8;
 
 
-	//Climber
-	public static int climbMotor1 = 50;
-	public static int climbMotor2 = 51;
-	public static int climbMotor3 = 52;
-	public static int climbMotor4 = 53;
-	public static int leftClawLimitSwitch = 10;
-	public static int rightClawLimitSwitch = 11;
+
 
 
 	////////// These are all of the solenoids for the robotri
@@ -79,25 +75,6 @@ public class RobotMap {
 	//shifter6
 	public static int shiftHigh = 4;
 	public static int shiftLow = 5;
-
-	///// DIOs
-
-	public static int liftBottomLimit = 0;
-	public static int liftHighLimit = 1;
-
-
-
-	///////////// PDP PORTS
-
-
-
-	//CANifier IDs
-	public static int UpFlywheelCANifier = 1;
-	public static int DownFlywheelCANifier = 2;
-
-	//Claw Pneumatic Ports
-	public static int gripLeftClaw = 6;
-	public static int releaseLeftClaw = 7;
 
 
 

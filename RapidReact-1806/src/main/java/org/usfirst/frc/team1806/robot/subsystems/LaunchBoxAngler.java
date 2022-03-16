@@ -11,23 +11,27 @@ import org.usfirst.frc.team1806.robot.loop.Looper;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class LaunchBoxAngler implements Subsystem {
     
-    private final double MINIMUM_POWER= 0.12;
     private TalonSRX mLaunchMotor;
     private DutyCycleEncoder mEncoder;
+    private Encoder mQuadEncoder;
     private PIDController mPIDController;
     private static LaunchBoxAngler LUNCH_BOX_ANGLER = new LaunchBoxAngler();
     private Double mKp, mKi, mKd, mWantedSetPoint;
-    private Double angleLeniency = 10.0;
+    private Double angleLeniency = 2.0;
     private final double ROBOT_OFFSET = Constants.kIsCompBot?-142.6:-51;
     private double currentOffset;
+    private double quadOffset;
     private boolean hasOffsetBeenSet;
     private boolean hasOffsetBeenLoopChecked;
+    private boolean hasQuadOffsetBeenSet;
     private double wantedManualPower;
     
     private enum LunchboxStates{
@@ -42,12 +46,17 @@ public class LaunchBoxAngler implements Subsystem {
 
         @Override
         public void onStart(double timestamp) {
-            // TODO Auto-generated method stub
+            //Use
             if(!hasOffsetBeenSet && !hasOffsetBeenLoopChecked && mEncoder.getDistance() >= 300.0)
             {
                 currentOffset = currentOffset - 360.0;
                 hasOffsetBeenSet = true;
-                
+            }
+            if(!hasQuadOffsetBeenSet)
+            {
+                quadOffset = getAbsoluteEncoderAngle();
+                mQuadEncoder.reset();   
+                hasQuadOffsetBeenSet = true;
             }
             hasOffsetBeenLoopChecked = true;
         }
@@ -76,18 +85,20 @@ public class LaunchBoxAngler implements Subsystem {
                         } 
                     }
                     */
+                    double minimumPower = Constants.kLaunchBoxMinimumMovePowerVert + ((Constants.kLaunchBoxMinimumMovePowerHoriz - Constants.kLaunchBoxMinimumMovePowerVert)* Math.abs(Math.sin( Units.degreesToRadians(getCurrentAngle()))));
                     if(isAtAngle())
                     {
                         power = 0;
+                        mPIDController.reset();
                     }
                     else{
                         if(power > 0)
                         {
-                            power =MathUtil.clamp(power, MINIMUM_POWER, 1.0); 
+                            power += minimumPower; 
                         }
                         if(power < 0)
                         {
-                            power =MathUtil.clamp(power, -1.0 , -MINIMUM_POWER);
+                            power -= minimumPower;
                         }
                     }
 
@@ -124,18 +135,25 @@ public class LaunchBoxAngler implements Subsystem {
         mEncoder = new DutyCycleEncoder(RobotMap.launchBoxAngleEncoder);
         mEncoder.setConnectedFrequencyThreshold(975);
         mEncoder.setDutyCycleRange(1.0/1025.0, 1024.0/1025.0);
-        mEncoder.setDistancePerRotation(360);
+        mEncoder.setDistancePerRotation(360); //Rotations to degrees.
+        mQuadEncoder = new Encoder(RobotMap.launchBoxAngleQuadA, RobotMap.launchBoxAngleQuadB);
+        mQuadEncoder.setDistancePerPulse(360.0/2048.0); // 2048CPR, change to degrees.
+        mQuadEncoder.setReverseDirection(false);
         wantedManualPower = 0.0;
         currentOffset = 0.0;
         currentOffset += ROBOT_OFFSET;
         hasOffsetBeenLoopChecked=false;
+        hasQuadOffsetBeenSet = false;
         if(mEncoder.getDistance() >= 300.0)
         {
             currentOffset = currentOffset- 360.0;
             hasOffsetBeenSet = true;
+            quadOffset = getAbsoluteEncoderAngle();
+            hasQuadOffsetBeenSet = true;
         }
         else
         {
+            quadOffset = getAbsoluteEncoderAngle();
             hasOffsetBeenSet = false;
         }
 
@@ -143,6 +161,7 @@ public class LaunchBoxAngler implements Subsystem {
         mKi = Constants.kLaunchBoxAnglerKi;
         mKd = Constants.kLaunchBoxAnglerKd;
         mLaunchMotor = new TalonSRX(RobotMap.launchBoxAngler);
+        mLaunchMotor.setInverted(true);
         mLaunchMotor.setNeutralMode(NeutralMode.Brake);
         mLaunchMotor.configPeakCurrentLimit(0);
         mLaunchMotor.configContinuousCurrentLimit(100);
@@ -206,6 +225,7 @@ public class LaunchBoxAngler implements Subsystem {
     public void goToAngle(Double Angle){
         if(mLunchboxStates != LunchboxStates.Manual){
             mWantedSetPoint = Angle;
+            mPIDController.setP(Constants.kLaunchBoxAnglerKpVert + ((Constants.kLaunchBoxAnglerKpHoriz - Constants.kLaunchBoxAnglerKpVert) * Math.abs(Math.sin(Units.degreesToRadians(Angle)))));
             mLunchboxStates = LunchboxStates.GoingToPosition;
         }
 
@@ -216,7 +236,11 @@ public class LaunchBoxAngler implements Subsystem {
     }
 
     public double getCurrentAngle(){
-        return mEncoder.getDistance() + currentOffset;
+        return mQuadEncoder.getDistance() + quadOffset;
+    }
+
+    private double getAbsoluteEncoderAngle(){
+        return -(mEncoder.getDistance() + currentOffset);
     }
 
     public Boolean checkIfAtArbitraryAngle(Double angle){
@@ -224,7 +248,7 @@ public class LaunchBoxAngler implements Subsystem {
             return true;
         }
         if(angle == 0.0){
-            return Math.abs(angle - getCurrentAngle()) < 5.0;
+            return Math.abs(angle - getCurrentAngle()) < 2.0;
         }
         if (Math.abs(angle - getCurrentAngle()) > angleLeniency) return false;
         return true;
@@ -248,7 +272,9 @@ public class LaunchBoxAngler implements Subsystem {
 
     public void resetEncoder(){
         mEncoder.reset();
+        mQuadEncoder.reset();
         currentOffset = 0.0;
+        quadOffset = 0.0;
     }
 
     @Override

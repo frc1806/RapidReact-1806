@@ -13,6 +13,7 @@ import org.usfirst.frc.team1806.robot.loop.Looper;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class FlywheelSubsystem implements Subsystem {
 
@@ -20,7 +21,7 @@ public class FlywheelSubsystem implements Subsystem {
     private Double mKp, mKi, mKd, mKf, mIzone, mWantedSpeed, mks, mkv, mKa;
     private PIDController mFlywheelPIDController;
     private SimpleMotorFeedforward mFeedforwardController;
-    private Integer withinLeniency = 50;
+    private Integer withinLeniency = 300;
     private Encoder mEncoder;
 
 
@@ -38,7 +39,23 @@ public class FlywheelSubsystem implements Subsystem {
                     stop();
                     return;
                 case kVelocityControl:
-                mFlywheelMotor.setVoltage((Constants.kTopFlywheelKf * mWantedSpeed) + mFlywheelPIDController.calculate(getCurrentRPM(), mWantedSpeed));
+                if(mWantedSpeed> 0){
+                    if(mWantedSpeed > getCurrentRPM()){
+                        mFlywheelMotor.setVoltage(mKf * mWantedSpeed * 1.2);
+                    }
+                    else{
+                        mFlywheelMotor.setVoltage(mKf * mWantedSpeed * 0.8);
+                    }
+                }
+                else{
+                    if(mWantedSpeed < getCurrentRPM()){
+                        mFlywheelMotor.setVoltage(mKf * mWantedSpeed * 1.2);
+                    }
+                    else{
+                        mFlywheelMotor.setVoltage(mKf * mWantedSpeed * 0.8);
+                    }
+                }
+                //mFlywheelMotor.setVoltage((mKf * mWantedSpeed) + mFlywheelPIDController.calculate(getCurrentRPM(), mWantedSpeed) );
                     return;
             }
             
@@ -73,8 +90,10 @@ public class FlywheelSubsystem implements Subsystem {
         mWantedSpeed = 0.0;
         mFlywheelStates = FlywheelStates.kIdle;
         mEncoder = new Encoder(quadA, quadB);
-        mEncoder.setDistancePerPulse((4.0/8192.0) * 60); //8192 CPR encoder, change RPS to RPM
+        mEncoder.setDistancePerPulse((1.0/2048.0) * 60); //2048 CPR encoder, change RPS to RPM
+        mEncoder.setSamplesToAverage(25);
         mEncoder.setReverseDirection(isEncoderInverted);
+
         reloadGames();
     }
 
@@ -156,8 +175,7 @@ public class FlywheelSubsystem implements Subsystem {
     }
 
     public Boolean isSpeedInRange(){
-        return true;
-        //return !(getCurrentRPM() >= mWantedSpeed + withinLeniency && getCurrentRPM() >= mWantedSpeed - withinLeniency);
+        return Math.abs(getCurrentRPM() - mWantedSpeed) < withinLeniency;
     }
 
     public double getOutputPower(){

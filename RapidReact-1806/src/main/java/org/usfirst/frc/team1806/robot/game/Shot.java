@@ -107,8 +107,8 @@ public class Shot {
     
     public static Shot LOW_GOAL = new Shot (140.0, 1200.0, 850.0, false, false);
     public static Shot LOW_GOAL_FLIPPED = new Shot (140.0, 1200.0, 850.0, false, true);
-    public static Shot CLOSE_SHOT = new Shot(177.0, 2150.0, 2150.0, false, false);
-    public static Shot FLIPPED_CLOSE_SHOT = new Shot(177.0, 2150.0, 2150.0, false, true);
+    public static Shot CLOSE_SHOT = new Shot(166.0, 2400.0, 2400.0, false, false);
+    public static Shot FLIPPED_CLOSE_SHOT = new Shot(166.0, 2400.0, 2400.0, false, true);
     public static Shot TARMAC_EDGE_SHOT = new Shot(160.0, 2300.0, 2300.0, false, false);
 
     /**

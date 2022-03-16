@@ -113,8 +113,7 @@ public class OI {
 	// snag some subsystem instances
 	private DriveTrainSubsystem mDriveTrainSubsystem = DriveTrainSubsystem.getInstance();
 	private SuperStructure mSuperStructure = SuperStructure.getInstance();
-	private LEDStringSubsystem mLedStringSubsystem = LEDStringSubsystem.getInstance();
-	private ClimberSubsystem mClimberSubsystem = ClimberSubsystem.GetInstance();
+	//private LEDStringSubsystem mLedStringSubsystem = LEDStringSubsystem.getInstance();
 	private LaunchBoxAngler mLaunchBoxAngler = LaunchBoxAngler.getInstance();
 
 	// initialise controllers & ish
@@ -137,10 +136,6 @@ public class OI {
 		lastDriverControllerConfig = DriverConrollerConfigs.kRetroGranTurismo;
 	}
 
-	// start up button trackers
-	private Latch autoInTeleOp = new Latch();
-	private Boolean wasShift = false;
-	private Boolean wasParkingBrake = false;
 
 	public void runCommands() {
 		double timestamp = Timer.getFPGATimestamp();
@@ -153,12 +148,13 @@ public class OI {
 		else if (operatorController.getPOVDown()){
 			mLedStringSubsystem.setRobotLEDModeOff();
 		}*/
+		/*
 		if (operatorController.getPOVLeft()){
 			mLedStringSubsystem.setRobotLEDModeClimbComplete();
 		}
 		else{
 			mLedStringSubsystem.setRobotLEDModeNormal();
-		}
+		}*/
 
 		// handle config switching
 		DriverConrollerConfigs currentControllerConfig;
@@ -187,7 +183,6 @@ public class OI {
 		boolean overwriteBallCountTo0 = operatorController.getPOVDown();
 		boolean overwriteBallCountTo1 = operatorController.getPOVRight();
 		boolean overwriteBallCountTo2 = operatorController.getPOVUp();
-		double climbPower = operatorController.getRightJoyY();
 		double  anglerPower = operatorController.getLeftJoyY();
 
 		boolean enableAngler = operatorController.getButtonStart();
@@ -324,7 +319,7 @@ public class OI {
 		//perform actions based on control values
 
 		// Superstructure stuff
-		mSuperStructure.wantConfirmLaunch(true);
+		mSuperStructure.wantConfirmLaunch(confirmShot);
 
 		if(overwriteBallCountTo0){
 			mSuperStructure.overwiteBallCount(0);
@@ -381,8 +376,6 @@ public class OI {
 			mDriveTrainSubsystem.setGyroAngle(Rotation2d.fromDegrees(0.0));
 		}
 
-		//climb
-		mClimberSubsystem.moveClimber(climbPower);
 
 		mLaunchBoxAngler.runManualMode(anglerPower);
 
