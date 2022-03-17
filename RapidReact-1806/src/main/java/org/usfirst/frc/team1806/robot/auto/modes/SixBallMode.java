@@ -3,7 +3,7 @@ package org.usfirst.frc.team1806.robot.auto.modes;
 import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.IntakeBack;
 import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.IntakeFront;
 import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.Shoot;
-import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.StopIntake;
+import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.StopSuperStructure;
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.DrivePathAction;
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.ResetPoseFromPathAction;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeBase;
@@ -22,23 +22,23 @@ public class SixBallMode extends AutoModeBase {
         runAction(new IntakeFront());
         runAction(new ResetPoseFromPathAction(new SixBallPath1()));
         runAction(new DrivePathAction(new SixBallPath1()));
-        runAction(new StopIntake());
+        runAction(new StopSuperStructure());
         runAction(new Shoot(new Shot(175.0, 2500.0, 2300.0, false, false), 0.5));
         runAction(new IntakeBack());
         runAction(new DrivePathAction(new SixBallPath2()));
-        runAction(new StopIntake());
+        runAction(new StopSuperStructure());
         runAction(new Shoot(new Shot(175.0, 2500.0, 2300.0, false, false), 0.5));
         runAction(new IntakeBack());
         runAction(new DrivePathAction(new SixBallPath3()));
-        runAction(new StopIntake());
+        runAction(new StopSuperStructure());
         runAction(new Shoot(new Shot(175.0, 2500.0, 2300.0, false, false), 0.5));
         runAction(new IntakeFront());
         runAction(new DrivePathAction(new SixBallPath4()));
-        runAction(new StopIntake());
+        runAction(new StopSuperStructure());
         runAction(new Shoot(new Shot(175.0, 2500.0, 2300.0, false, false), 0.5));
         runAction(new IntakeBack());
         runAction(new DrivePathAction(new SixBallPath5()));
-        runAction(new StopIntake());
+        runAction(new StopSuperStructure());
         runAction(new Shoot(new Shot(175.0, 2500.0, 2300.0, false, false), 0.5));    
     }
     

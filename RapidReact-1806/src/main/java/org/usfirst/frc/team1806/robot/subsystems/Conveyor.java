@@ -40,13 +40,13 @@ public class Conveyor implements Subsystem {
                     mTalonMotor.set(ControlMode.PercentOutput, 0.0);
                     return;
                 case kConveying:
-                    mTalonMotor.set(ControlMode.PercentOutput,-1.0);
+                    mTalonMotor.set(ControlMode.PercentOutput,-.5);
                     return;
                 case kReverse:
                     mTalonMotor.set(ControlMode.PercentOutput, 1.0);
                     return;
                 case kLoading:
-                    mTalonMotor.set(ControlMode.PercentOutput,-1.0);
+                    mTalonMotor.set(ControlMode.PercentOutput,-.5);
                     return;
                 case kPrepareForLaunch:
                     mTalonMotor.set(ControlMode.PercentOutput, -0.10);

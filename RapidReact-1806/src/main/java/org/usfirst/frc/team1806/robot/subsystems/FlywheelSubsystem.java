@@ -40,7 +40,10 @@ public class FlywheelSubsystem implements Subsystem {
                     return;
                 case kVelocityControl:
                 if(mWantedSpeed> 0){
-                    if(mWantedSpeed > getCurrentRPM()){
+                    if (mWantedSpeed * 0.7 > getCurrentRPM()){
+                        mFlywheelMotor.setVoltage(12.0);
+                    }
+                    else if(mWantedSpeed > getCurrentRPM()){
                         mFlywheelMotor.setVoltage(mKf * mWantedSpeed * 1.2);
                     }
                     else{
@@ -48,6 +51,9 @@ public class FlywheelSubsystem implements Subsystem {
                     }
                 }
                 else{
+                    if (mWantedSpeed * 0.7 < getCurrentRPM()){
+                        mFlywheelMotor.setVoltage(-12.0);
+                    }
                     if(mWantedSpeed < getCurrentRPM()){
                         mFlywheelMotor.setVoltage(mKf * mWantedSpeed * 1.2);
                     }
@@ -79,6 +85,7 @@ public class FlywheelSubsystem implements Subsystem {
         mFlywheelMotor = new CANSparkMax(canID, MotorType.kBrushless);
         mFlywheelMotor.setInverted(isInverted);
         mFlywheelMotor.setIdleMode(IdleMode.kCoast);
+        mFlywheelMotor.setSmartCurrentLimit(30);
         mKp = kp;
         mKi = ki;
         mKd = kd;
@@ -91,7 +98,7 @@ public class FlywheelSubsystem implements Subsystem {
         mFlywheelStates = FlywheelStates.kIdle;
         mEncoder = new Encoder(quadA, quadB);
         mEncoder.setDistancePerPulse((1.0/2048.0) * 60); //2048 CPR encoder, change RPS to RPM
-        mEncoder.setSamplesToAverage(25);
+        mEncoder.setSamplesToAverage(12);
         mEncoder.setReverseDirection(isEncoderInverted);
 
         reloadGames();

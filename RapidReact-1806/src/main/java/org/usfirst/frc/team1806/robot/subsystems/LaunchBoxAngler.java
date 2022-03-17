@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import org.usfirst.frc.team1806.robot.Constants;
+import org.usfirst.frc.team1806.robot.Robot;
 import org.usfirst.frc.team1806.robot.RobotMap;
 import org.usfirst.frc.team1806.robot.loop.Loop;
 import org.usfirst.frc.team1806.robot.loop.Looper;
@@ -14,6 +15,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
@@ -33,6 +35,7 @@ public class LaunchBoxAngler implements Subsystem {
     private boolean hasOffsetBeenLoopChecked;
     private boolean hasQuadOffsetBeenSet;
     private double wantedManualPower;
+    private double batteryVoltage;
     
     private enum LunchboxStates{
         Idle,
@@ -64,9 +67,13 @@ public class LaunchBoxAngler implements Subsystem {
         @Override
         public void onLoop(double timestamp) {
             
+            batteryVoltage = Robot.powerDistributionPanel.getVoltage();
             switch(mLunchboxStates){
                 case Idle:
                     mLaunchMotor.set(ControlMode.PercentOutput, 0.0);
+                    if(getCurrentAngle() != getAbsoluteEncoderAnglePointing()){
+                        quadOffset += getAbsoluteEncoderAnglePointing() - getCurrentAngle();
+                    }
                     return;
                 case GoingToPosition:
                     
@@ -86,21 +93,30 @@ public class LaunchBoxAngler implements Subsystem {
                     }
                     */
                     double minimumPower = Constants.kLaunchBoxMinimumMovePowerVert + ((Constants.kLaunchBoxMinimumMovePowerHoriz - Constants.kLaunchBoxMinimumMovePowerVert)* Math.abs(Math.sin( Units.degreesToRadians(getCurrentAngle()))));
-                    if(isAtAngle())
-                    {
-                        power = 0;
-                        mPIDController.reset();
+                    if(batteryVoltage > 9.5){
+                        if(isAtAngle())
+                        {
+                            power = 0;
+                            mPIDController.reset();
+                            if(getCurrentAngle() != getAbsoluteEncoderAnglePointing()){
+                                quadOffset += getAbsoluteEncoderAnglePointing() - getCurrentAngle();
+                            }
+                        }
+                        else{
+                            if(power > 0)
+                            {
+                                power += minimumPower; 
+                            }
+                            if(power < 0)
+                            {
+                                power -= minimumPower;
+                            }
+                        }
                     }
                     else{
-                        if(power > 0)
-                        {
-                            power += minimumPower; 
-                        }
-                        if(power < 0)
-                        {
-                            power -= minimumPower;
-                        }
+                        power = 0;
                     }
+
 
                     /*
                     double power =  mWantedSetPoint - getCurrentAngle() > 0? .35 :-.35;
@@ -241,6 +257,18 @@ public class LaunchBoxAngler implements Subsystem {
 
     private double getAbsoluteEncoderAngle(){
         return -(mEncoder.getDistance() + currentOffset);
+    }
+
+    private double getAbsoluteEncoderAnglePointing(){
+        double currentRotAngle = -(mEncoder.getDistance() + currentOffset) % 360.0;
+        if (currentRotAngle > 180){
+            currentRotAngle -= 360;
+        }
+        else if (currentRotAngle < -180){
+            currentRotAngle += 360;
+        }
+       
+        return currentRotAngle;
     }
 
     public Boolean checkIfAtArbitraryAngle(Double angle){

@@ -3,7 +3,7 @@ package org.usfirst.frc.team1806.robot.auto.modes;
 import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.IntakeBack;
 import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.IntakeFront;
 import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.Shoot;
-import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.StopIntake;
+import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.StopSuperStructure;
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.Action;
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.DrivePathAction;
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.ResetPoseFromPathAction;
@@ -25,7 +25,7 @@ public class TwoBallCloseMode extends AutoModeBase{
         runAction(new Shoot(Shot.LOW_GOAL, 5.0));
         runAction(new IntakeBack());
         runAction(new DrivePathAction(new TwoBallClose3()));
-        runAction(new StopIntake());
+        runAction(new StopSuperStructure());
     }
 }
 

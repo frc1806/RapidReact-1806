@@ -235,7 +235,7 @@ public static Double kTopFlywheelKv =0.0; //1.563;
 public static Double kTopFlywheelKa =0.0; //0.86814;
 
 //Launchbox Angler PID
-public static Double kLaunchBoxAnglerKpHoriz = 0.4/20;
+public static Double kLaunchBoxAnglerKpHoriz = 0.2/20;
 public static Double kLaunchBoxAnglerKpVert = 0.1/20;
 public static Double kLaunchBoxAnglerKp = 0.3/20;
 public static Double kLaunchBoxAnglerKi = 0.0000;

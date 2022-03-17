@@ -111,8 +111,8 @@ public class VisionSubsystem implements Subsystem {
     @Override
     public void setupDriverTab() {
         // TODO Auto-generated method stub
-        Robot.getMainDriverTab().addCamera("Driver Front Camera", "frontDriverCam", "frontGoalPhoton.local:1183").withPosition(3,1).withSize(4,2);
-        Robot.getMainDriverTab().addCamera("Driver Rear Camera", "rearDriverCam", "frontGoalPhoton.local:1185").withPosition(3, 3).withSize(4,2); 
+        Robot.getMainDriverTab().addCamera("Driver Front Camera", "frontDriverCam", "http://10.18.6.13:1182/stream.mjpg").withPosition(1,2).withSize(4,4);
+        Robot.getMainDriverTab().addCamera("Driver Rear Camera", "rearDriverCam", "http://10.18.6.13:1184/stream.mjpg").withPosition(3, 2).withSize(4,4); 
     }
 
     public TargetLocation getBestTargetLocation(){
