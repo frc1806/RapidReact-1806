@@ -404,16 +404,16 @@ public class SuperStructure implements Subsystem {
 
     }
 
-    public void wantIntakeFront() {
+    public synchronized void wantIntakeFront() {
         mSuperStructureStates = SuperStructureStates.IntakingFront;
 
     };
 
-    public void wantIntakeBack() {
+    public synchronized void wantIntakeBack() {
         mSuperStructureStates = SuperStructureStates.IntakingBack;
     }
 
-    public void wantPrepareShot(Shot wantedShot) {
+    public synchronized void wantPrepareShot(Shot wantedShot) {
         if (mSuperStructureStates != SuperStructureStates.Launching) {
             mLaunchingStates = LaunchingStates.kPreparingLaunch;
         }
@@ -428,15 +428,15 @@ public class SuperStructure implements Subsystem {
         mWantedShot = wantedShot;
     }
 
-    public void wantConfirmLaunch(Boolean shouldShoot) {
+    public synchronized void wantConfirmLaunch(Boolean shouldShoot) {
         mWantConfirmShot = shouldShoot;
     }
     
-    public void wantFeedFrontIntake(){
+    public synchronized void wantFeedFrontIntake(){
         mSuperStructureStates = SuperStructureStates.FrontIntakeFeedThrough;
     }
 
-    public void wantFeedBackIntake(){
+    public synchronized void wantFeedBackIntake(){
         mSuperStructureStates = SuperStructureStates.BackIntakeFeedThrough;
 
     }
@@ -445,12 +445,12 @@ public class SuperStructure implements Subsystem {
         return SUPER_STRUCTURE;
     }
     
-    public void overwiteBallCount(int wantedCount){
+    public synchronized void overwiteBallCount(int wantedCount){
         ballCount = wantedCount;
     }
 
 
-    public boolean doesFrontColorSensorDetectWrongBall(){
+    public synchronized boolean doesFrontColorSensorDetectWrongBall(){
         
         switch(mCurrentAlliance){
             case Blue:
@@ -467,7 +467,7 @@ public class SuperStructure implements Subsystem {
         
         
 
-    public boolean doesBackColorSensorDetectWrongBall(){
+    public synchronized boolean doesBackColorSensorDetectWrongBall(){
 
         
         mPicoColorSensor.getRawColor0();

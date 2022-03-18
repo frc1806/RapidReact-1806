@@ -34,26 +34,18 @@ public class Shot {
     Double launcherAngle, topSpeed, bottomSpeed;
     Boolean isPreciseShot;
     Boolean isFlipped;
-    public static ShotDashboard TheShotDashboard = new ShotDashboard();
+    public static volatile ShotDashboard TheShotDashboard;
+
+    public static void initializeShotDashboard(){
+        TheShotDashboard = new ShotDashboard();
+    }
 
     //A tab on the dashboard where we can enter in any shot params we want for tuning... or for extreme in-match emergencies.
     public static class ShotDashboard {
 
-        private static Map<String, Object> FLYWHEEL_SPEED_SLIDER_PROPS = new HashMap<>();
+        private static Map<String, Object> FLYWHEEL_SPEED_SLIDER_PROPS;
+        private static Map<String, Object> ANGLE_SLIDER_PROPS;
 
-        static {
-            FLYWHEEL_SPEED_SLIDER_PROPS.put("Min", 0.0d);
-            FLYWHEEL_SPEED_SLIDER_PROPS.put("Max", 3000.0d);
-            FLYWHEEL_SPEED_SLIDER_PROPS.put("Block increment", 25d);
-        }
-
-        private static Map<String, Object> ANGLE_SLIDER_PROPS = new HashMap<>();
-
-        static {
-            ANGLE_SLIDER_PROPS.put("Min", -180.0d);
-            ANGLE_SLIDER_PROPS.put("Max", 180.0d);
-            ANGLE_SLIDER_PROPS.put("Block increment", 0.25d);
-        }
         private ShuffleboardTab ShotTuningTab;
         private NetworkTableEntry TopSpeedEntry;
         private NetworkTableEntry BottomSpeedEntry;
@@ -61,13 +53,29 @@ public class Shot {
         private NetworkTableEntry IsPreciseShot;
         private NetworkTableEntry IsFlipped;
 
+        public void initialize(){
+            FLYWHEEL_SPEED_SLIDER_PROPS = new HashMap<>();
+            FLYWHEEL_SPEED_SLIDER_PROPS.put("Min", 0.0d);
+            FLYWHEEL_SPEED_SLIDER_PROPS.put("Max", 6000.0d);
+            FLYWHEEL_SPEED_SLIDER_PROPS.put("Block increment", 25d);
+
+            ANGLE_SLIDER_PROPS = new HashMap<>();
+            ANGLE_SLIDER_PROPS.put("Min", -200.0d);
+            ANGLE_SLIDER_PROPS.put("Max", 200.0d);
+            ANGLE_SLIDER_PROPS.put("Block increment", 0.25d);
+
+
+        }
+
+
         public ShotDashboard(){
             ShotTuningTab = Shuffleboard.getTab("Shot Tuning");
-            TopSpeedEntry = ShotTuningTab.addPersistent("Top Speed", 1500).withWidget(BuiltInWidgets.kNumberSlider).withProperties(FLYWHEEL_SPEED_SLIDER_PROPS).getEntry();
-            BottomSpeedEntry = ShotTuningTab.addPersistent("Bottom Speed", 1500).withWidget(BuiltInWidgets.kNumberSlider).withProperties(FLYWHEEL_SPEED_SLIDER_PROPS).getEntry();
-            Angle =  ShotTuningTab.addPersistent("Angle", 175).withWidget(BuiltInWidgets.kNumberSlider).withProperties(ANGLE_SLIDER_PROPS).getEntry();
-            IsPreciseShot = ShotTuningTab.addPersistent("Is Precise Shot?", false).withWidget(BuiltInWidgets.kBooleanBox).getEntry();
-            IsFlipped = ShotTuningTab.addPersistent("Flipped?", false).withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+            initialize();
+            TopSpeedEntry = ShotTuningTab.addPersistent("Top Speed", 1500).withWidget(BuiltInWidgets.kNumberSlider).withProperties(FLYWHEEL_SPEED_SLIDER_PROPS).withPosition(1, 1).withSize(1,4).getEntry();
+            BottomSpeedEntry = ShotTuningTab.addPersistent("Bottom Speed", 1500).withWidget(BuiltInWidgets.kNumberSlider).withProperties(FLYWHEEL_SPEED_SLIDER_PROPS).withPosition(1, 2).withSize(1,4).getEntry();
+            Angle =  ShotTuningTab.addPersistent("Angle", 175).withWidget(BuiltInWidgets.kNumberSlider).withProperties(ANGLE_SLIDER_PROPS).withPosition(5,1).withSize(2, 2).getEntry();
+            IsPreciseShot = ShotTuningTab.addPersistent("Is Precise Shot?", false).withWidget(BuiltInWidgets.kToggleButton).withPosition(6, 1).withSize(2, 2).getEntry();
+            IsFlipped = ShotTuningTab.addPersistent("Flipped?", false).withWidget(BuiltInWidgets.kBooleanBox).withPosition(8,1).withSize(2,2).getEntry();
         }
         
         public Shot getDashboardShot(){

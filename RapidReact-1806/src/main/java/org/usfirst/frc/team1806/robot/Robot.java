@@ -16,6 +16,7 @@ import org.usfirst.frc.team1806.robot.auto.modes.VisionMode;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeBase;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeExecuter;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeSelector;
+import org.usfirst.frc.team1806.robot.game.Shot;
 import org.usfirst.frc.team1806.robot.loop.Looper;
 import org.usfirst.frc.team1806.robot.path.motion.RobotStateEstimator;
 import org.usfirst.frc.team1806.robot.subsystems.*;
@@ -89,6 +90,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {
+        Shot.initializeShotDashboard();
         selectedModeName = "";
         lastSelectedModeName = "";
         competitionTab = Shuffleboard.getTab("Main Competition Tab");
@@ -344,7 +346,7 @@ public class Robot extends TimedRobot {
 
     static {
       DELAY.put("Min", 0.0d);
-      DELAY.put("Max", 10.0d);
+      DELAY.put("Max", 15.0d);
       DELAY.put("Block increment", 0.01d);
     }
 

@@ -2,6 +2,7 @@ package org.usfirst.frc.team1806.robot.subsystems;
 
 import java.util.List;
 
+import org.usfirst.frc.team1806.robot.Robot;
 import org.usfirst.frc.team1806.robot.loop.Looper;
 
 /**
@@ -37,5 +38,5 @@ public class SubsystemManager {
 
     public void retractAll() { mAllSubsystems.forEach((s) -> s.retractAll());}
 
-    public void setUpDriverTab(){mAllSubsystems.forEach((s) -> s.setupDriverTab());}
+    public void setUpDriverTab(){ mAllSubsystems.forEach((s) -> s.setupDriverTab());}
 }
