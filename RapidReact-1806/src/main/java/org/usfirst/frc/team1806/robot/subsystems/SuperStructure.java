@@ -222,16 +222,17 @@ public class SuperStructure implements Subsystem {
                                 else {
                                     mLaunchboxAngler.goToAngle(0.0);
                                 }
-                                if(mLaunchboxAngler.isAtAngle()); mLaunchingStates = LaunchingStates.kLaunching;
+                                if(mLaunchboxAngler.isAtAngle()); mLaunchingStates = LaunchingStates.kPreparingLaunch;
                             } else {
                                 mElevator.goToSetpointInches(mWantedShot.getLiftHeight());
-                                if (mElevator.isAtPosition()); mLaunchingStates = LaunchingStates.kLaunching;
+                                if (mElevator.isAtPosition()); mLaunchingStates = LaunchingStates.kPreparingLaunch;
                             }
 
                             break;
                         case kLaunching:
                             mElevator.goToSetpointInches(mWantedShot.getLiftHeight());
                             mUpFlywheel.setWantedSpeed(mWantedShot.getTopSpeed());
+                            mDownFlywheel.setWantedSpeed(mWantedShot.getBottomSpeed());
                             if(mElevator.isAbovePosition(Constants.kLaunchBoxInchesToFreedom + Constants.kLiftBottomPivotHeight))
                             {
                                 mLaunchboxAngler.goToAngle(mWantedShot.getLauncherAngle());
@@ -239,7 +240,6 @@ public class SuperStructure implements Subsystem {
                             else {
                                 mLaunchboxAngler.goToAngle(0.0);
                             }
-                            mDownFlywheel.setWantedSpeed(mWantedShot.getBottomSpeed());
                             mFrontIntake.stop();
                             mBackIntake.stop();
                             mConveyor.launch();
@@ -256,7 +256,7 @@ public class SuperStructure implements Subsystem {
                                 }
                             }
                             
-                            if (!mWantConfirmShot || !mLaunchboxAngler.checkIfAtArbitraryAngle(mWantedShot.getLauncherAngle())|| !mElevator.isAtArbitraryPosition(mWantedShot.getLiftHeight())|| !mUpFlywheel.isSpeedInRange() || !mDownFlywheel.isSpeedInRange()) // TODO: And a bunch of other logic
+                            if (!mWantConfirmShot || (mWantedShot.getIsPreciseShot() &&(!mLaunchboxAngler.checkIfAtArbitraryAngle(mWantedShot.getLauncherAngle())|| !mElevator.isAtArbitraryPosition(mWantedShot.getLiftHeight())|| !mUpFlywheel.isSpeedInRange() || !mDownFlywheel.isSpeedInRange()))) // TODO: And a bunch of other logic
                             {
                                 mLaunchingStates = LaunchingStates.kPreparingLaunch;
                             }
