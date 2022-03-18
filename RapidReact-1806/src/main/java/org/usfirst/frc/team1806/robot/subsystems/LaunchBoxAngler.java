@@ -28,7 +28,8 @@ public class LaunchBoxAngler implements Subsystem {
     private PIDController mPIDController;
     private static LaunchBoxAngler LUNCH_BOX_ANGLER = new LaunchBoxAngler();
     private Double mKp, mKi, mKd, mWantedSetPoint;
-    private Double angleLeniency = 2.0;
+    private Double angleLeniency = 1.5;
+    private Double angleLeniencyImprecise = 6.0;
     private final double ROBOT_OFFSET = Constants.kIsCompBot?-142.6:-51;
     private double currentOffset;
     private double quadOffset;
@@ -37,6 +38,7 @@ public class LaunchBoxAngler implements Subsystem {
     private boolean hasQuadOffsetBeenSet;
     private double wantedManualPower;
     private double batteryVoltage;
+    private boolean mIsPreciseShot;
     
     private enum LunchboxStates{
         Idle,
@@ -184,7 +186,7 @@ public class LaunchBoxAngler implements Subsystem {
         mLaunchMotor.configContinuousCurrentLimit(100);
         mLaunchMotor.configVoltageCompSaturation(9);
         mLaunchMotor.enableVoltageCompensation(true);
-
+        mIsPreciseShot = true;
         SupplyCurrentLimitConfiguration config = new SupplyCurrentLimitConfiguration(true, 40.0, 50.0, .2);
         mLaunchMotor.configSupplyCurrentLimit(config);
 
@@ -283,7 +285,7 @@ public class LaunchBoxAngler implements Subsystem {
         if(angle == 0.0){
             return Math.abs(angle - getCurrentAngle()) < 2.0;
         }
-        if (Math.abs(angle - getCurrentAngle()) > angleLeniency) return false;
+        if (Math.abs(angle - getCurrentAngle()) > (mIsPreciseShot?angleLeniency:angleLeniencyImprecise)) return false;
         return true;
     }
 
@@ -297,6 +299,10 @@ public class LaunchBoxAngler implements Subsystem {
         }
         wantedManualPower = power;
 
+    }
+
+    public void setIsPreciseShot(boolean isPreciseShot){
+        mIsPreciseShot = isPreciseShot;
     }
 
     public void reEnable(){

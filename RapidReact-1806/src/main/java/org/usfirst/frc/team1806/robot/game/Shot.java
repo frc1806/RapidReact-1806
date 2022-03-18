@@ -110,14 +110,19 @@ public class Shot {
      */
     public static Shot createShotFromVision(Double visionDistance, Boolean isFlipped){
         InterpolatingDouble interpolableVisionDistance = new InterpolatingDouble(visionDistance);
-        return new Shot(LAUNCHER_ANGLE_FROM_DISTANCE_MAP.getInterpolated(interpolableVisionDistance).value, TOP_SPEED_FROM_DISTANCE_MAP.getInterpolated(interpolableVisionDistance).value, BOTTOM_SPEED_FROM_DISTANCE_MAP.getInterpolated(interpolableVisionDistance).value, false, isFlipped);
+        return new Shot(LAUNCHER_ANGLE_FROM_DISTANCE_MAP.getInterpolated(interpolableVisionDistance).value, TOP_SPEED_FROM_DISTANCE_MAP.getInterpolated(interpolableVisionDistance).value, BOTTOM_SPEED_FROM_DISTANCE_MAP.getInterpolated(interpolableVisionDistance).value, true, isFlipped);
     }
     
     public static Shot LOW_GOAL = new Shot (140.0, 1200.0, 850.0, false, false);
-    public static Shot LOW_GOAL_FLIPPED = new Shot (140.0, 1200.0, 850.0, false, true);
-    public static Shot CLOSE_SHOT = new Shot(166.0, 2400.0, 2400.0, false, false);
-    public static Shot FLIPPED_CLOSE_SHOT = new Shot(166.0, 2400.0, 2400.0, false, true);
-    public static Shot TARMAC_EDGE_SHOT = new Shot(160.0, 2300.0, 2300.0, false, false);
+    public static Shot LOW_GOAL_FLIPPED = LOW_GOAL.getThisShotButFlipped();
+    public static Shot CLOSE_SHOT = new Shot(166.0, 2400.0, 2400.0, true, false);
+    public static Shot FLIPPED_CLOSE_SHOT = CLOSE_SHOT.getThisShotButFlipped();
+    public static Shot TARMAC_EDGE_SHOT = new Shot(160.0, 2300.0, 2300.0, true, false);
+    public static Shot TARMAC_EDGE_SHOT_FLIPPED = TARMAC_EDGE_SHOT.getThisShotButFlipped();
+    public static Shot BIG_SHOT = new Shot(155.0, 4000.0, 3500.0, true, false);
+    public static Shot BIG_SHOT_FLIPPED = BIG_SHOT.getThisShotButFlipped();
+    public static Shot ROLL_SHOT = new Shot(110.0, 5500.0, 2000.0, false, false);
+    public static Shot ROLL_SHOT_FLIPPED = ROLL_SHOT.getThisShotButFlipped();
 
     /**
      * Declare a preset/ dead reckoning shot
@@ -176,5 +181,9 @@ public class Shot {
     public Boolean getIsFlipped(){
         return isFlipped;
     }   
+
+    public Shot getThisShotButFlipped(){
+        return new Shot(this.getLauncherAngle(), this.getTopSpeed(), this.getBottomSpeed(), !this.getIsFlipped(), this.getIsPreciseShot());
+    }
 
 }

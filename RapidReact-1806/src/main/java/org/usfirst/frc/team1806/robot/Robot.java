@@ -95,30 +95,32 @@ public class Robot extends TimedRobot {
         lastSelectedModeName = "";
         competitionTab = Shuffleboard.getTab("Main Competition Tab");
         setupMainCompetitionTab();
-      m_oi = new OI();
-      zeroAllSensors();
-      //mDrive.setDebug(true);
-      //adds in the iterative code to make the code run
-      mEnabledLooper.register(RobotStateEstimator.getInstance());
-      S_SubsystemManager.registerEnabledLoops(mEnabledLooper);
+        m_oi = new OI();
 
-      powerDistributionPanel = new PowerDistribution();
-      SmartDashboard.putData("Auto mode", m_chooser);
-      mAutoModeExecuter = null;
-      mAutomatedSequenceExecuter = null;
-      mAutoModeExecuter = new AutoModeExecuter();
-      mAutomatedSequenceExecuter = new AutoModeExecuter();
-      //mAutoModeExecuter.setAutoMode(new QualMode()); TODO
-      mDrive.setCoastMode();
-      AutoModeSelector.registerDisabledLoop(mDisabledLooper);
-      AutoModeSelector.initAutoModeSelector();
-      needToPositionControlInTele = false;
-      try {
-        Thread.sleep(3000);
-      } catch (InterruptedException e){
-        System.out.println(e);
-      }
-      S_SubsystemManager.setUpDriverTab();
+        powerDistributionPanel = new PowerDistribution();
+
+        //mDrive.setDebug(true);
+        //adds in the iterative code to make the code run
+        mEnabledLooper.register(RobotStateEstimator.getInstance());
+        S_SubsystemManager.registerEnabledLoops(mEnabledLooper);
+
+        
+        SmartDashboard.putData("Auto mode", m_chooser);
+        mAutoModeExecuter = null;
+        mAutomatedSequenceExecuter = null;
+        mAutoModeExecuter = new AutoModeExecuter();
+        mAutomatedSequenceExecuter = new AutoModeExecuter();
+        //mAutoModeExecuter.setAutoMode(new QualMode()); TODO
+        mDrive.setCoastMode();
+        AutoModeSelector.registerDisabledLoop(mDisabledLooper);
+        AutoModeSelector.initAutoModeSelector();
+        needToPositionControlInTele = false;
+        try {
+          Thread.sleep(3000);
+        } catch (InterruptedException e){
+          System.out.println(e);
+        }
+        S_SubsystemManager.setUpDriverTab();
     }
 
     public enum SequenceState{
@@ -351,9 +353,8 @@ public class Robot extends TimedRobot {
     }
 
 
-
     private void setupMainCompetitionTab(){
-      autoDelay = competitionTab.addPersistent("Auto Delay", 0)
+      autoDelay = competitionTab.addPersistent("Auto Delay", 0).withProperties(DELAY)
                 .withWidget(BuiltInWidgets.kNumberSlider).withSize(2, 1).withPosition(4, 0).getEntry();
     }
   

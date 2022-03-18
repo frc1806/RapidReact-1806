@@ -25,7 +25,7 @@ public class DualRollerSubsystem implements Subsystem{
         backRoller.enableVoltageCompensation(true);
         backRoller.setInverted(true);
 
-        SupplyCurrentLimitConfiguration config = new SupplyCurrentLimitConfiguration(true, 40.0, 50.0, .2);
+        SupplyCurrentLimitConfiguration config = new SupplyCurrentLimitConfiguration(true, 40.0, 50.0, .1);
         frontRoller.configSupplyCurrentLimit(config);
         backRoller.configSupplyCurrentLimit(config);
         frontRoller.configOpenloopRamp(0.2);

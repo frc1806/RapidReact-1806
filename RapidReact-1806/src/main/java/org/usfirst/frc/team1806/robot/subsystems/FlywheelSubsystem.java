@@ -21,10 +21,12 @@ public class FlywheelSubsystem implements Subsystem {
     private Double mKp, mKi, mKd, mKf, mIzone, mWantedSpeed, mks, mkv, mKa;
     private PIDController mFlywheelPIDController;
     private SimpleMotorFeedforward mFeedforwardController;
-    private Integer withinLeniency = 300;
+    private double withinLeniency = 100.0;
+    private double withinLeniencyImprecise = 300.0;
     private Encoder mEncoder;
     private int currentLimit;
     private double rampRate;
+    private boolean mPreciseShot = true;
 
 
     private Loop mLoop = new Loop(){
@@ -47,11 +49,11 @@ public class FlywheelSubsystem implements Subsystem {
                         currentLimit = 30;
                         mFlywheelMotor.setSmartCurrentLimit(currentLimit);
                     }
-                    if(rampRate != 0.0){
-                        rampRate = 0.0;
+                    if(rampRate != 0.05){
+                        rampRate = 0.5;
                         mFlywheelMotor.setOpenLoopRampRate(rampRate);
                     }
-                    if (mWantedSpeed * 0.7 > getCurrentRPM()){
+                    if (mWantedSpeed * 0.66 > getCurrentRPM()){
                         mFlywheelMotor.setVoltage(12.0);
                     }
                     else if(mWantedSpeed > getCurrentRPM()){
@@ -103,7 +105,7 @@ public class FlywheelSubsystem implements Subsystem {
         mFlywheelMotor.setInverted(isInverted);
         mFlywheelMotor.setIdleMode(IdleMode.kCoast);
         mFlywheelMotor.setSmartCurrentLimit(30);
-        mFlywheelMotor.setOpenLoopRampRate(0.2);
+        mFlywheelMotor.setOpenLoopRampRate(0.0);
         currentLimit = 30;
         mKp = kp;
         mKi = ki;
@@ -117,7 +119,7 @@ public class FlywheelSubsystem implements Subsystem {
         mFlywheelStates = FlywheelStates.kIdle;
         mEncoder = new Encoder(quadA, quadB);
         mEncoder.setDistancePerPulse((1.0/2048.0) * 60); //2048 CPR encoder, change RPS to RPM
-        mEncoder.setSamplesToAverage(12);
+        mEncoder.setSamplesToAverage(4);
         mEncoder.setReverseDirection(isEncoderInverted);
 
         reloadGames();
@@ -201,11 +203,15 @@ public class FlywheelSubsystem implements Subsystem {
     }
 
     public Boolean isSpeedInRange(){
-        return Math.abs(getCurrentRPM() - mWantedSpeed) < withinLeniency;
+        return Math.abs(getCurrentRPM() - mWantedSpeed) < (mPreciseShot?withinLeniency:withinLeniencyImprecise);
     }
 
     public double getOutputPower(){
         return mFlywheelMotor.getAppliedOutput();
+    }
+
+    public void setPreciseShot(boolean preciseShot){
+        
     }
 
     @Override

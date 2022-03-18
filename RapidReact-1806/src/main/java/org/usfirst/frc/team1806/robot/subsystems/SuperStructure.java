@@ -177,6 +177,7 @@ public class SuperStructure implements Subsystem {
                     mCompressor.disable();
                     mDriveTrainSubsystem.setCurrentLimitPerMotor(Constants.kDriveLimitedAmpLimit);
                     mDriveTrainSubsystem.setOpenLoopRampRate(Constants.kDriveLimitedRampRate);
+
                     switch (mLaunchingStates) {
                         default:
                         case kPreparingLaunch:
@@ -518,6 +519,9 @@ public class SuperStructure implements Subsystem {
                 mLaunchingStates = LaunchingStates.kChangeShot;
             }
         }
+        mUpFlywheel.setPreciseShot(mWantedShot.getIsPreciseShot());
+        mDownFlywheel.setPreciseShot(mWantedShot.getIsPreciseShot());
+        mLaunchboxAngler.setIsPreciseShot(mWantedShot.getIsPreciseShot());
         mSuperStructureStates = SuperStructureStates.Launching;
         mWantedShot = wantedShot;
     }
