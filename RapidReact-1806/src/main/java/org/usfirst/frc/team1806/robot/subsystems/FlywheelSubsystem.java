@@ -94,6 +94,7 @@ public class FlywheelSubsystem implements Subsystem {
         mFlywheelMotor.setInverted(isInverted);
         mFlywheelMotor.setIdleMode(IdleMode.kCoast);
         mFlywheelMotor.setSmartCurrentLimit(30);
+        mFlywheelMotor.setOpenLoopRampRate(0.2);
         currentLimit = 30;
         mKp = kp;
         mKi = ki;

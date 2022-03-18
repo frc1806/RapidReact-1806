@@ -61,6 +61,7 @@ public class IntakeSubsystem implements Subsystem {
         mExtendSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, extendSolenoidPort, retractSolenoidPort);
         intakeMotor = new CANSparkMax(canID, MotorType.kBrushless);
         intakeMotor.setSmartCurrentLimit(20);
+        intakeMotor.setOpenLoopRampRate(0.3);
         mIntakeState = IntakeStates.IDLE;
     }
 
