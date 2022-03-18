@@ -262,4 +262,11 @@ public static RawColor kRedBallMinimumValues = new RawColor(150, 0, 0, 0);
 //Vision lineup
 public static Double visionLineUpProportional = 1.0/20.0;
 
+
+//Power
+public static int kDriveNormalAmpLimit = 45;
+public static int kDriveLimitedAmpLimit = 30;
+public static double kDriveNormalRampRate = 0.5;
+public static double kDriveLimitedRampRate = 0.75;
+
 }

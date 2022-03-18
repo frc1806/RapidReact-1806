@@ -105,6 +105,8 @@ public class DriveTrainSubsystem implements Subsystem {
 	private PIDController leftHighGearVelocityPID, rightHighGearVelocityPID, leftLoweGearPositionPID, rightLowGearPositionPID;
 	private SimpleMotorFeedforward leftHighGearVelocityFeedForward, rightHighGearVelocityFeedForward;
 	private CheesyDriveHelper visionCheesyDriveHelper = new CheesyDriveHelper(0.0, 0.2);
+	private int currentLimit = 0;
+	private double rampRate = 0;
 
 	public DriveStates getmDriveStates() {
 		return mDriveStates;
@@ -219,13 +221,7 @@ public class DriveTrainSubsystem implements Subsystem {
 		leftA.follow(leaderLeft);
 		leftB.follow(leaderLeft);
 
-		leaderLeft.setSmartCurrentLimit(50);
-		leftA.setSmartCurrentLimit(50);
-		leftB.setSmartCurrentLimit(50);
-
-		leaderRight.setSmartCurrentLimit(50);
-		rightA.setSmartCurrentLimit(50);
-		rightB.setSmartCurrentLimit(50);
+		setCurrentLimitPerMotor(45);
 
 		leaderLeft.setInverted(true);
 		leftA.setInverted(true);
@@ -235,6 +231,8 @@ public class DriveTrainSubsystem implements Subsystem {
 		leaderRight.setInverted(false);
 		rightA.setInverted(false);
 		rightB.setInverted(false);
+
+		setOpenLoopRampRate(0.5);
 
 		leftEncoderDistance = 0;
 		rightEncoderDistance = 0;
@@ -752,6 +750,36 @@ public class DriveTrainSubsystem implements Subsystem {
 		mDriveStates = DriveStates.DRIVING;
 		parkingBrakeIsStopped = false;
 		setCoastMode();
+	}
+
+	/**
+	 * Sets the smart current limit for every motor in the drive
+	 * @param currentLimit limit in amps.
+	 */
+	public void setCurrentLimitPerMotor(int currentLimit){
+		if(currentLimit != this.currentLimit)
+		{
+			this.currentLimit = currentLimit;
+			leaderLeft.setSmartCurrentLimit(currentLimit);
+			leftA.setSmartCurrentLimit(currentLimit);
+			leftB.setSmartCurrentLimit(currentLimit);
+	
+			leaderRight.setSmartCurrentLimit(currentLimit);
+			rightA.setSmartCurrentLimit(currentLimit);
+			rightB.setSmartCurrentLimit(currentLimit);
+		}
+	}
+
+	/**
+	 * Sets the open loop ramp rate for the drive.
+	 * @param rampRate time from 0 to full power in seconds
+	 */
+	public void setOpenLoopRampRate(double rampRate){
+		if(rampRate != this.rampRate){
+			this.rampRate = rampRate;
+			leaderLeft.setOpenLoopRampRate(rampRate);
+			leaderRight.setOpenLoopRampRate(rampRate);
+		}
 	}
 
 	@Override

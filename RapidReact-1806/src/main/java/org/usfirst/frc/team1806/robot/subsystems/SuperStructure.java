@@ -6,7 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.usfirst.frc.team1806.robot.Constants;
@@ -74,13 +77,42 @@ public class SuperStructure implements Subsystem {
             //main loop
             switch (mSuperStructureStates) {
                 case IntakingFront:
+                    mCompressor.disable();
+                    mDriveTrainSubsystem.setCurrentLimitPerMotor(Constants.kDriveLimitedAmpLimit);
+                    mDriveTrainSubsystem.setOpenLoopRampRate(Constants.kDriveLimitedRampRate);
+                    if(timestamp - intakePowerManagementChangeTime > .15){
+                        intakePowerManagementStage++;
+                        intakePowerManagementChangeTime = timestamp;
+                    }
+                    switch(intakePowerManagementStage){
+                        case 0:
+                            mDualRollerSubsystem.stop();
+                        case 1:
+                            mUpFlywheel.stop();
+                            mDownFlywheel.stop();
+                        case 2:
+                            mConveyor.stop();
+                        case 3:
+                        default:
+                    }
+                    switch(intakePowerManagementStage){
+                        default:
+                        case 3:
+                            mConveyor.loadConveyor();
+                        case 2:
+                            mUpFlywheel.setReverseSpeed(1500.0);
+                            mDownFlywheel.setReverseSpeed(1500.0);
+                        case 1:
+                            mDualRollerSubsystem.startRoller();
+                        case 0:
+                    }
                     mElevator.goToSetpointInches(Constants.kLiftBottomPivotHeight);
                     mFrontIntake.wantIntaking();
                     mBackIntake.stop();
-                    mDualRollerSubsystem.startRoller();
-                    mConveyor.loadConveyor();
-                    mUpFlywheel.setReverseSpeed(1500.0);
-                    mDownFlywheel.setReverseSpeed(1500.0);
+                    // mDualRollerSubsystem.startRoller();
+                    // mConveyor.loadConveyor();
+                    // mUpFlywheel.setReverseSpeed(1500.0);
+                    // mDownFlywheel.setReverseSpeed(1500.0);
                     mLaunchboxAngler.goToAngle(0.0);
                     //cargo counting
                     if(olderAverage < 0 && recentAverage < 0)
@@ -96,13 +128,38 @@ public class SuperStructure implements Subsystem {
                     }
                     break;
                 case IntakingBack:
+                    mCompressor.disable();
+                    mDriveTrainSubsystem.setCurrentLimitPerMotor(Constants.kDriveLimitedAmpLimit);
+                    mDriveTrainSubsystem.setOpenLoopRampRate(Constants.kDriveLimitedRampRate);
+                    if(timestamp - intakePowerManagementChangeTime > .15){
+                        intakePowerManagementStage++;
+                        intakePowerManagementChangeTime = timestamp;
+                    }
+                    switch(intakePowerManagementStage){
+                        case 0:
+                            mDualRollerSubsystem.stop();
+                        case 1:
+                            mUpFlywheel.stop();
+                            mDownFlywheel.stop();
+                        case 2:
+                            mConveyor.stop();
+                        case 3:
+                        default:
+                    }
+                    switch(intakePowerManagementStage){
+                        default:
+                        case 3:
+                            mConveyor.loadConveyor();
+                        case 2:
+                            mUpFlywheel.setReverseSpeed(1500.0);
+                            mDownFlywheel.setReverseSpeed(1500.0);
+                        case 1:
+                            mDualRollerSubsystem.startRoller();
+                        case 0:
+                    }
                     mElevator.goToSetpointInches(Constants.kLiftBottomPivotHeight);
                     mFrontIntake.stop();
                     mBackIntake.wantIntaking();
-                    mDualRollerSubsystem.startRoller();
-                    mConveyor.loadConveyor();
-                    mUpFlywheel.setReverseSpeed(1500.0);
-                    mDownFlywheel.setReverseSpeed(1500.0);
                     mLaunchboxAngler.goToAngle(0.0);
                     if(olderAverage < 0 && recentAverage < 0)
                     {
@@ -117,6 +174,9 @@ public class SuperStructure implements Subsystem {
                     }
                     break;
                 case Launching:
+                    mCompressor.disable();
+                    mDriveTrainSubsystem.setCurrentLimitPerMotor(Constants.kDriveLimitedAmpLimit);
+                    mDriveTrainSubsystem.setOpenLoopRampRate(Constants.kDriveLimitedRampRate);
                     switch (mLaunchingStates) {
                         default:
                         case kPreparingLaunch:
@@ -129,8 +189,14 @@ public class SuperStructure implements Subsystem {
                             else {
                                 mLaunchboxAngler.goToAngle(0.0);
                             }
-                            mUpFlywheel.setWantedSpeed(mWantedShot.getTopSpeed());
-                            mDownFlywheel.setWantedSpeed(mWantedShot.getBottomSpeed());
+                            if(Math.abs(mLaunchboxAngler.getCurrentAngle() - mWantedShot.getLauncherAngle()) < 25){
+                                mUpFlywheel.setWantedSpeed(mWantedShot.getTopSpeed());
+                                mDownFlywheel.setWantedSpeed(mWantedShot.getBottomSpeed());
+                            }
+                            else{
+                                mUpFlywheel.stop();
+                                mDownFlywheel.stop();
+                            }
                             mFrontIntake.stop();
                             mBackIntake.stop();
                             mDualRollerSubsystem.stop();
@@ -199,6 +265,9 @@ public class SuperStructure implements Subsystem {
                     break;
                 default:
                 case Idle:
+                    mCompressor.enableDigital();
+                    mDriveTrainSubsystem.setCurrentLimitPerMotor(Constants.kDriveNormalAmpLimit);
+                    mDriveTrainSubsystem.setOpenLoopRampRate(Constants.kDriveNormalRampRate);
                     switch(mIdleStates){
                         default:
                         case GoingHome:
@@ -237,6 +306,9 @@ public class SuperStructure implements Subsystem {
                     }
                     break;
                 case Climbing:
+                    mCompressor.enableDigital();
+                    mDriveTrainSubsystem.setCurrentLimitPerMotor(Constants.kDriveLimitedAmpLimit);
+                    mDriveTrainSubsystem.setOpenLoopRampRate(Constants.kDriveLimitedRampRate);
                     mUpFlywheel.stop();
                     mDownFlywheel.stop();
                     mElevator.stop();
@@ -247,6 +319,9 @@ public class SuperStructure implements Subsystem {
                     mLaunchboxAngler.goToAngle(0.0);
                     break;
                 case FrontIntakeFeedThrough:
+                    mDriveTrainSubsystem.setCurrentLimitPerMotor(Constants.kDriveLimitedAmpLimit);
+                    mDriveTrainSubsystem.setOpenLoopRampRate(Constants.kDriveLimitedRampRate);
+                    mCompressor.disable();
                     mUpFlywheel.stop();
                     mDownFlywheel.stop();
                     mElevator.stop();
@@ -257,6 +332,9 @@ public class SuperStructure implements Subsystem {
                     mLaunchboxAngler.goToAngle(0.0);
                     break;
                 case BackIntakeFeedThrough:
+                    mDriveTrainSubsystem.setCurrentLimitPerMotor(Constants.kDriveLimitedAmpLimit);
+                    mDriveTrainSubsystem.setOpenLoopRampRate(Constants.kDriveLimitedRampRate);
+                    mCompressor.disable();
                     mUpFlywheel.stop();
                     mDownFlywheel.stop();
                     mElevator.stop();
@@ -297,6 +375,10 @@ public class SuperStructure implements Subsystem {
     private IdleStates mIdleStates;
     private Alliance mCurrentAlliance;
     private double lastCheckedAllianceTime;
+    private int intakePowerManagementStage;
+    private double intakePowerManagementChangeTime;
+    Compressor mCompressor;
+    DriveTrainSubsystem mDriveTrainSubsystem;
 
     //Cargo counting
     private BisectedCircularBuffer flywheelAverageSpeedsBuffer;
@@ -304,6 +386,7 @@ public class SuperStructure implements Subsystem {
     private int ballCount;
 
     private SuperStructure() {
+        intakePowerManagementStage = 0;
         mElevator = ElevatorSubsystem.getInstance();
         mPicoColorSensor = new PicoColorSensor();
         mFrontIntake = new IntakeSubsystem(RobotMap.frontIntake, RobotMap.frontIntakeExtend, RobotMap.frontIntakeRetract);
@@ -325,7 +408,8 @@ public class SuperStructure implements Subsystem {
         lastCheckedAllianceTime = 0.0;
         flywheelAverageSpeedsBuffer = new BisectedCircularBuffer(10, 5);
         isFlywheelSpeedDecreasing = false;
-
+        mCompressor = new Compressor(PneumaticsModuleType.CTREPCM);
+        mDriveTrainSubsystem = DriveTrainSubsystem.getInstance();
     }
 
     @Override
@@ -405,12 +489,22 @@ public class SuperStructure implements Subsystem {
     }
 
     public synchronized void wantIntakeFront() {
-        mSuperStructureStates = SuperStructureStates.IntakingFront;
+        if(mSuperStructureStates!= SuperStructureStates.IntakingFront){
+            mSuperStructureStates = SuperStructureStates.IntakingFront;
+            intakePowerManagementStage = 0;
+            intakePowerManagementChangeTime = Timer.getFPGATimestamp();
+        }
+        
 
     };
 
     public synchronized void wantIntakeBack() {
-        mSuperStructureStates = SuperStructureStates.IntakingBack;
+        if(mSuperStructureStates != SuperStructureStates.IntakingBack){
+            mSuperStructureStates = SuperStructureStates.IntakingBack;
+            intakePowerManagementStage = 0;
+            intakePowerManagementChangeTime = Timer.getFPGATimestamp();
+        }
+        
     }
 
     public synchronized void wantPrepareShot(Shot wantedShot) {
@@ -433,11 +527,21 @@ public class SuperStructure implements Subsystem {
     }
     
     public synchronized void wantFeedFrontIntake(){
-        mSuperStructureStates = SuperStructureStates.FrontIntakeFeedThrough;
+        if(mSuperStructureStates != SuperStructureStates.FrontIntakeFeedThrough){
+            mSuperStructureStates = SuperStructureStates.FrontIntakeFeedThrough;
+            intakePowerManagementStage = 0;
+            intakePowerManagementChangeTime = Timer.getFPGATimestamp();
+        }
+        
     }
 
     public synchronized void wantFeedBackIntake(){
-        mSuperStructureStates = SuperStructureStates.BackIntakeFeedThrough;
+        if(mSuperStructureStates != SuperStructureStates.BackIntakeFeedThrough){
+            mSuperStructureStates = SuperStructureStates.BackIntakeFeedThrough;
+            intakePowerManagementStage = 0;
+            intakePowerManagementChangeTime = Timer.getFPGATimestamp();
+        }
+        
 
     }
 

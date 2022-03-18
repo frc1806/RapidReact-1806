@@ -2,6 +2,7 @@ package org.usfirst.frc.team1806.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import org.usfirst.frc.team1806.robot.Constants;
@@ -93,7 +94,7 @@ public class LaunchBoxAngler implements Subsystem {
                     }
                     */
                     double minimumPower = Constants.kLaunchBoxMinimumMovePowerVert + ((Constants.kLaunchBoxMinimumMovePowerHoriz - Constants.kLaunchBoxMinimumMovePowerVert)* Math.abs(Math.sin( Units.degreesToRadians(getCurrentAngle()))));
-                    if(batteryVoltage > 9.5){
+                    if(batteryVoltage > 10.0){
                         if(isAtAngle())
                         {
                             power = 0;
@@ -183,6 +184,10 @@ public class LaunchBoxAngler implements Subsystem {
         mLaunchMotor.configContinuousCurrentLimit(100);
         mLaunchMotor.configVoltageCompSaturation(9);
         mLaunchMotor.enableVoltageCompensation(true);
+
+        SupplyCurrentLimitConfiguration config = new SupplyCurrentLimitConfiguration(true, 40.0, 50.0, .2);
+        mLaunchMotor.configSupplyCurrentLimit(config);
+
         mPIDController = new PIDController(mKp, mKi, mKd);
         mLunchboxStates = LunchboxStates.Idle;
         mWantedSetPoint = 0.0;

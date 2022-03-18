@@ -23,6 +23,7 @@ public class FlywheelSubsystem implements Subsystem {
     private SimpleMotorFeedforward mFeedforwardController;
     private Integer withinLeniency = 300;
     private Encoder mEncoder;
+    private int currentLimit;
 
 
     private Loop mLoop = new Loop(){
@@ -40,6 +41,11 @@ public class FlywheelSubsystem implements Subsystem {
                     return;
                 case kVelocityControl:
                 if(mWantedSpeed> 0){
+                    if(currentLimit != 30)
+                    {
+                        currentLimit = 30;
+                        mFlywheelMotor.setSmartCurrentLimit(currentLimit);
+                    }
                     if (mWantedSpeed * 0.7 > getCurrentRPM()){
                         mFlywheelMotor.setVoltage(12.0);
                     }
@@ -51,9 +57,11 @@ public class FlywheelSubsystem implements Subsystem {
                     }
                 }
                 else{
-                    if (mWantedSpeed * 0.7 < getCurrentRPM()){
-                        mFlywheelMotor.setVoltage(-12.0);
+                    if(currentLimit != 15){
+                        currentLimit = 15;
+                        mFlywheelMotor.setSmartCurrentLimit(currentLimit);
                     }
+                    
                     if(mWantedSpeed < getCurrentRPM()){
                         mFlywheelMotor.setVoltage(mKf * mWantedSpeed * 1.2);
                     }
@@ -86,6 +94,7 @@ public class FlywheelSubsystem implements Subsystem {
         mFlywheelMotor.setInverted(isInverted);
         mFlywheelMotor.setIdleMode(IdleMode.kCoast);
         mFlywheelMotor.setSmartCurrentLimit(30);
+        currentLimit = 30;
         mKp = kp;
         mKi = ki;
         mKd = kd;

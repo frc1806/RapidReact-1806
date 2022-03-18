@@ -2,6 +2,7 @@ package org.usfirst.frc.team1806.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.InvertType;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import org.usfirst.frc.team1806.robot.RobotMap;
@@ -18,10 +19,15 @@ public class DualRollerSubsystem implements Subsystem{
         frontRoller = new TalonSRX(RobotMap.frontRoller);
         frontRoller.configVoltageCompSaturation(9);
         frontRoller.enableVoltageCompensation(true);
+
         backRoller = new TalonSRX(RobotMap.rearRoller);
         backRoller.configVoltageCompSaturation(9);
         backRoller.enableVoltageCompensation(true);
         backRoller.setInverted(true);
+
+        SupplyCurrentLimitConfiguration config = new SupplyCurrentLimitConfiguration(true, 40.0, 50.0, .2);
+        frontRoller.configSupplyCurrentLimit(config);
+        backRoller.configSupplyCurrentLimit(config);
     }
 
 
