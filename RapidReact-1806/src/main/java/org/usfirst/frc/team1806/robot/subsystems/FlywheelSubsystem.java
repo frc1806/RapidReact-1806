@@ -24,6 +24,7 @@ public class FlywheelSubsystem implements Subsystem {
     private Integer withinLeniency = 300;
     private Encoder mEncoder;
     private int currentLimit;
+    private double rampRate;
 
 
     private Loop mLoop = new Loop(){
@@ -46,6 +47,10 @@ public class FlywheelSubsystem implements Subsystem {
                         currentLimit = 30;
                         mFlywheelMotor.setSmartCurrentLimit(currentLimit);
                     }
+                    if(rampRate != 0.0){
+                        rampRate = 0.0;
+                        mFlywheelMotor.setOpenLoopRampRate(rampRate);
+                    }
                     if (mWantedSpeed * 0.7 > getCurrentRPM()){
                         mFlywheelMotor.setVoltage(12.0);
                     }
@@ -60,6 +65,10 @@ public class FlywheelSubsystem implements Subsystem {
                     if(currentLimit != 15){
                         currentLimit = 15;
                         mFlywheelMotor.setSmartCurrentLimit(currentLimit);
+                    }
+                    if(rampRate != 1.0){
+                        rampRate = 1.0;
+                        mFlywheelMotor.setOpenLoopRampRate(1.0);
                     }
                     
                     if(mWantedSpeed < getCurrentRPM()){

@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 public class Conveyor implements Subsystem {
@@ -71,6 +72,9 @@ public class Conveyor implements Subsystem {
         mTalonMotor = new TalonSRX(RobotMap.lowerConveyor);
         mTalonMotor.configVoltageCompSaturation(9);
         mTalonMotor.enableVoltageCompensation(true);
+        SupplyCurrentLimitConfiguration config = new SupplyCurrentLimitConfiguration(true, 40.0, 50.0, .2);
+        mTalonMotor.configSupplyCurrentLimit(config);
+        mTalonMotor.configOpenloopRamp(0.4);
     }
 
     @Override

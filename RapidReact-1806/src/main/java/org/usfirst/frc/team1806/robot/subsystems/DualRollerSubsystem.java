@@ -28,6 +28,8 @@ public class DualRollerSubsystem implements Subsystem{
         SupplyCurrentLimitConfiguration config = new SupplyCurrentLimitConfiguration(true, 40.0, 50.0, .2);
         frontRoller.configSupplyCurrentLimit(config);
         backRoller.configSupplyCurrentLimit(config);
+        frontRoller.configOpenloopRamp(0.2);
+        backRoller.configOpenloopRamp(0.2);
     }
 
 
