@@ -188,6 +188,9 @@ public class OI {
 		boolean enableAngler = operatorController.getButtonStart();
 		boolean zeroAngler = operatorController.getButtonBack();
 
+		boolean loadConevyor = operatorController.getButtonRB();
+		boolean reverseConveyor = operatorController.getButtonLB();
+
 
 
 		//define all driver controls
@@ -244,8 +247,8 @@ public class OI {
 				shiftHighGear = driverController.getButtonY();
 				shiftLowGear = driverController.getButtonB();
 
-				intakeFront = driverController.getButtonRB();
-				intakeBack = driverController.getButtonLB();
+				intakeFront = driverController.getButtonLB();
+				intakeBack = driverController.getButtonRB();
 				feedThroughFromFront = driverController.getPOVUp();
 				feedThroughFromBack = driverController.getPOVDown();
 				// POV Left and right are still unused, as is the right stick, and forward/back
@@ -354,6 +357,14 @@ public class OI {
 			mSuperStructure.wantPrepareShot(Shot.LOW_GOAL_FLIPPED);
 		}else {
 			mSuperStructure.stop();
+		}
+
+		if(loadConevyor){
+			mSuperStructure.wantInnerBallPathIntake();
+		}else if (reverseConveyor){
+			mSuperStructure.wantInnerBallPathReverse();
+		}else{
+			mSuperStructure.wantInnerBallPathStop();
 		}
 		
 		

@@ -52,6 +52,12 @@ public class SuperStructure implements Subsystem {
         FeedThrough
     }
 
+    public enum InnerBallPathModes{
+        kIntake,
+        kReverse,
+        kIdle
+    }
+
     private Loop mLoop = new Loop() {
 
         @Override
@@ -284,8 +290,6 @@ public class SuperStructure implements Subsystem {
                             }
                             mFrontIntake.stop();
                             mBackIntake.stop();
-                            mDualRollerSubsystem.stop();
-                            mConveyor.stop();
                             mIdleStates = IdleStates.AtHome;
                             mLaunchboxAngler.goToAngle(0.0);
                             if(mElevator.isAtArbitraryPosition(Constants.kLiftBottomPivotHeight) && mLaunchboxAngler.checkIfAtArbitraryAngle(0.0));
@@ -299,11 +303,27 @@ public class SuperStructure implements Subsystem {
                             mElevator.goToSetpointInches(Constants.kLiftBottomPivotHeight);
                             mFrontIntake.stop();
                             mBackIntake.stop();
-                            mDualRollerSubsystem.stop();
-                            mConveyor.stop();
+
                             mLaunchboxAngler.goToAngle(0.0);
 
                             break;
+                    }
+
+                    switch(mInnerBallPathMode){
+                        default:
+                        case kIdle:
+                            mDualRollerSubsystem.stop();
+                            mConveyor.stop();
+                            break;
+                        case kIntake:
+                            mDualRollerSubsystem.startRoller();
+                            mConveyor.loadConveyor();
+                            break;
+                        case kReverse:
+                            mDualRollerSubsystem.feedBackwards();
+                            mConveyor.launch();
+                            break;
+                        
                     }
                     break;
                 case Climbing:
@@ -371,6 +391,7 @@ public class SuperStructure implements Subsystem {
     private SuperStructureStates mSuperStructureStates;
     private PicoColorSensor mPicoColorSensor;
     private LaunchingStates mLaunchingStates;
+    private InnerBallPathModes mInnerBallPathMode;
     private Boolean mWantConfirmShot;
     private Shot mWantedShot; // make sure to null check this
     private IdleStates mIdleStates;
@@ -388,6 +409,7 @@ public class SuperStructure implements Subsystem {
 
     private SuperStructure() {
         intakePowerManagementStage = 0;
+        mInnerBallPathMode = InnerBallPathModes.kIdle;
         mElevator = ElevatorSubsystem.getInstance();
         mPicoColorSensor = new PicoColorSensor();
         mFrontIntake = new IntakeSubsystem(RobotMap.frontIntake, RobotMap.frontIntakeExtend, RobotMap.frontIntakeRetract);
@@ -506,6 +528,18 @@ public class SuperStructure implements Subsystem {
             intakePowerManagementChangeTime = Timer.getFPGATimestamp();
         }
         
+    }
+
+    public synchronized void wantInnerBallPathIntake(){
+        mInnerBallPathMode = InnerBallPathModes.kIntake;
+    }
+
+    public synchronized void wantInnerBallPathReverse(){
+        mInnerBallPathMode = InnerBallPathModes.kReverse;
+    }
+
+    public synchronized void wantInnerBallPathStop(){
+        mInnerBallPathMode = InnerBallPathModes.kIdle;
     }
 
     public synchronized void wantPrepareShot(Shot wantedShot) {
