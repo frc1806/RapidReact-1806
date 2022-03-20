@@ -28,7 +28,7 @@ public class LaunchBoxAngler implements Subsystem {
     private PIDController mPIDController;
     private static LaunchBoxAngler LUNCH_BOX_ANGLER = new LaunchBoxAngler();
     private Double mKp, mKi, mKd, mWantedSetPoint;
-    private Double angleLeniency = 1.5;
+    private Double angleLeniency = 2.0;
     private Double angleLeniencyImprecise = 6.0;
     private final double ROBOT_OFFSET = Constants.kIsCompBot?-142.6:-51;
     private double currentOffset;

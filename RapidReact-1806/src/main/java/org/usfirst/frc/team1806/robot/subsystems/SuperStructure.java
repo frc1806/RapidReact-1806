@@ -32,7 +32,7 @@ public class SuperStructure implements Subsystem {
         Idle,
         Climbing,
         FrontIntakeFeedThrough,
-        BackIntakeFeedThrough
+        BackIntakeFeedThrough,
     };
 
     public enum LaunchingStates {
@@ -183,7 +183,16 @@ public class SuperStructure implements Subsystem {
                     mCompressor.disable();
                     mDriveTrainSubsystem.setCurrentLimitPerMotor(Constants.kDriveLimitedAmpLimit);
                     mDriveTrainSubsystem.setOpenLoopRampRate(Constants.kDriveLimitedRampRate);
-
+                    if(frontSweep){
+                        mFrontIntake.wantSweep();
+                    }else{
+                        mFrontIntake.stop();
+                    }
+                    if(rearSweep){
+                        mBackIntake.wantSweep();
+                    }else{
+                        mBackIntake.stop();
+                    }
                     switch (mLaunchingStates) {
                         default:
                         case kPreparingLaunch:
@@ -204,11 +213,9 @@ public class SuperStructure implements Subsystem {
                                 mUpFlywheel.stop();
                                 mDownFlywheel.stop();
                             }
-                            mFrontIntake.stop();
-                            mBackIntake.stop();
                             mDualRollerSubsystem.stop();
                             mConveyor.prepareForLaunch();
-                            if (mWantConfirmShot && mLaunchboxAngler.checkIfAtArbitraryAngle(mWantedShot.getLauncherAngle())&& mElevator.isAtArbitraryPosition(mWantedShot.getLiftHeight()) && mUpFlywheel.isSpeedInRange() && mDownFlywheel.isSpeedInRange()) 
+                            if (mWantConfirmShot && mLaunchboxAngler.checkIfAtArbitraryAngle(mWantedShot.getLauncherAngle())&& mElevator.isAtArbitraryPosition(mWantedShot.getLiftHeight()) && mUpFlywheel.isAtSpeed(mWantedShot.getTopSpeed()) && mDownFlywheel.isAtSpeed(mWantedShot.getBottomSpeed())) 
                             {
                                 mLaunchingStates = LaunchingStates.kLaunching;
                             }
@@ -216,8 +223,6 @@ public class SuperStructure implements Subsystem {
                         case kChangeShot:
                             mUpFlywheel.setWantedSpeed(mWantedShot.getTopSpeed());
                             mDownFlywheel.setWantedSpeed(mWantedShot.getBottomSpeed());
-                            mFrontIntake.stop();
-                            mBackIntake.stop();
                             mDualRollerSubsystem.stop();
                             mConveyor.prepareForLaunch();
                             if (!isShotAngleIncreasing){
@@ -246,8 +251,6 @@ public class SuperStructure implements Subsystem {
                             else {
                                 mLaunchboxAngler.goToAngle(0.0);
                             }
-                            mFrontIntake.stop();
-                            mBackIntake.stop();
                             mConveyor.launch();
                             mDualRollerSubsystem.stop();
                             if(olderAverage > 0 && recentAverage > 0)
@@ -275,11 +278,20 @@ public class SuperStructure implements Subsystem {
                     mCompressor.enableDigital();
                     mDriveTrainSubsystem.setCurrentLimitPerMotor(Constants.kDriveNormalAmpLimit);
                     mDriveTrainSubsystem.setOpenLoopRampRate(Constants.kDriveNormalRampRate);
+                    if(frontSweep){
+                        mFrontIntake.wantSweep();
+                    }else{
+                        mFrontIntake.stop();
+                    }
+                    if(rearSweep){
+                        mBackIntake.wantSweep();
+                    }else{
+                        mBackIntake.stop();
+                    }
                     switch(mIdleStates){
                         default:
                         case GoingHome:
-                            mUpFlywheel.stop();
-                            mDownFlywheel.stop();
+ 
                             if(mLaunchboxAngler.checkIfAtArbitraryAngle(0.0))
                             {
                                 mElevator.goToSetpointInches(Constants.kLiftBottomPivotHeight);
@@ -288,8 +300,6 @@ public class SuperStructure implements Subsystem {
                             {
                                 mElevator.goToSetpointInches(Constants.kLiftBottomPivotHeight + Constants.kLaunchBoxInchesToFreedom);
                             }
-                            mFrontIntake.stop();
-                            mBackIntake.stop();
                             mIdleStates = IdleStates.AtHome;
                             mLaunchboxAngler.goToAngle(0.0);
                             if(mElevator.isAtArbitraryPosition(Constants.kLiftBottomPivotHeight) && mLaunchboxAngler.checkIfAtArbitraryAngle(0.0));
@@ -298,11 +308,7 @@ public class SuperStructure implements Subsystem {
                             }
                             break;
                         case AtHome:
-                            mUpFlywheel.stop();
-                            mDownFlywheel.stop();
                             mElevator.goToSetpointInches(Constants.kLiftBottomPivotHeight);
-                            mFrontIntake.stop();
-                            mBackIntake.stop();
 
                             mLaunchboxAngler.goToAngle(0.0);
 
@@ -314,14 +320,20 @@ public class SuperStructure implements Subsystem {
                         case kIdle:
                             mDualRollerSubsystem.stop();
                             mConveyor.stop();
+                            mUpFlywheel.stop();
+                            mDownFlywheel.stop();
                             break;
                         case kIntake:
                             mDualRollerSubsystem.startRoller();
                             mConveyor.loadConveyor();
+                            mUpFlywheel.setReverseSpeed(1500.0);
+                            mDownFlywheel.setReverseSpeed(1500.0);
                             break;
                         case kReverse:
                             mDualRollerSubsystem.feedBackwards();
                             mConveyor.launch();
+                            mUpFlywheel.setWantedSpeed(1500.0);
+                            mDownFlywheel.setWantedSpeed(1500.0);
                             break;
                         
                     }
@@ -333,8 +345,16 @@ public class SuperStructure implements Subsystem {
                     mUpFlywheel.stop();
                     mDownFlywheel.stop();
                     mElevator.stop();
-                    mFrontIntake.stop();
-                    mBackIntake.stop();
+                    if(frontSweep){
+                        mFrontIntake.wantSweep();
+                    }else{
+                        mFrontIntake.stop();
+                    }
+                    if(rearSweep){
+                        mBackIntake.wantSweep();
+                    }else{
+                        mBackIntake.stop();
+                    }
                     mDualRollerSubsystem.stop();
                     mConveyor.stop();
                     mLaunchboxAngler.goToAngle(0.0);
@@ -402,12 +422,17 @@ public class SuperStructure implements Subsystem {
     Compressor mCompressor;
     DriveTrainSubsystem mDriveTrainSubsystem;
 
+    private boolean frontSweep;
+    private boolean rearSweep;
+
     //Cargo counting
     private BisectedCircularBuffer flywheelAverageSpeedsBuffer;
     private boolean isFlywheelSpeedDecreasing;
     private int ballCount;
 
     private SuperStructure() {
+        frontSweep = false;
+        rearSweep = false;
         intakePowerManagementStage = 0;
         mInnerBallPathMode = InnerBallPathModes.kIdle;
         mElevator = ElevatorSubsystem.getInstance();
@@ -553,11 +578,12 @@ public class SuperStructure implements Subsystem {
                 mLaunchingStates = LaunchingStates.kChangeShot;
             }
         }
+        mWantedShot = wantedShot;
         mUpFlywheel.setPreciseShot(mWantedShot.getIsPreciseShot());
         mDownFlywheel.setPreciseShot(mWantedShot.getIsPreciseShot());
         mLaunchboxAngler.setIsPreciseShot(mWantedShot.getIsPreciseShot());
         mSuperStructureStates = SuperStructureStates.Launching;
-        mWantedShot = wantedShot;
+        
     }
 
     public synchronized void wantConfirmLaunch(Boolean shouldShoot) {
@@ -639,7 +665,15 @@ public class SuperStructure implements Subsystem {
         if(color.red < Constants.kRedBallMinimumValues.red || color.red > Constants.kRedBallMaxValues.red) return false;
         if(color.green < Constants.kRedBallMinimumValues.green || color.green > Constants.kRedBallMaxValues.green) return false;
         if(color.blue < Constants.kRedBallMinimumValues.blue || color.blue > Constants.kBlueBallMaxValues.blue) return false;
-        return true;
+          return true;
+    }
+
+    public void setWantFrontSweep(boolean sweep){
+        frontSweep = sweep;
+    }
+
+    public void setWantRearSwee(boolean sweep){
+        rearSweep = sweep;
     }
 
 

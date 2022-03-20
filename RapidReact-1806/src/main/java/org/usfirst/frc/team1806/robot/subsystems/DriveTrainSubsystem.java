@@ -221,7 +221,7 @@ public class DriveTrainSubsystem implements Subsystem {
 		leftA.follow(leaderLeft);
 		leftB.follow(leaderLeft);
 
-		setCurrentLimitPerMotor(45);
+		setCurrentLimitPerMotor(50);
 
 		leaderLeft.setInverted(true);
 		leftA.setInverted(true);
@@ -232,7 +232,7 @@ public class DriveTrainSubsystem implements Subsystem {
 		rightA.setInverted(false);
 		rightB.setInverted(false);
 
-		setOpenLoopRampRate(0.5);
+		setOpenLoopRampRate(0.2);
 
 		leftEncoderDistance = 0;
 		rightEncoderDistance = 0;

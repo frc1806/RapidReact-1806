@@ -30,6 +30,7 @@ public class DualRollerSubsystem implements Subsystem{
         backRoller.configSupplyCurrentLimit(config);
         frontRoller.configOpenloopRamp(0.2);
         backRoller.configOpenloopRamp(0.2);
+
     }
 
 

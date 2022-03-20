@@ -12,6 +12,7 @@ import org.usfirst.frc.team1806.robot.loop.Looper;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.util.CircularBuffer;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -21,12 +22,13 @@ public class FlywheelSubsystem implements Subsystem {
     private Double mKp, mKi, mKd, mKf, mIzone, mWantedSpeed, mks, mkv, mKa;
     private PIDController mFlywheelPIDController;
     private SimpleMotorFeedforward mFeedforwardController;
-    private double withinLeniency = 100.0;
-    private double withinLeniencyImprecise = 300.0;
+    private double withinLeniency = 150.0;
+    private double withinLeniencyImprecise = 400.0;
     private Encoder mEncoder;
     private int currentLimit;
     private double rampRate;
     private boolean mPreciseShot = true;
+    private CircularBuffer averagingBuffer;
 
 
     private Loop mLoop = new Loop(){
@@ -38,6 +40,7 @@ public class FlywheelSubsystem implements Subsystem {
 
         @Override
         public void onLoop(double timestamp) {
+            averagingBuffer.addFirst(getCurrentRPM());
             switch(mFlywheelStates){
                 case kIdle:
                     stop();
@@ -119,9 +122,9 @@ public class FlywheelSubsystem implements Subsystem {
         mFlywheelStates = FlywheelStates.kIdle;
         mEncoder = new Encoder(quadA, quadB);
         mEncoder.setDistancePerPulse((1.0/2048.0) * 60); //2048 CPR encoder, change RPS to RPM
-        mEncoder.setSamplesToAverage(4);
+        mEncoder.setSamplesToAverage(12);
         mEncoder.setReverseDirection(isEncoderInverted);
-
+        averagingBuffer = new CircularBuffer(30);
         reloadGames();
     }
 
@@ -203,7 +206,17 @@ public class FlywheelSubsystem implements Subsystem {
     }
 
     public Boolean isSpeedInRange(){
-        return Math.abs(getCurrentRPM() - mWantedSpeed) < (mPreciseShot?withinLeniency:withinLeniencyImprecise);
+       return isAtSpeed(mWantedSpeed);
+    }
+
+    public Boolean isAtSpeed(double Speed){
+        double runningTotal = 0;
+        
+        for(int i = 0; i < 30; i++){
+            runningTotal += averagingBuffer.get(i);
+        }
+        //SmartDashboard.putNumber("Average", (runningTotal / 30.0));
+        return Math.abs((runningTotal / 30.0) - mWantedSpeed) < (mPreciseShot?withinLeniency:withinLeniencyImprecise);
     }
 
     public double getOutputPower(){

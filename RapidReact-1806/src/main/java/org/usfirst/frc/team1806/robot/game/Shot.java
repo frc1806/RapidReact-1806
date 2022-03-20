@@ -115,13 +115,13 @@ public class Shot {
     
     public static Shot LOW_GOAL = new Shot (140.0, 1200.0, 850.0, false, false);
     public static Shot LOW_GOAL_FLIPPED = LOW_GOAL.getThisShotButFlipped();
-    public static Shot CLOSE_SHOT = new Shot(166.0, 2400.0, 2400.0, true, false);
+    public static Shot CLOSE_SHOT = new Shot(166.0, 2500.0, 2500.0, true, false);
     public static Shot FLIPPED_CLOSE_SHOT = CLOSE_SHOT.getThisShotButFlipped();
-    public static Shot TARMAC_EDGE_SHOT = new Shot(160.0, 2300.0, 2300.0, true, false);
+    public static Shot TARMAC_EDGE_SHOT = new Shot(160.0, 3500.0, 3300.0, true, false);
     public static Shot TARMAC_EDGE_SHOT_FLIPPED = TARMAC_EDGE_SHOT.getThisShotButFlipped();
-    public static Shot BIG_SHOT = new Shot(155.0, 4000.0, 3500.0, true, false);
+    public static Shot BIG_SHOT = new Shot(155.0, 4437.0, 2172.0, true, false);
     public static Shot BIG_SHOT_FLIPPED = BIG_SHOT.getThisShotButFlipped();
-    public static Shot ROLL_SHOT = new Shot(110.0, 5500.0, 2000.0, false, false);
+    public static Shot ROLL_SHOT = new Shot(110.0, 4500.0, 2000.0, false, false);
     public static Shot ROLL_SHOT_FLIPPED = ROLL_SHOT.getThisShotButFlipped();
 
     /**
