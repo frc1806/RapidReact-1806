@@ -12,6 +12,7 @@ import org.usfirst.frc.team1806.robot.loop.Looper;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.util.CircularBuffer;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -21,8 +22,13 @@ public class FlywheelSubsystem implements Subsystem {
     private Double mKp, mKi, mKd, mKf, mIzone, mWantedSpeed, mks, mkv, mKa;
     private PIDController mFlywheelPIDController;
     private SimpleMotorFeedforward mFeedforwardController;
-    private Integer withinLeniency = 300;
+    private double withinLeniency = 150.0;
+    private double withinLeniencyImprecise = 400.0;
     private Encoder mEncoder;
+    private int currentLimit;
+    private double rampRate;
+    private boolean mPreciseShot = true;
+    private CircularBuffer averagingBuffer;
 
 
     private Loop mLoop = new Loop(){
@@ -34,13 +40,23 @@ public class FlywheelSubsystem implements Subsystem {
 
         @Override
         public void onLoop(double timestamp) {
+            averagingBuffer.addFirst(getCurrentRPM());
             switch(mFlywheelStates){
                 case kIdle:
                     stop();
                     return;
                 case kVelocityControl:
                 if(mWantedSpeed> 0){
-                    if (mWantedSpeed * 0.7 > getCurrentRPM()){
+                    if(currentLimit != 30)
+                    {
+                        currentLimit = 30;
+                        mFlywheelMotor.setSmartCurrentLimit(currentLimit);
+                    }
+                    if(rampRate != 0.05){
+                        rampRate = 0.5;
+                        mFlywheelMotor.setOpenLoopRampRate(rampRate);
+                    }
+                    if (mWantedSpeed * 0.66 > getCurrentRPM()){
                         mFlywheelMotor.setVoltage(12.0);
                     }
                     else if(mWantedSpeed > getCurrentRPM()){
@@ -51,9 +67,15 @@ public class FlywheelSubsystem implements Subsystem {
                     }
                 }
                 else{
-                    if (mWantedSpeed * 0.7 < getCurrentRPM()){
-                        mFlywheelMotor.setVoltage(-12.0);
+                    if(currentLimit != 15){
+                        currentLimit = 15;
+                        mFlywheelMotor.setSmartCurrentLimit(currentLimit);
                     }
+                    if(rampRate != 1.0){
+                        rampRate = 1.0;
+                        mFlywheelMotor.setOpenLoopRampRate(1.0);
+                    }
+                    
                     if(mWantedSpeed < getCurrentRPM()){
                         mFlywheelMotor.setVoltage(mKf * mWantedSpeed * 1.2);
                     }
@@ -86,6 +108,8 @@ public class FlywheelSubsystem implements Subsystem {
         mFlywheelMotor.setInverted(isInverted);
         mFlywheelMotor.setIdleMode(IdleMode.kCoast);
         mFlywheelMotor.setSmartCurrentLimit(30);
+        mFlywheelMotor.setOpenLoopRampRate(0.0);
+        currentLimit = 30;
         mKp = kp;
         mKi = ki;
         mKd = kd;
@@ -100,7 +124,7 @@ public class FlywheelSubsystem implements Subsystem {
         mEncoder.setDistancePerPulse((1.0/2048.0) * 60); //2048 CPR encoder, change RPS to RPM
         mEncoder.setSamplesToAverage(12);
         mEncoder.setReverseDirection(isEncoderInverted);
-
+        averagingBuffer = new CircularBuffer(30);
         reloadGames();
     }
 
@@ -182,11 +206,25 @@ public class FlywheelSubsystem implements Subsystem {
     }
 
     public Boolean isSpeedInRange(){
-        return Math.abs(getCurrentRPM() - mWantedSpeed) < withinLeniency;
+       return isAtSpeed(mWantedSpeed);
+    }
+
+    public Boolean isAtSpeed(double Speed){
+        double runningTotal = 0;
+        
+        for(int i = 0; i < 30; i++){
+            runningTotal += averagingBuffer.get(i);
+        }
+        //SmartDashboard.putNumber("Average", (runningTotal / 30.0));
+        return Math.abs((runningTotal / 30.0) - mWantedSpeed) < (mPreciseShot?withinLeniency:withinLeniencyImprecise);
     }
 
     public double getOutputPower(){
         return mFlywheelMotor.getAppliedOutput();
+    }
+
+    public void setPreciseShot(boolean preciseShot){
+        
     }
 
     @Override

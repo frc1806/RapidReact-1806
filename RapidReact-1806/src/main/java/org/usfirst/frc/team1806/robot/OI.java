@@ -180,13 +180,25 @@ public class OI {
 		boolean lowGoalFlipShot = operatorController.getButtonX();
 		boolean visionShot = operatorController.getRightTriggerAsDigital(); //driver may also be able to activate this
 
-		boolean overwriteBallCountTo0 = operatorController.getPOVDown();
-		boolean overwriteBallCountTo1 = operatorController.getPOVRight();
-		boolean overwriteBallCountTo2 = operatorController.getPOVUp();
+		boolean overwriteBallCountTo0 = false;
+		boolean overwriteBallCountTo1 = false;
+		boolean overwriteBallCountTo2 = false;
 		double  anglerPower = operatorController.getLeftJoyY();
 
 		boolean enableAngler = operatorController.getButtonStart();
 		boolean zeroAngler = operatorController.getButtonBack();
+
+		boolean loadConevyor = operatorController.getButtonRB();
+		boolean reverseConveyor = operatorController.getButtonLB();
+
+		boolean tarmacEdgeShot = operatorController.getPOVRight();
+		boolean tarmacEdgeFlipped = operatorController.getPOVUp();
+		boolean bigShot = operatorController.getPOVDown(); //Now's your chance to be a
+		boolean bigShotFlipped = operatorController.getPOVLeft();
+
+		boolean passForward = operatorController.getRightJoyY() > 0.5;
+		boolean passBack = operatorController.getRightJoyY() < -0.5;
+
 
 
 
@@ -201,6 +213,9 @@ public class OI {
 		boolean feedThroughFromFront;
 		boolean feedThroughFromBack;
 		boolean confirmShot;
+
+		boolean frontSweep;
+		boolean rearSweep;
 
 		double throttle;
 		double turn;
@@ -219,6 +234,9 @@ public class OI {
 				feedThroughFromFront = driverController.getPOVUp();
 				feedThroughFromBack = driverController.getPOVDown();
 				// face buttons are all unused.
+
+				frontSweep = driverController.getButtonY();
+				rearSweep = driverController.getButtonX();
 
 				confirmShot = driverController.getButtonA();
 				
@@ -244,14 +262,17 @@ public class OI {
 				shiftHighGear = driverController.getButtonY();
 				shiftLowGear = driverController.getButtonB();
 
-				intakeFront = driverController.getButtonRB();
-				intakeBack = driverController.getButtonLB();
+				intakeFront = driverController.getButtonLB();
+				intakeBack = driverController.getButtonRB();
 				feedThroughFromFront = driverController.getPOVUp();
 				feedThroughFromBack = driverController.getPOVDown();
 				// POV Left and right are still unused, as is the right stick, and forward/back
 				// buttons.
 
 				confirmShot =driverController.getPOVLeft();
+
+				frontSweep = driverController.getRightJoyY() > 0.5;
+				rearSweep = driverController.getRightJoyY() < -0.5;
 
 
 				visionShot = visionShot || driverController.getPOVRight();
@@ -303,6 +324,9 @@ public class OI {
 
 				confirmShot = driverController.getButtonA();
 
+				frontSweep = driverController.getButtonY();
+				rearSweep = driverController.getButtonX();
+
 				visionShot = visionShot || driverController.getButtonB();
 				visionLineup = visionLineup || driverController.getButtonB();
 
@@ -333,6 +357,8 @@ public class OI {
 			mSuperStructure.overwiteBallCount(2);
 		}
 
+		mSuperStructure.setWantFrontSweep(frontSweep);
+		mSuperStructure.setWantRearSwee(rearSweep);
 		//TODO: Add vision shot
 		if (intakeFront) {
 			mSuperStructure.wantIntakeFront();
@@ -342,7 +368,7 @@ public class OI {
 			mSuperStructure.wantFeedFrontIntake();
 		} else if (feedThroughFromBack) {
 			mSuperStructure.wantFeedBackIntake();
-		} else if (dashboardShot){
+		}else if (dashboardShot){
 			mSuperStructure.wantPrepareShot(Shot.TheShotDashboard.getDashboardShot());
 		} else if (closeShot){
 			mSuperStructure.wantPrepareShot(Shot.CLOSE_SHOT);
@@ -352,8 +378,31 @@ public class OI {
 			mSuperStructure.wantPrepareShot(Shot.FLIPPED_CLOSE_SHOT);
 		} else if (lowGoalFlipShot){
 			mSuperStructure.wantPrepareShot(Shot.LOW_GOAL_FLIPPED);
-		}else {
+		} else if (tarmacEdgeShot){
+			mSuperStructure.wantPrepareShot(Shot.TARMAC_EDGE_SHOT);
+		} else if (tarmacEdgeFlipped){
+			mSuperStructure.wantPrepareShot(Shot.TARMAC_EDGE_SHOT_FLIPPED);
+		}else if (bigShot){
+			mSuperStructure.wantPrepareShot(Shot.BIG_SHOT);
+		}else if (bigShotFlipped){
+			mSuperStructure.wantPrepareShot(Shot.BIG_SHOT_FLIPPED);
+		}
+		else if (passForward){
+			mSuperStructure.wantPrepareShot(Shot.ROLL_SHOT);
+		}
+		else if (passBack){
+			mSuperStructure.wantPrepareShot(Shot.ROLL_SHOT_FLIPPED);
+		}
+		else {
 			mSuperStructure.stop();
+		}
+
+		if(loadConevyor){
+			mSuperStructure.wantInnerBallPathIntake();
+		}else if (reverseConveyor){
+			mSuperStructure.wantInnerBallPathReverse();
+		}else{
+			mSuperStructure.wantInnerBallPathStop();
 		}
 		
 		

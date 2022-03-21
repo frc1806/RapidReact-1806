@@ -104,9 +104,9 @@ public class Constants {
     // PID gains for drive velocity loop ***This should be high gear lollz sorry yall
     // This is typically used in the most in the TurnToPoint action
     // Units: setpoint, error, and output are in counts
-    public final static double kDriveLowGearPositionKp = .1; //.008
-    public final static double kDriveLowGearPositionKi = .00044;
-    public final static double kDriveLowGearPositionKd = 0.1; //0.0035
+    public final static double kDriveLowGearPositionKp = .05; //.008
+    public final static double kDriveLowGearPositionKi = .00004;
+    public final static double kDriveLowGearPositionKd = 0.01; //0.0035
     public final static double kDriveLowGearPositionKf = 0.000;
     public final static double kDriveLowGearPositionIZone = 1.5;
     public final static int kDriveLowGearMaxVelocity = 700; // Counts
@@ -261,5 +261,12 @@ public static RawColor kRedBallMinimumValues = new RawColor(150, 0, 0, 0);
 
 //Vision lineup
 public static Double visionLineUpProportional = 1.0/20.0;
+
+
+//Power
+public static int kDriveNormalAmpLimit = 45;
+public static int kDriveLimitedAmpLimit = 35;
+public static double kDriveNormalRampRate = 0.3;
+public static double kDriveLimitedRampRate = 0.5;
 
 }
