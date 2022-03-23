@@ -37,8 +37,8 @@ public class DualRollerSubsystem implements Subsystem{
 
     public void startRoller() {
 
-        frontRoller.set(ControlMode.PercentOutput, .5);
-        backRoller.set(ControlMode.PercentOutput, .5);
+        frontRoller.set(ControlMode.PercentOutput, .85);
+        backRoller.set(ControlMode.PercentOutput, .85);
     }
 
 
@@ -92,13 +92,13 @@ public class DualRollerSubsystem implements Subsystem{
     }
 
     public void feedForward(){
-        frontRoller.set(ControlMode.PercentOutput, -.75);
-        backRoller.set(ControlMode.PercentOutput, .75);
+        frontRoller.set(ControlMode.PercentOutput, -1);
+        backRoller.set(ControlMode.PercentOutput, 1);
     }
 
     public void feedBackwards(){
-        frontRoller.set(ControlMode.PercentOutput, .75);
-        backRoller.set(ControlMode.PercentOutput, -.75);
+        frontRoller.set(ControlMode.PercentOutput, 1);
+        backRoller.set(ControlMode.PercentOutput, -1);
     }
 
     public static DualRollerSubsystem getInstance(){

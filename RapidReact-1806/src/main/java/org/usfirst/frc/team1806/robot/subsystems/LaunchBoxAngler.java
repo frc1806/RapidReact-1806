@@ -30,7 +30,7 @@ public class LaunchBoxAngler implements Subsystem {
     private Double mKp, mKi, mKd, mWantedSetPoint;
     private Double angleLeniency = 2.0;
     private Double angleLeniencyImprecise = 6.0;
-    private final double ROBOT_OFFSET = Constants.kIsCompBot?-142.6:-51;
+    private final double ROBOT_OFFSET = Constants.kIsCompBot?-261.1:-51;
     private double currentOffset;
     private double quadOffset;
     private boolean hasOffsetBeenSet;
