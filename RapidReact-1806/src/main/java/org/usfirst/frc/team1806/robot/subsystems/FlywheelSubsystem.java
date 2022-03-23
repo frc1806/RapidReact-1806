@@ -22,8 +22,8 @@ public class FlywheelSubsystem implements Subsystem {
     private Double mKp, mKi, mKd, mKf, mIzone, mWantedSpeed, mks, mkv, mKa;
     private PIDController mFlywheelPIDController;
     private SimpleMotorFeedforward mFeedforwardController;
-    private double withinLeniency = 150.0;
-    private double withinLeniencyImprecise = 400.0;
+    private double withinLeniency = 250.0;
+    private double withinLeniencyImprecise = 600.0;
     private Encoder mEncoder;
     private int currentLimit;
     private double rampRate;
@@ -67,8 +67,8 @@ public class FlywheelSubsystem implements Subsystem {
                     }
                 }
                 else{
-                    if(currentLimit != 15){
-                        currentLimit = 15;
+                    if(currentLimit != 25){
+                        currentLimit = 25;
                         mFlywheelMotor.setSmartCurrentLimit(currentLimit);
                     }
                     if(rampRate != 1.0){

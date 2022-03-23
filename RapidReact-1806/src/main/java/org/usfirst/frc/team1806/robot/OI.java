@@ -198,6 +198,7 @@ public class OI {
 
 		boolean passForward = operatorController.getRightJoyY() > 0.5;
 		boolean passBack = operatorController.getRightJoyY() < -0.5;
+		boolean wantClimb = operatorController.getLeftTriggerAsDigital();
 
 
 
@@ -392,6 +393,9 @@ public class OI {
 		}
 		else if (passBack){
 			mSuperStructure.wantPrepareShot(Shot.ROLL_SHOT_FLIPPED);
+		}
+		else if (wantClimb){
+			mSuperStructure.setWantClimb();
 		}
 		else {
 			mSuperStructure.stop();

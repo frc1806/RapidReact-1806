@@ -117,9 +117,9 @@ public class Shot {
     public static Shot LOW_GOAL_FLIPPED = LOW_GOAL.getThisShotButFlipped();
     public static Shot CLOSE_SHOT = new Shot(166.0, 2500.0, 2500.0, true, false);
     public static Shot FLIPPED_CLOSE_SHOT = CLOSE_SHOT.getThisShotButFlipped();
-    public static Shot TARMAC_EDGE_SHOT = new Shot(160.0, 3500.0, 3300.0, true, false);
+    public static Shot TARMAC_EDGE_SHOT = new Shot(150.0, 2600.0, 3200.0, true, false);
     public static Shot TARMAC_EDGE_SHOT_FLIPPED = TARMAC_EDGE_SHOT.getThisShotButFlipped();
-    public static Shot BIG_SHOT = new Shot(155.0, 4437.0, 2172.0, true, false);
+    public static Shot BIG_SHOT = new Shot(145.0, 4437.0, 2172.0, true, false);
     public static Shot BIG_SHOT_FLIPPED = BIG_SHOT.getThisShotButFlipped();
     public static Shot ROLL_SHOT = new Shot(110.0, 4500.0, 2000.0, false, false);
     public static Shot ROLL_SHOT_FLIPPED = ROLL_SHOT.getThisShotButFlipped();
@@ -138,27 +138,6 @@ public class Shot {
         this.bottomSpeed = bottomSpeed;
         this.isPreciseShot = isPreciseShot;
         this.isFlipped = isFlipped;
-    }
-
-
-
-    public Double getLiftHeight() {
-        return Constants.kLaunchBoxSpeenPosition;
-        /*
-        double maxLiftHeight = Double.MAX_VALUE;
-        for(PolarCoordinate coord : POINTS_OF_INTEREST_ON_LAUNCHBOX)
-        {
-            double pointLiftHeight = (MAX_LEGAL_HEIGHT) - (Math.asin(Units.degreesToRadians(launcherAngle - 90 + coord.getAngle())) * coord.getDistance()); 
-            if(pointLiftHeight < maxLiftHeight)
-            {
-                maxLiftHeight = pointLiftHeight;
-            }
-        }
-        if(maxLiftHeight > MAX_LEGAL_HEIGHT - 2){
-            maxLiftHeight = MAX_LEGAL_HEIGHT - 2;
-        }
-        return maxLiftHeight;
-        */
     }
 
     public Double getLauncherAngle() {
@@ -183,7 +162,7 @@ public class Shot {
     }   
 
     public Shot getThisShotButFlipped(){
-        return new Shot(this.getLauncherAngle(), this.getTopSpeed(), this.getBottomSpeed(), !this.getIsFlipped(), this.getIsPreciseShot());
+        return new Shot(this.getLauncherAngle(), this.getTopSpeed(), this.getBottomSpeed(), this.getIsPreciseShot(), !this.getIsFlipped());
     }
 
 }
