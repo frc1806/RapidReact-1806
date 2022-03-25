@@ -37,8 +37,8 @@ public class DualRollerSubsystem implements Subsystem{
 
     public void startRoller() {
 
-        frontRoller.set(ControlMode.PercentOutput, .85);
-        backRoller.set(ControlMode.PercentOutput, .85);
+        frontRoller.set(ControlMode.PercentOutput, .92);
+        backRoller.set(ControlMode.PercentOutput, .92);
     }
 
 

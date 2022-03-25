@@ -16,6 +16,7 @@ public class SixBallPath1 implements PathContainer {
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
         sWaypoints.add(new Waypoint(250,205,0,0));
+        sWaypoints.add(new Waypoint(226,224,0,20));
         sWaypoints.add(new Waypoint(215,233,0,10));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
@@ -30,7 +31,7 @@ public class SixBallPath1 implements PathContainer {
     public boolean isReversed() {
         return false; 
     }
-	// WAYPOINT_DATA: [{"position":{"x":250,"y":205},"speed":0,"radius":0,"comment":""},{"position":{"x":215,"y":233},"speed":0,"radius":0,"comment":""}]
+	// WAYPOINT_DATA: [{"position":{"x":250,"y":205},"speed":0,"radius":0,"comment":""},{"position":{"x":226,"y":224},"speed":30,"radius":0,"comment":""},{"position":{"x":215,"y":233},"speed":10,"radius":0,"comment":""}]
 	// IS_REVERSED: false
 	// FILE_NAME: SixBallPath1
 }

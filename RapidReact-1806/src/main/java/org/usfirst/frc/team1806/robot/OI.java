@@ -178,7 +178,7 @@ public class OI {
 		boolean closeFlipShot = operatorController.getButtonY();
 		boolean lowGoalShot = operatorController.getButtonA();
 		boolean lowGoalFlipShot = operatorController.getButtonX();
-		boolean visionShot = operatorController.getRightTriggerAsDigital(); //driver may also be able to activate this
+		boolean visionShot = false; //operatorController.getRightTriggerAsDigital(); //driver may also be able to activate this
 
 		boolean overwriteBallCountTo0 = false;
 		boolean overwriteBallCountTo1 = false;
@@ -199,6 +199,7 @@ public class OI {
 		boolean passForward = operatorController.getRightJoyY() > 0.5;
 		boolean passBack = operatorController.getRightJoyY() < -0.5;
 		boolean wantClimb = operatorController.getLeftTriggerAsDigital();
+		boolean wantLowClimb = operatorController.getRightTriggerAsDigital();
 
 
 
@@ -278,6 +279,9 @@ public class OI {
 
 				visionShot = visionShot || driverController.getPOVRight();
 				visionLineup = visionLineup || driverController.getPOVRight();
+
+				wantClimb |= driverController.getRightJoyX() > 0.5;
+				wantLowClimb |= driverController.getRightJoyX() < -0.5;
 
 				// decide throttle with triggers
 
@@ -395,7 +399,10 @@ public class OI {
 			mSuperStructure.wantPrepareShot(Shot.ROLL_SHOT_FLIPPED);
 		}
 		else if (wantClimb){
-			mSuperStructure.setWantClimb();
+			mSuperStructure.setWantClimbMid();
+		}
+		else if (wantLowClimb){
+			mSuperStructure.setWantClimbLow();
 		}
 		else {
 			mSuperStructure.stop();
@@ -413,7 +420,8 @@ public class OI {
 		// Handle shfting
 		if (shiftHighGear) {
 			mDriveTrainSubsystem.setHighGear(true);
-		} else if (shiftLowGear) {
+		} 
+		if (shiftLowGear) {
 			mDriveTrainSubsystem.setHighGear(false);
 		}
 

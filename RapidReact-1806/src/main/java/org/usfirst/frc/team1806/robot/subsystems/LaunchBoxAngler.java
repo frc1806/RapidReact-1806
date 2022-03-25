@@ -120,6 +120,10 @@ public class LaunchBoxAngler implements Subsystem {
                         power = 0;
                     }
 
+                    if(getCurrentAngle() < - 90){
+                        power = power * 0.7;
+                    }
+
 
                     /*
                     double power =  mWantedSetPoint - getCurrentAngle() > 0? .35 :-.35;
@@ -180,7 +184,7 @@ public class LaunchBoxAngler implements Subsystem {
         mKi = Constants.kLaunchBoxAnglerKi;
         mKd = Constants.kLaunchBoxAnglerKd;
         mLaunchMotor = new TalonSRX(RobotMap.launchBoxAngler);
-        mLaunchMotor.setInverted(true);
+        mLaunchMotor.setInverted(false);
         mLaunchMotor.setNeutralMode(NeutralMode.Brake);
         mLaunchMotor.configPeakCurrentLimit(0);
         mLaunchMotor.configContinuousCurrentLimit(100);

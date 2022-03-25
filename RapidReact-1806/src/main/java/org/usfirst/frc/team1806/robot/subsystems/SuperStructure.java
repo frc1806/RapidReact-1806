@@ -30,7 +30,8 @@ public class SuperStructure implements Subsystem {
         IntakingBack,
         Launching,
         Idle,
-        Climbing,
+        ClimbingMid,
+        ClimbingLow,
         FrontIntakeFeedThrough,
         BackIntakeFeedThrough,
     };
@@ -284,7 +285,7 @@ public class SuperStructure implements Subsystem {
                             break;
                     }
                     break;
-                case Climbing:
+                case ClimbingMid:
                     mCompressor.disable();
                     mDriveTrainSubsystem.setCurrentLimitPerMotor(Constants.kDriveNormalAmpLimit);
                     mDriveTrainSubsystem.setOpenLoopRampRate(Constants.kDriveNormalRampRate);
@@ -304,6 +305,28 @@ public class SuperStructure implements Subsystem {
                     mConveyor.stop();
                     mLaunchboxAngler.goToAngle(77.7); //Hi 987
                     break;
+
+                case ClimbingLow:
+                    mCompressor.disable();
+                    mDriveTrainSubsystem.setCurrentLimitPerMotor(Constants.kDriveNormalAmpLimit);
+                    mDriveTrainSubsystem.setOpenLoopRampRate(Constants.kDriveNormalRampRate);
+                    mUpFlywheel.stop();
+                    mDownFlywheel.stop();
+                    if(frontSweep){
+                        mFrontIntake.wantSweep();
+                    }else{
+                        mFrontIntake.stop();
+                    }
+                    if(rearSweep){
+                        mBackIntake.wantSweep();
+                    }else{
+                        mBackIntake.stop();
+                    }
+                    mDualRollerSubsystem.stop();
+                    mConveyor.stop();
+                    mLaunchboxAngler.goToAngle(-66.6);
+                    break;
+
                 case FrontIntakeFeedThrough:
                     mDriveTrainSubsystem.setCurrentLimitPerMotor(Constants.kDriveLimitedAmpLimit);
                     mDriveTrainSubsystem.setOpenLoopRampRate(Constants.kDriveLimitedRampRate);
@@ -603,8 +626,12 @@ public class SuperStructure implements Subsystem {
         rearSweep = sweep;
     }
 
-    public void setWantClimb(){
-        mSuperStructureStates = SuperStructureStates.Climbing;
+    public void setWantClimbMid(){
+        mSuperStructureStates = SuperStructureStates.ClimbingMid;
+    }
+
+    public void setWantClimbLow(){
+        mSuperStructureStates = SuperStructureStates.ClimbingLow;
     }
 
 

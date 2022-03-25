@@ -60,10 +60,10 @@ public class FlywheelSubsystem implements Subsystem {
                         mFlywheelMotor.setVoltage(12.0);
                     }
                     else if(mWantedSpeed > getCurrentRPM()){
-                        mFlywheelMotor.setVoltage(mKf * mWantedSpeed * 1.2);
+                        mFlywheelMotor.setVoltage(mKf * mWantedSpeed * 1.1);
                     }
                     else{
-                        mFlywheelMotor.setVoltage(mKf * mWantedSpeed * 0.8);
+                        mFlywheelMotor.setVoltage(mKf * mWantedSpeed * 0.9);
                     }
                 }
                 else{
