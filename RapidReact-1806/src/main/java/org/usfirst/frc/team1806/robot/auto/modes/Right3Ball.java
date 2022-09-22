@@ -3,18 +3,13 @@ package org.usfirst.frc.team1806.robot.auto.modes;
 import java.util.Arrays;
 
 import org.usfirst.frc.team1806.robot.auto.actions.SloppyTurnToHeading;
-import org.usfirst.frc.team1806.robot.auto.actions.SloppyTurnToPoint;
 import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.IntakeBack;
-import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.IntakeFront;
-import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.SetInnerBallPathIntakeAction;
-import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.SetInnerBallPathStopAction;
 import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.Shoot;
 import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.StopSuperStructure;
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.DrivePathAction;
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.DrivePathActionWithTimeout;
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.ParallelAction;
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.ResetPoseFromPathAction;
-import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.RunActionAtAngle;
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.WaitAction;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeBase;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeEndedException;

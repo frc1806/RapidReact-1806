@@ -17,8 +17,6 @@ public class DataLogger {
 	// Creates fileName using RoboRio calender
 	private Calendar mC = Calendar.getInstance();
 	private String mFileName = "/U/" + String.valueOf(mC.getTime() + ".csv");
-	private FileWriter mFileWriter;
-	private BufferedWriter mBufferedWriter;
 	private boolean mAlreadyRan = false;
 	
 	public DataLogger(){

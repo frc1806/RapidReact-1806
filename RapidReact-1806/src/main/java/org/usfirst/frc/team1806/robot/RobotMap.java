@@ -1,7 +1,6 @@
 
 package org.usfirst.frc.team1806.robot;
 
-import edu.wpi.first.wpilibj.DutyCycle;
 
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into

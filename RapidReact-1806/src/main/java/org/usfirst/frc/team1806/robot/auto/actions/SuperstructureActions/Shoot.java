@@ -1,7 +1,5 @@
 package org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions;
 
-import java.security.Timestamp;
-
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.Action;
 import org.usfirst.frc.team1806.robot.game.Shot;
 import org.usfirst.frc.team1806.robot.subsystems.SuperStructure;

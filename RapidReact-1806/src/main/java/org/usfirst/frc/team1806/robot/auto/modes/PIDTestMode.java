@@ -1,15 +1,10 @@
 package org.usfirst.frc.team1806.robot.auto.modes;
 
-import org.usfirst.frc.team1806.robot.FeatureFlags;
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.*;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeBase;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeEndedException;
-import org.usfirst.frc.team1806.robot.auto.paths.DumbMode;
 import org.usfirst.frc.team1806.robot.auto.paths.PIDTestPath;
 import org.usfirst.frc.team1806.robot.path.PathContainer;
-import org.usfirst.frc.team1806.robot.util.Translation2d;
-
-import java.beans.FeatureDescriptor;
 
 public class PIDTestMode extends AutoModeBase {
     @Override

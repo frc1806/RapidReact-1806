@@ -2,9 +2,6 @@ package org.usfirst.frc.team1806.robot.util.LED;
 
 import edu.wpi.first.wpilibj.util.Color;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class RGBWaveLEDPattern implements LEDPattern {
 
     private double speed;

@@ -1,6 +1,5 @@
 package org.usfirst.frc.team1806.robot;
 
-import org.usfirst.frc.team1806.robot.util.Translation2d;
 import org.usfirst.frc.team1806.robot.util.XboxControllerConfigValues;
 import org.usfirst.frc.team1806.robot.util.PicoColorSensor.RawColor;
 

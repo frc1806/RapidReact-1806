@@ -3,12 +3,9 @@ package org.usfirst.frc.team1806.robot.auto.modes;
 import java.util.Arrays;
 
 import org.usfirst.frc.team1806.robot.auto.actions.SloppyTurnToHeading;
-import org.usfirst.frc.team1806.robot.auto.actions.SloppyTurnToPoint;
 import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.BackFeedThrough;
 import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.FrontFeedThrough;
 import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.IntakeFront;
-import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.SetInnerBallPathIntakeAction;
-import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.SetInnerBallPathStopAction;
 import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.Shoot;
 import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.StopSuperStructure;
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.DrivePathAction;
@@ -23,7 +20,6 @@ import org.usfirst.frc.team1806.robot.auto.paths.LeftSideElimHub2;
 import org.usfirst.frc.team1806.robot.auto.paths.SixBallPath1;
 import org.usfirst.frc.team1806.robot.game.Shot;
 import org.usfirst.frc.team1806.robot.util.Rotation2d;
-import org.usfirst.frc.team1806.robot.util.Translation2d;
 
 //Hi Chris
 

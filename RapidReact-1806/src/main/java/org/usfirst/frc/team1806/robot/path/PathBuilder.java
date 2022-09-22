@@ -5,7 +5,6 @@ import java.util.List;
 import org.usfirst.frc.team1806.robot.util.RigidTransform2d;
 import org.usfirst.frc.team1806.robot.util.Rotation2d;
 import org.usfirst.frc.team1806.robot.util.Translation2d;
-import org.usfirst.frc.team1806.robot.path.motion.MotionState;
 
 /**
  * Class used to convert a list of Waypoints into a Path object consisting of arc and line PathSegments

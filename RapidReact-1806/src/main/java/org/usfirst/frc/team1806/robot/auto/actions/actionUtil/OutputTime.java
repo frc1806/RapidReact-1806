@@ -1,6 +1,5 @@
 package org.usfirst.frc.team1806.robot.auto.actions.actionUtil;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 
 public class OutputTime implements Action {

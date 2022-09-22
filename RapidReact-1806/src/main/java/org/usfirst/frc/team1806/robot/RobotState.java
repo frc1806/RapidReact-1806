@@ -2,12 +2,10 @@ package org.usfirst.frc.team1806.robot;
 
 import java.util.Map;
 
-import org.usfirst.frc.team1806.robot.subsystems.DriveTrainSubsystem;
 import org.usfirst.frc.team1806.robot.util.InterpolatingDouble;
 import org.usfirst.frc.team1806.robot.util.InterpolatingTreeMap;
 import org.usfirst.frc.team1806.robot.util.RigidTransform2d;
 import org.usfirst.frc.team1806.robot.util.Rotation2d;
-import org.usfirst.frc.team1806.robot.util.Translation2d;
 import org.usfirst.frc.team1806.robot.util.Twist2d;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -27,9 +25,6 @@ public class RobotState {
     private Twist2d vehicle_velocity_predicted_;
     private Twist2d vehicle_velocity_measured_;
     private double distance_driven_;
-    private Rotation2d camera_pitch_correction_;
-    private Rotation2d camera_yaw_correction_;
-    private double differential_height_;
     private RobotState() {
         reset(0, new RigidTransform2d());
     }

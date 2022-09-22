@@ -1,9 +1,6 @@
 package org.usfirst.frc.team1806.robot.auto;
 
 import org.usfirst.frc.team1806.robot.path.Path;
-import org.usfirst.frc.team1806.robot.path.PathBuilder;
-
-import java.util.ArrayList;
 
 public class GeneralPathAdapter implements PathAdapter {
 

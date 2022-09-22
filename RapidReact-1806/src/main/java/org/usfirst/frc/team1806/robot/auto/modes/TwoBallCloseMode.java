@@ -1,10 +1,8 @@
 package org.usfirst.frc.team1806.robot.auto.modes;
 
 import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.IntakeBack;
-import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.IntakeFront;
 import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.Shoot;
 import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.StopSuperStructure;
-import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.Action;
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.DrivePathAction;
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.ResetPoseFromPathAction;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeBase;

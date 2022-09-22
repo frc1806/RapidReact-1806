@@ -14,7 +14,6 @@ import org.usfirst.frc.team1806.robot.auto.paths.SixBallPath1;
 import org.usfirst.frc.team1806.robot.auto.paths.SixBallPath2;
 import org.usfirst.frc.team1806.robot.auto.paths.SixBallPath3;
 import org.usfirst.frc.team1806.robot.auto.paths.SixBallPath4;
-import org.usfirst.frc.team1806.robot.auto.paths.SixBallPath5;
 import org.usfirst.frc.team1806.robot.game.Shot;
 import org.usfirst.frc.team1806.robot.util.Translation2d;
 

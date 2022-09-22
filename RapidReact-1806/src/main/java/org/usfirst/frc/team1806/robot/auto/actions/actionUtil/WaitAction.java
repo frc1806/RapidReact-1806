@@ -1,8 +1,6 @@
 package org.usfirst.frc.team1806.robot.auto.actions.actionUtil;
 
 import edu.wpi.first.wpilibj.Timer;
-import org.usfirst.frc.team1806.robot.Robot;
-import org.usfirst.frc.team1806.robot.subsystems.SubsystemManager;
 
 /**
  * Action to wait for a given amount of time To use this Action, call runAction(new WaitAction(your_time))

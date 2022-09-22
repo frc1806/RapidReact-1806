@@ -2,7 +2,6 @@ package org.usfirst.frc.team1806.robot.util;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
-import edu.wpi.first.wpilibj.CAN;
 
 public class SparkMaxMechanismSynchronizer {
     private CANSparkMax left;

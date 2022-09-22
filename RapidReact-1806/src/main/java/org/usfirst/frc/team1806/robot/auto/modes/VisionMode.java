@@ -4,12 +4,7 @@ import org.usfirst.frc.team1806.robot.auto.actions.DriveToStall;
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.*;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeBase;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeEndedException;
-import org.usfirst.frc.team1806.robot.auto.paths.DumbMode;
-import org.usfirst.frc.team1806.robot.path.Path;
 import org.usfirst.frc.team1806.robot.subsystems.DriveTrainSubsystem;
-import org.usfirst.frc.team1806.robot.util.RigidTransform2d;
-import org.usfirst.frc.team1806.robot.util.Rotation2d;
-import org.usfirst.frc.team1806.robot.util.Translation2d;
 
 public class VisionMode extends AutoModeBase {
     public static double mAngle = -1000;

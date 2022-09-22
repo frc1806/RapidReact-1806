@@ -1,7 +1,5 @@
 package org.usfirst.frc.team1806.robot.auto.modes;
 
-import java.nio.file.Path;
-
 import org.usfirst.frc.team1806.robot.Robot;
 import org.usfirst.frc.team1806.robot.auto.actions.SuperstructureActions.Shoot;
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.DrivePathAction;

@@ -8,16 +8,10 @@
 package org.usfirst.frc.team1806.robot;
 
 import java.util.function.DoubleSupplier;
-import java.util.function.Function;
-
-import javax.lang.model.util.ElementScanner6;
 
 import org.usfirst.frc.team1806.robot.game.Shot;
-import org.usfirst.frc.team1806.robot.game.Shot.ShotDashboard;
 import org.usfirst.frc.team1806.robot.subsystems.*;
-import org.usfirst.frc.team1806.robot.subsystems.SuperStructure.SuperStructureStates;
 import org.usfirst.frc.team1806.robot.util.CheesyDriveHelper;
-import org.usfirst.frc.team1806.robot.util.Latch;
 import org.usfirst.frc.team1806.robot.util.Rotation2d;
 import org.usfirst.frc.team1806.robot.util.XboxController;
 

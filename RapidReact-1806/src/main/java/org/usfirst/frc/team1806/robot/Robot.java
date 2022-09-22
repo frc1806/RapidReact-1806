@@ -7,10 +7,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.ScheduleCommand;
-import org.usfirst.frc.team1806.robot.auto.*;
-import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.WaitAction;
 import org.usfirst.frc.team1806.robot.auto.modes.DummyMode;
 import org.usfirst.frc.team1806.robot.auto.modes.VisionMode;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeBase;
@@ -27,7 +23,6 @@ import org.usfirst.frc.team1806.robot.util.RigidTransform2d;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Arrays;
-import java.util.function.DoubleSupplier;
 
 
 /**

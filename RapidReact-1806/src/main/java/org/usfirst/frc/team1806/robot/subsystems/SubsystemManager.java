@@ -2,7 +2,6 @@ package org.usfirst.frc.team1806.robot.subsystems;
 
 import java.util.List;
 
-import org.usfirst.frc.team1806.robot.Robot;
 import org.usfirst.frc.team1806.robot.loop.Looper;
 
 /**

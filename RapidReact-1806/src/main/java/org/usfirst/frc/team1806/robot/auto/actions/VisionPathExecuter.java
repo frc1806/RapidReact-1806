@@ -1,6 +1,5 @@
 package org.usfirst.frc.team1806.robot.auto.actions;
 
-import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.Action;
 import org.usfirst.frc.team1806.robot.auto.modes.VisionMode;
 

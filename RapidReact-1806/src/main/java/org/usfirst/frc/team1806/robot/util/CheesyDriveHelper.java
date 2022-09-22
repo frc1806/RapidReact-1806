@@ -30,8 +30,6 @@ public class CheesyDriveHelper {
     private static final double kQuickStopDeadband = 0.2;
     private static final double kQuickStopWeight = 1;
     private static final double kQuickStopScalar = 5.0;
-    
-    private static final double kTurnabilityZeroThrottle = 0.15;
 
     private double mOldWheel = 0.0;
     private double mQuickStopAccumlator = 0.0;
