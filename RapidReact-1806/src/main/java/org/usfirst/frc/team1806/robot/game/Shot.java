@@ -116,7 +116,7 @@ public class Shot {
     public static Shot FLIPPED_CLOSE_SHOT = CLOSE_SHOT.getThisShotButFlipped();
     public static Shot TARMAC_EDGE_SHOT = new Shot(150.0, 2600.0, 3200.0, true, false);
     public static Shot TARMAC_EDGE_SHOT_FLIPPED = TARMAC_EDGE_SHOT.getThisShotButFlipped();
-    public static Shot AUTO_FAR_TARMAC_EDGE = new Shot (152.0, 2700.0, 3350.0, true, false);
+    public static Shot AUTO_FAR_TARMAC_EDGE = new Shot (152.0, 2800.0, 3450.0, true, false);
     public static Shot BIG_SHOT = new Shot(145.0, 4437.0, 2172.0, true, false);
     public static Shot BIG_SHOT_FLIPPED = BIG_SHOT.getThisShotButFlipped();
     public static Shot ROLL_SHOT = new Shot(110.0, 4500.0, 2000.0, false, false);

@@ -16,15 +16,15 @@ public class Right3Ball2 implements PathContainer {
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
         sWaypoints.add(new Waypoint(300,36,0,0));
-        sWaypoints.add(new Waypoint(250,55,5,25));
-        sWaypoints.add(new Waypoint(222,67,0,25));
+        sWaypoints.add(new Waypoint(250,55,5,33));
+        sWaypoints.add(new Waypoint(225,64,0,28));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
     
     @Override
     public RigidTransform2d getStartPose() {
-        return new RigidTransform2d(new Translation2d(300, 36), Rotation2d.fromDegrees(-21.9)); 
+        return new RigidTransform2d(new Translation2d(300, 36), Rotation2d.fromDegrees(-27.9)); 
     }
 
     @Override

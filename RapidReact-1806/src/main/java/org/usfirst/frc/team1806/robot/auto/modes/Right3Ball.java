@@ -37,6 +37,7 @@ public class Right3Ball extends AutoModeBase{
         runAction(new SloppyTurnToHeading(Rotation2d.fromDegrees(-27.9), 5.0));
         runAction(new IntakeBack());
         runAction(new DrivePathActionWithTimeout(new Right3Ball2(), 6.0));
+        runAction(new WaitAction(0.50));
         runAction(new StopSuperStructure());
         runAction(new ParallelAction(Arrays.asList(
             new SloppyTurnToHeading(Rotation2d.fromDegrees(40.0), 5.0),

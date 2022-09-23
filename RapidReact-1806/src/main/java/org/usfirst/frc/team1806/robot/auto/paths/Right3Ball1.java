@@ -16,7 +16,7 @@ public class Right3Ball1 implements PathContainer {
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
         sWaypoints.add(new Waypoint(300,70,0,0));
-        sWaypoints.add(new Waypoint(300,36,0,15));
+        sWaypoints.add(new Waypoint(300,36,0,17));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
