@@ -16,7 +16,7 @@ public class Right3Ball1 implements PathContainer {
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
         sWaypoints.add(new Waypoint(300,70,0,0));
-        sWaypoints.add(new Waypoint(300,36,0,17));
+        sWaypoints.add(new Waypoint(300,40,0,17));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
@@ -30,7 +30,7 @@ public class Right3Ball1 implements PathContainer {
     public boolean isReversed() {
         return true; 
     }
-	// WAYPOINT_DATA: [{"position":{"x":300,"y":70},"speed":0,"radius":0,"comment":""},{"position":{"x":300,"y":36},"speed":15,"radius":0,"comment":""}]
+	// WAYPOINT_DATA: [{"position":{"x":300,"y":70},"speed":0,"radius":0,"comment":""},{"position":{"x":300,"y":40},"speed":15,"radius":0,"comment":""}]
 	// IS_REVERSED: true
 	// FILE_NAME: Right3Ball1
 }

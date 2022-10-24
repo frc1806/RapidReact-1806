@@ -1,6 +1,7 @@
 package org.usfirst.frc.team1806.robot.subsystems;
 
 import com.revrobotics.ColorSensorV3;
+import com.revrobotics.ColorSensorV3.RawColor;
 
 import org.usfirst.frc.team1806.robot.loop.Looper;
 
@@ -12,7 +13,7 @@ import edu.wpi.first.wpilibj.util.Color;
 
 public class ColorSensorSubsystem implements Subsystem {
 
-    private ColorSensorSubsystem mColorSensorSubsystem;
+    private static ColorSensorSubsystem mColorSensorSubsystem;
 
     private final ColorSensorV3 mColorSensor;
     private final I2C.Port i2cPort;
@@ -23,6 +24,11 @@ public class ColorSensorSubsystem implements Subsystem {
 
     private ColorChoices mMatchedColor;
     private ColorChoices mAllianceColor;
+    private RawColor raw_color;
+    private int color_offset;
+    private int adjusted_blue;
+    private int adjusted_red;
+    private double color_ratio;
 
     public ColorSensorSubsystem(){
         mColorSensorSubsystem = new ColorSensorSubsystem();
@@ -30,10 +36,15 @@ public class ColorSensorSubsystem implements Subsystem {
         mColorSensor = new ColorSensorV3(i2cPort);
         
         mMatchedColor = ColorChoices.NONE;
-        
+        raw_color = mColorSensor.getRawColor();
+        adjusted_blue = raw_color.blue;
+        adjusted_red = raw_color.red + color_offset;
+        color_offset = adjusted_blue - adjusted_red;
+        color_ratio = (double) adjusted_red / (double) adjusted_blue;
+        updateAllianceColor();
     }
 
-    public ColorSensorSubsystem getInstance(){
+    public static ColorSensorSubsystem getInstance(){
         return mColorSensorSubsystem;
     }
 
@@ -41,9 +52,12 @@ public class ColorSensorSubsystem implements Subsystem {
         return mAllianceColor == mMatchedColor;
     }
 
-    public boolean hasOppisiteColor(){
-        return !hasCorrectColor();
+    public boolean hasOppositeColor() {
+        return !hasCorrectColor()
+                    && (mMatchedColor != ColorChoices.OTHER)
+                    && (mMatchedColor != ColorChoices.NONE);
     }
+
 
     public void updateAllianceColor() {
         if (DriverStation.isDSAttached()) {
@@ -55,6 +69,16 @@ public class ColorSensorSubsystem implements Subsystem {
         } else {
             mAllianceColor = ColorChoices.NONE;
             DriverStation.reportError("No Alliance Color Detected", true);
+        }
+    }
+
+    public void updateMatchedColor(){
+        if (color_ratio > 1.0) {
+            mMatchedColor = ColorChoices.RED;
+        } else if (color_ratio < 1.0) {
+            mMatchedColor = ColorChoices.BLUE;
+        } else {
+            mMatchedColor = ColorChoices.OTHER;
         }
     }
 
@@ -76,6 +100,7 @@ public class ColorSensorSubsystem implements Subsystem {
         int proximity = mColorSensor.getProximity();
     
         SmartDashboard.putNumber("Proximity", proximity);
+        SmartDashboard.putString("Guess Color", mMatchedColor.toString());
     }
 
     @Override
