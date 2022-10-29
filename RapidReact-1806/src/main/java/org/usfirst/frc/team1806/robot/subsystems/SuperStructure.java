@@ -687,30 +687,6 @@ public class SuperStructure implements Subsystem {
 
 
         }).withWidget(BuiltInWidgets.kDial).withPosition(9,3).withSize(2,2).withProperties(FLYWHEEL_SPEEDS); //add .withProperties if neccesary
-
-
-
-
-        Robot.getMainDriverTab().addNumber("Up Wanted Flywheel Speed", new DoubleSupplier() {
-
-            @Override
-			public double getAsDouble() {
-				return mUpFlywheel.getWantedRPM();
-			}
-
-        }).withWidget(BuiltInWidgets.kDial).withPosition(7,1).withSize(2,2).withProperties(FLYWHEEL_SPEEDS); //add .withProperties if neccesary
-
-
-        Robot.getMainDriverTab().addNumber("Down Wanted Flywheel Speed", new DoubleSupplier() {
-
-            @Override
-			public double getAsDouble() {
-				return mDownFlywheel.getWantedRPM();
-			}
-        
-
-        }).withWidget(BuiltInWidgets.kDial).withPosition(7,3).withSize(2,2).withProperties(FLYWHEEL_SPEEDS); //add .withProperties if neccesary
-
         
 
         Robot.getMainDriverTab().addNumber("Shooter Angle", new DoubleSupplier() {
@@ -722,66 +698,6 @@ public class SuperStructure implements Subsystem {
         
 
         }).withWidget(BuiltInWidgets.kDial).withPosition(-1,-1).withSize(1,1).withProperties(SHOOTER_ANGLE); //add .withProperties if neccesary
-
-        //TODO: Move position
-        Robot.getMainDriverTab().addNumber("Ball Count", new DoubleSupplier() {
-
-            @Override
-            public double getAsDouble() {
-                return ballCount;
-            }
-        
-
-        }).withWidget(BuiltInWidgets.kDial).withPosition(-1,-1).withSize(1,1).withProperties(BALL_COUNT); //add .withProperties if neccesary
-
-        Robot.getMainDriverTab().addNumber("Red 0", new DoubleSupplier() {
-
-            @Override
-            public double getAsDouble() {
-                return mPicoColorSensor.getRawColor0().red;
-            }
-        
-
-        }).withWidget(BuiltInWidgets.kDial).withPosition(0,3).withSize(1,1).withProperties(RGB_VALUE); //add .withProperties if neccesary
-
-
-        Robot.getMainDriverTab().addNumber("Green 0", new DoubleSupplier() {
-
-            @Override
-            public double getAsDouble() {
-                return mPicoColorSensor.getRawColor0().green;
-            }
-        
-
-        }).withWidget(BuiltInWidgets.kDial).withPosition(1,3).withSize(1,1).withProperties(RGB_VALUE); //add .withProperties if neccesary
-
-
-
-
-        Robot.getMainDriverTab().addNumber("Blue 0", new DoubleSupplier() {
-
-            @Override
-            public double getAsDouble() {
-                return mPicoColorSensor.getRawColor0().blue;
-            }
-        
-
-        }).withWidget(BuiltInWidgets.kDial).withPosition(2,3).withSize(1,1).withProperties(RGB_VALUE); //add .withProperties if neccesary
-
-
-
-
-        }
-       
-    
-
-
-
-
-
-
-
-        // TODO Auto-generated method stub
         
     }
-
+}

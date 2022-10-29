@@ -264,7 +264,7 @@ public static Double visionLineUpProportional = 1.0/20.0;
 
 //Power
 public static int kDriveNormalAmpLimit = 45;
-public static int kDriveLimitedAmpLimit = 35;
+public static int kDriveLimitedAmpLimit = 28;
 public static double kDriveNormalRampRate = 0.3;
 public static double kDriveLimitedRampRate = 0.5;
 

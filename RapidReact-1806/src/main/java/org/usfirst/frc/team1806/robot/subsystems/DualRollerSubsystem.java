@@ -92,11 +92,11 @@ public class DualRollerSubsystem implements Subsystem{
 
     public void feedForward(){
         frontRoller.set(ControlMode.PercentOutput, -1);
-        backRoller.set(ControlMode.PercentOutput, 1);
+        backRoller.set(ControlMode.PercentOutput, 0.6);
     }
 
     public void feedBackwards(){
-        frontRoller.set(ControlMode.PercentOutput, 1);
+        frontRoller.set(ControlMode.PercentOutput, 0.6);
         backRoller.set(ControlMode.PercentOutput, -1);
     }
 

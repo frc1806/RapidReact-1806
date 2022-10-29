@@ -94,7 +94,7 @@ public class LaunchBoxAngler implements Subsystem {
                     }
                     */
                     double minimumPower = Constants.kLaunchBoxMinimumMovePowerVert + ((Constants.kLaunchBoxMinimumMovePowerHoriz - Constants.kLaunchBoxMinimumMovePowerVert)* Math.abs(Math.sin( Units.degreesToRadians(getCurrentAngle()))));
-                    if(batteryVoltage > 10.0){
+                    if(batteryVoltage > 9.0){
                         if(isAtAngle())
                         {
                             power = 0;
@@ -119,7 +119,7 @@ public class LaunchBoxAngler implements Subsystem {
                     }
 
                     if(getCurrentAngle() < - 90){
-                        power = power * 0.7;
+                        power = power * 0.9;
                     }
 
 

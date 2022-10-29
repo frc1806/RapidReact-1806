@@ -1,5 +1,7 @@
 package org.usfirst.frc.team1806.robot.subsystems;
 
+import java.sql.Driver;
+
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
@@ -11,12 +13,14 @@ import org.usfirst.frc.team1806.robot.loop.Looper;
 import org.usfirst.frc.team1806.robot.util.TargetInfo;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.CameraServerJNI;
 import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoMode;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.net.PortForwarder;
+import edu.wpi.first.wpilibj.DriverStation;
 
 public class VisionSubsystem implements Subsystem {
 
@@ -39,8 +43,6 @@ public class VisionSubsystem implements Subsystem {
 
     private PhotonCamera frontCamera = new PhotonCamera("frontGoalPhoton");
     private PhotonCamera backCamera = new PhotonCamera("backGoalPhoton");
-    private PhotonCamera frontDriverCam = new PhotonCamera("frontDriverCam");
-    private PhotonCamera backDriverCam = new PhotonCamera("backDriverCamm");
 
 
 
@@ -113,13 +115,12 @@ public class VisionSubsystem implements Subsystem {
 
     @Override
     public void setupDriverTab() {
-        // TODO Auto-generated method 
-        UsbCamera camera = new UsbCamera("Driver Cam", 0);
-        camera.setExposureManual(1);
-        camera.setResolution(320, 240);
-        CameraServer.startAutomaticCapture(camera);
-        Robot.getMainDriverTab().addCamera("Driver Front Camera", "frontDriverCam", "http://10.18.6.2:1181/stream.mjpg").withPosition(1,2).withSize(4,4);
-        //Robot.getMainDriverTab().addCamera("Driver Rear Camera", "rearDriverCam", "http://10.18.6.13:1184/stream.mjpg").withPosition(3, 2).withSize(4,4); 
+        UsbCamera rCamera = new UsbCamera("Rear Cam", 0);
+        rCamera.setExposureManual(1);
+        rCamera.setResolution(320, 240);
+        CameraServer.startAutomaticCapture(rCamera);
+
+        Robot.getMainDriverTab().addCamera("Driver Rear Camera", "rearDriverCam", "http://10.18.6.2:1181/stream.mjpg").withPosition(3, 2).withSize(4,4); 
     }
 
     public TargetLocation getBestTargetLocation(){

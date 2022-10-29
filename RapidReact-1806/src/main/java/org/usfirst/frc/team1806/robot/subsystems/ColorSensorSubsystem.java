@@ -3,6 +3,7 @@ package org.usfirst.frc.team1806.robot.subsystems;
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.ColorSensorV3.RawColor;
 
+import org.usfirst.frc.team1806.robot.loop.Loop;
 import org.usfirst.frc.team1806.robot.loop.Looper;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -13,7 +14,7 @@ import edu.wpi.first.wpilibj.util.Color;
 
 public class ColorSensorSubsystem implements Subsystem {
 
-    private static ColorSensorSubsystem mColorSensorSubsystem;
+    private static ColorSensorSubsystem mColorSensorSubsystem = null;
 
     private final ColorSensorV3 mColorSensor;
     private final I2C.Port i2cPort;
@@ -31,7 +32,6 @@ public class ColorSensorSubsystem implements Subsystem {
     private double color_ratio;
 
     public ColorSensorSubsystem(){
-        mColorSensorSubsystem = new ColorSensorSubsystem();
         i2cPort = I2C.Port.kOnboard;
         mColorSensor = new ColorSensorV3(i2cPort);
         
@@ -101,6 +101,7 @@ public class ColorSensorSubsystem implements Subsystem {
     
         SmartDashboard.putNumber("Proximity", proximity);
         SmartDashboard.putString("Guess Color", mMatchedColor.toString());
+        SmartDashboard.putNumber("Color Ratio", color_ratio);
     }
 
     @Override
@@ -118,6 +119,28 @@ public class ColorSensorSubsystem implements Subsystem {
     @Override
     public void registerEnabledLoops(Looper enabledLooper) {
         // TODO Auto-generated method stub
+        enabledLooper.register(new Loop(){
+
+            @Override
+            public void onStart(double timestamp) {
+                // TODO Auto-generated method stub
+                updateAllianceColor();
+            }
+
+            @Override
+            public void onLoop(double timestamp) {
+                updateMatchedColor();
+                raw_color = mColorSensor.getRawColor();
+                
+            }
+
+            @Override
+            public void onStop(double timestamp) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+        });
         
     }
 

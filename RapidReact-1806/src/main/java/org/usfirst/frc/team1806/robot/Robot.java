@@ -44,10 +44,10 @@ public class Robot extends TimedRobot {
     private String lastSelectedModeName;
     private boolean bAutoModeStale = false;
     SendableChooser<edu.wpi.first.wpilibj2.command.Command> m_chooser = new SendableChooser<>();
-
+    private ColorSensorSubsystem mColorSensor = ColorSensorSubsystem.getInstance();
 
     private static final SubsystemManager S_SubsystemManager = new SubsystemManager(
-            Arrays.asList(DriveTrainSubsystem.getInstance(), SuperStructure.getInstance(), VisionSubsystem.getInstance(),  LaunchBoxAngler.getInstance(), ColorSensorSubsystem.getInstance()));  // LEDStringSubsystem.getInstance()///TODO RE ADD IN SUBSYSTEMS
+            Arrays.asList(DriveTrainSubsystem.getInstance(), SuperStructure.getInstance(), VisionSubsystem.getInstance(),  LaunchBoxAngler.getInstance()));  // LEDStringSubsystem.getInstance()///TODO RE ADD IN SUBSYSTEMS
 
     private Looper mEnabledLooper = new Looper();
     private Looper mDisabledLooper = new Looper();
@@ -62,7 +62,6 @@ public class Robot extends TimedRobot {
     private boolean sequenceEnding = false;
     private boolean wasAutomatedSequenceEnabled = false;
     public static AutoModeBase currentSequence;
-    private ColorSensorSubsystem mColorSensor = ColorSensorSubsystem.getInstance();
 
     //Global Dashboard tabs
     private static ShuffleboardTab competitionTab;
@@ -330,7 +329,6 @@ public class Robot extends TimedRobot {
       mRobotState.outputToSmartDashboard();
       mEnabledLooper.outputToSmartDashboard();
       SmartDashboard.putString("Auto We Are Running", AutoModeSelector.returnNameOfSelectedAuto()==null?"Nothing":AutoModeSelector.returnNameOfSelectedAuto());
-      mColorSensor.updateMatchedColor();
      //SmartDashboard.putNumber("PDP Total", powerDistributionPanel.getTotalCurrent());
     }
     private void runTeleOp(){

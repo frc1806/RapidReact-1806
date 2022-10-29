@@ -200,7 +200,7 @@ public class OI {
 
 		//define all driver controls
 		boolean quickTurn;
-		boolean visionLineup;
+		boolean visionLineup = false;
 		boolean shiftHighGear;
 		boolean shiftLowGear;
 
@@ -220,13 +220,13 @@ public class OI {
 		switch (currentControllerConfig) {
 			case kCallOfDuty:{
 				// buttons
-				quickTurn = driverController.getPOVLeft(); // Will Map to paddle
-				visionLineup = driverController.getPOVRight(); // Will map to paddle
-				shiftHighGear = driverController.getButtonRB();
-				shiftLowGear = driverController.getButtonLB();
+				quickTurn = driverController.getPOVRight(); // Will Map to paddle
+				//visionLineup = driverController.getPOVRight(); // Will map to paddle
+				shiftHighGear = driverController.getButtonLS();
+				shiftLowGear = driverController.getButtonRS();
 
-				intakeFront = driverController.getRightTriggerAsDigital();
-				intakeBack = driverController.getLeftTriggerAsDigital();
+				intakeFront = driverController.getButtonRB();
+				intakeBack = driverController.getButtonLB();
 				feedThroughFromFront = driverController.getPOVUp();
 				feedThroughFromBack = driverController.getPOVDown();
 				// face buttons are all unused.
@@ -234,10 +234,13 @@ public class OI {
 				frontSweep = driverController.getButtonY();
 				rearSweep = driverController.getButtonX();
 
-				confirmShot = driverController.getButtonA();
+				confirmShot = driverController.getPOVLeft();
 				
 				visionShot = visionShot || driverController.getButtonB();
 				visionLineup = visionLineup || driverController.getButtonB();
+
+				wantClimb = driverController.getLeftTriggerAsDigital();
+				wantLowClimb = driverController.getRightTriggerAsDigital();
 
 				// decide throttle with triggers
 
