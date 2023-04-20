@@ -10,9 +10,11 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.usfirst.frc.team1806.robot.Constants;
+import org.usfirst.frc.team1806.robot.OI;
 import org.usfirst.frc.team1806.robot.Robot;
 import org.usfirst.frc.team1806.robot.RobotMap;
 import org.usfirst.frc.team1806.robot.loop.Loop;
@@ -235,7 +237,9 @@ public class SuperStructure implements Subsystem {
                     break;
                 default:
                 case Idle:
-                    mCompressor.enableDigital();
+                    if(!mDebugController.getButtonB()){
+                        mCompressor.enableDigital();
+                    }
                     mDriveTrainSubsystem.setCurrentLimitPerMotor(Constants.kDriveNormalAmpLimit);
                     mDriveTrainSubsystem.setOpenLoopRampRate(Constants.kDriveNormalRampRate);
                     if(frontSweep){
@@ -393,6 +397,7 @@ public class SuperStructure implements Subsystem {
     private BisectedCircularBuffer flywheelAverageSpeedsBuffer;
     private boolean isFlywheelSpeedDecreasing;
     private int ballCount;
+    private org.usfirst.frc.team1806.robot.util.XboxController mDebugController;
 
     private SuperStructure() {
         frontSweep = false;
@@ -421,6 +426,11 @@ public class SuperStructure implements Subsystem {
         isFlywheelSpeedDecreasing = false;
         mCompressor = new Compressor(PneumaticsModuleType.CTREPCM);
         mDriveTrainSubsystem = DriveTrainSubsystem.getInstance();
+        mDebugController = OI.debugController;
+    }
+
+    public Compressor getCompressor(){
+        return mCompressor;
     }
 
     @Override

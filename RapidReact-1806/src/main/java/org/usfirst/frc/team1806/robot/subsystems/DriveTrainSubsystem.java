@@ -5,6 +5,7 @@ import java.util.function.DoubleSupplier;
 //import org.omg.CORBA.PRIVATE_MEMBER;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -88,7 +89,8 @@ public class DriveTrainSubsystem implements Subsystem {
 	}
 
 	// Initialize all of the drive motors
-	private CANSparkMax leaderLeft, leaderRight, leftA, rightA, leftB, rightB;
+	private CANSparkMax leaderLeft, leaderRight, leftA, rightA;
+	private CANSparkMax leftB, rightB;
 	private DoubleSolenoid shifter;
 	private NavX navx;
 	private PathFollower mPathFollower;
@@ -212,20 +214,22 @@ public class DriveTrainSubsystem implements Subsystem {
 
 		leftB = new CANSparkMax(RobotMap.leftFollowerB, CANSparkMaxLowLevel.MotorType.kBrushless);
 		rightB = new CANSparkMax(RobotMap.rightFollowerB, CANSparkMaxLowLevel.MotorType.kBrushless);
-
 		// Follow for right side
 		rightA.follow(leaderRight);
 		rightB.follow(leaderRight);
-
+		//rightB.setIdleMode(IdleMode.kCoast);
+		//rightB.set(0); //comment out for 6
 		// Follow for left side
 		leftA.follow(leaderLeft);
 		leftB.follow(leaderLeft);
-
-		setCurrentLimitPerMotor(50);
+		//leftB.setIdleMode(IdleMode.kCoast);
+		//leftB.set(0);
+		
+		setCurrentLimitPerMotor(80);
 
 		leaderLeft.setInverted(true);
 		leftA.setInverted(true);
-		leftB.setInverted(true);
+		//leftB.setInverted(true);
 
 		// //Invert the right side
 		leaderRight.setInverted(false);

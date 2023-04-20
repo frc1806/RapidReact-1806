@@ -30,7 +30,7 @@ public class OI {
 			Constants.kDriverControllerDefaultConfig);
 	protected static XboxController operatorController = new XboxController(1, "Operator",
 			Constants.kOperatorControllerDefaultConfig);
-	protected static XboxController debugController = new XboxController(2, "Debug",
+	public static XboxController debugController = new XboxController(2, "Debug",
 			Constants.kOperatorControllerDefaultConfig);
 			
 
@@ -135,6 +135,7 @@ public class OI {
 		double timestamp = Timer.getFPGATimestamp();
 
 		boolean dashboardShot = debugController.getButtonA();
+		boolean disableCompressor = debugController.getButtonB();
 		//LED Controls
 		/*if(operatorController.getPOVUp()){
 			mLedStringSubsystem.setRobotLEDModeGlitchy();
@@ -403,6 +404,12 @@ public class OI {
 		}
 		else {
 			mSuperStructure.stop();
+		}
+
+		if (disableCompressor){
+			mSuperStructure.getCompressor().disable();
+		} else {
+			mSuperStructure.getCompressor().enableDigital();
 		}
 
 		if(loadConevyor){
